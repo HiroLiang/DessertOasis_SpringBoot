@@ -13,7 +13,7 @@ public class Test {
 	public ResponseEntity<String> test(){
 		HttpHeaders headers = new HttpHeaders();
 		headers.add("Access-Control-Allow-Origin", "*");
-		return new ResponseEntity<>("<h2>Hello world</h2>", headers, HttpStatus.CREATED);
+		return new ResponseEntity<>("Hello world", headers, HttpStatus.CREATED);
 	}
 
 }
