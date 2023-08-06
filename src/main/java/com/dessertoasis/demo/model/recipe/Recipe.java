@@ -15,41 +15,41 @@ import jakarta.persistence.Table;
 @Entity @Table(name = "recipes")
 public class Recipe {
 
-	@Id @Column(name="RECIPEID") 
+	@Id @Column(name="recipeID") 
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer recipeID;
 	
 	//食譜名稱
-	@Column(name = "RECIPETITLE")
+	@Column(name = "recipeTitle")
 	private String recipeTitle;
 	
 	//成品圖圖庫位址
-	@Column(name = "PICTUREURL")
+	@Column(name = "pictureURL")
 	private String pictureURL;
 	
 	//食譜簡介
-	@Column(name = "RECIPEINTRODUCTION")
+	@Column(name = "recipeIntroduction")
 	private String recipeIntroduction;
 	
 	//食譜分類ID
-	@Column(name = "CATEGORYID")
+	@Column(name = "categoryID")
 	private Integer categoryID;
 	
 	//撰寫者ID(連結Member id)
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name="RECIPEAUTHORID")
+	@JoinColumn(name="recipeAuthorID")
 	private Membership recipeAuthorID;
 	
 	//製作時間
-	@Column(name = "COOKINGTIME")
+	@Column(name = "cookingTime")
 	private Integer cookingTime;
 	
 	//難度
-	@Column(name = "DIFFICULTY")
+	@Column(name = "difficulty")
 	private String difficulty;
 	
 	//食譜步驟
-	@Column(name = "RECIPESTEPS")
+	@Column(name = "recipeSteps")
 	private String recipeSteps;
 	
 	public Recipe() {
