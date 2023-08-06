@@ -1,10 +1,15 @@
-package com.dessertoasis.demo.model;
+package com.dessertoasis.demo.model.recipe;
+
+import com.dessertoasis.demo.model.membership.Membership;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
 @Entity @Table(name = "recipes")
@@ -14,47 +19,44 @@ public class Recipe {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer recipeID;
 	
+	//食譜名稱
 	@Column(name = "RECIPETITLE")
 	private String recipeTitle;
 	
+	//成品圖圖庫位址
 	@Column(name = "PICTUREURL")
 	private String pictureURL;
 	
+	//食譜簡介
 	@Column(name = "RECIPEINTRODUCTION")
 	private String recipeIntroduction;
 	
+	//食譜分類ID
 	@Column(name = "CATEGORYID")
 	private Integer categoryID;
 	
-	@Column(name = "RECIPEAUTHORID")
-	private Integer recipeAuthorID;
+	//撰寫者ID(連結Member id)
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name="RECIPEAUTHORID")
+	private Membership recipeAuthorID;
 	
+	//製作時間
 	@Column(name = "COOKINGTIME")
 	private Integer cookingTime;
 	
+	//難度
 	@Column(name = "DIFFICULTY")
 	private String difficulty;
 	
+	//食譜步驟
 	@Column(name = "RECIPESTEPS")
 	private String recipeSteps;
 	
 	public Recipe() {
 	}
 
-	
-	
-	@Override
-	public String toString() {
-		return "Recipe [recipeID=" + recipeID + ", recipeTitle=" + recipeTitle + ", pictureURL=" + pictureURL
-				+ ", recipeIntroduction=" + recipeIntroduction + ", categoryID=" + categoryID + ", recipeAuthorID="
-				+ recipeAuthorID + ", cookingTime=" + cookingTime + ", difficulty=" + difficulty + ", recipeSteps="
-				+ recipeSteps + "]";
-	}
-
-	public Recipe(Integer recipeID, String recipeTitle, String pictureURL, String recipeIntroduction,
-			Integer categoryID, Integer recipeAuthorID, Integer cookingTime, String difficulty, String recipeSteps) {
-		super();
-		this.recipeID = recipeID;
+	public Recipe(String recipeTitle, String pictureURL, String recipeIntroduction,
+			Integer categoryID, Membership recipeAuthorID, Integer cookingTime, String difficulty, String recipeSteps) {
 		this.recipeTitle = recipeTitle;
 		this.pictureURL = pictureURL;
 		this.recipeIntroduction = recipeIntroduction;
@@ -105,11 +107,11 @@ public class Recipe {
 		this.categoryID = categoryID;
 	}
 
-	public Integer getRecipeAuthorID() {
+	public Membership getRecipeAuthorID() {
 		return recipeAuthorID;
 	}
 
-	public void setRecipeAuthorID(Integer recipeAuthorID) {
+	public void setRecipeAuthorID(Membership recipeAuthorID) {
 		this.recipeAuthorID = recipeAuthorID;
 	}
 

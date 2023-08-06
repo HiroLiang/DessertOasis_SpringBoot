@@ -1,10 +1,18 @@
 package com.dessertoasis.demo.model.membership;
 
+import java.util.LinkedHashSet;
+import java.util.Set;
+
+import com.dessertoasis.demo.model.recipe.Recipe;
+
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.Data;
 
@@ -57,7 +65,11 @@ public class Membership {
 	//個人圖庫
 	@Column(name="IMAGEGALLERY")
 	private String imageGallery;
-
+	
+	//作為FK連結食譜RECIPEAUTHORID
+	@OneToMany(mappedBy = "recipeAuthorID" , fetch = FetchType.LAZY , cascade = CascadeType.ALL)
+	private Set<Recipe> recipes = new LinkedHashSet<>();
+	
 	public Membership() {
 	}
 
