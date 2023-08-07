@@ -1,4 +1,4 @@
-package com.dessertoasis.demo.model;
+package com.dessertoasis.demo.model.product;
 import java.sql.Timestamp;
 
 import org.springframework.format.annotation.DateTimeFormat;
