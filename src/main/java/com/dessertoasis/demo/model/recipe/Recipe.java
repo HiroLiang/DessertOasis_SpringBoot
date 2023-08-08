@@ -1,5 +1,9 @@
 package com.dessertoasis.demo.model.recipe;
 
+import java.util.Date;
+
+import org.springframework.format.annotation.DateTimeFormat;
+
 import com.dessertoasis.demo.model.membership.Membership;
 
 import jakarta.persistence.Column;
@@ -11,6 +15,8 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.persistence.Temporal;
+import jakarta.persistence.TemporalType;
 
 @Entity @Table(name = "recipes")
 public class Recipe {
@@ -51,6 +57,16 @@ public class Recipe {
 	//食譜步驟
 	@Column(name = "recipeSteps")
 	private String recipeSteps;
+	
+	//食譜建立時間
+	@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss:SSS")  // 在資料進 Java 環境時，做格式化
+	@Temporal(TemporalType.TIMESTAMP)
+	@Column(name = "recipeCreateDate")
+	private Date recipeCreateDate;
+	
+	//食譜每月計數器(統計每月熱門食譜)
+	@Column(name = "recipeMonthlyVisitCount")
+	private Integer recipeMonthlyVisitCount;
 	
 	public Recipe() {
 	}
