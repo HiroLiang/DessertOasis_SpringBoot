@@ -15,7 +15,7 @@ public class OrderController {
 	@Autowired
 	private OrderService oService;
 	
-	@GetMapping("/odermanagement/findall")
+	@GetMapping("/order/findall")
 	public List<Order> findAllOrder() {
 		return oService.findAll(); 
 	}
