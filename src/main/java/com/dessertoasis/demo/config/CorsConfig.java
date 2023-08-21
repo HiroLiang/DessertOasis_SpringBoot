@@ -11,7 +11,7 @@ public class CorsConfig implements WebMvcConfigurer {
 	public void addCorsMappings(CorsRegistry registry) {
 		registry.addMapping("/**") // project 中所有 api 都支持跨域
 		        .allowedOrigins("http://localhost:8081/", "http://localhost:5173/") // 設置放行哪些原始域
-//		        .allowCredentials(true) // 是否發送 Cookie
+		        .allowCredentials(true) // 是否發送 Cookie
 		        .allowedMethods("*") // 放行哪些請求方法 GET, POST, PUT, DELETE,...
 //		        .maxAge(3600) // 跨域允許時間
 		        ;
