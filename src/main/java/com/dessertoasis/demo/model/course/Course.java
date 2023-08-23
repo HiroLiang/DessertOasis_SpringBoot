@@ -31,7 +31,7 @@ public class Course {
 	private String courseName;
 	
 	//開課狀態
-	@Column(name="couseStatus")
+	@Column(name="courseStatus")
 	private String courseStatus;
 	
 	//開課日期
@@ -78,12 +78,16 @@ public class Course {
 	@Column(name="recipeId")
 	private Integer recipeId;
 	
+	//標籤編號
+	@Column(name="tagId")
+	private Integer tagId;
+	
 	public Course() {
 	}
 
 	public Course(Integer teacherId, String courseName, String courseStatus, Date courseDate, Date regDeadline,
 			String courseDescription, String courseLocation, Integer courseSortId, Integer remainingPlaces,
-			Integer coursePrice, String coursePictureUrl, Integer courseVideoId, Integer recipeId) {
+			Integer coursePrice, String coursePictureUrl, Integer courseVideoId, Integer recipeId, Integer tagId) {
 		super();
 		this.teacherId = teacherId;
 		this.courseName = courseName;
@@ -98,6 +102,7 @@ public class Course {
 		this.coursePictureUrl = coursePictureUrl;
 		this.courseVideoId = courseVideoId;
 		this.recipeId = recipeId;
+		this.tagId = tagId;
 	}
 
 	public Integer getCourseId() {
@@ -212,4 +217,13 @@ public class Course {
 		this.recipeId = recipeId;
 	}
 
+	public Integer getTagId() {
+		return tagId;
+	}
+
+	public void setTagId(Integer tagId) {
+		this.tagId = tagId;
+	}
+
+	
 }
