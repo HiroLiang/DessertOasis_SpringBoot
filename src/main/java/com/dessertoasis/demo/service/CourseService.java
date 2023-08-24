@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import com.dessertoasis.demo.model.course.Course;
 import com.dessertoasis.demo.model.course.CourseRepository;
+import com.dessertoasis.demo.model.course.CourseTeacherDTO;
 import com.dessertoasis.demo.model.course.Teacher;
 
 @Service
@@ -75,5 +76,9 @@ public class CourseService {
 	
 	public List<Course> getCoursesByTeacher(Teacher teacher) {
         return cRepo.findByTeacher(teacher);
+    }
+	
+	public List<CourseTeacherDTO> getAllCoursesWithTeacherNames() {
+        return cRepo.findAllCoursesWithTeacherNames();
     }
 }

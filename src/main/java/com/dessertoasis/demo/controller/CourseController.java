@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.dessertoasis.demo.model.course.Course;
+import com.dessertoasis.demo.model.course.CourseTeacherDTO;
 import com.dessertoasis.demo.service.CourseService;
 
 import jakarta.servlet.http.Cookie;
@@ -104,4 +105,9 @@ public class CourseController {
 //        // 这里只是一个示例，您可能需要根据实际情况进行修改
 //        return cookieValue != null && cookieValue.contains("teacherId");
 //    }
+	
+	@GetMapping("/course/withTrName")
+	public List<CourseTeacherDTO> getAllCoursesWithTeacherNames() {
+        return cService.getAllCoursesWithTeacherNames();
+    }
 }
