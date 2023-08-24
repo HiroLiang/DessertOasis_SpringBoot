@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.dessertoasis.demo.model.course.Course;
-import com.dessertoasis.demo.model.course.CourseRepository;
 import com.dessertoasis.demo.service.CourseService;
 
 import jakarta.servlet.http.Cookie;
@@ -25,9 +24,6 @@ public class CourseController {
 
 	@Autowired
 	private CourseService cService;
-	
-	@Autowired
-	private CourseRepository cRepo;
 	
 	//查詢單筆課程(用課程id)
 	@GetMapping("/course/{id}")

@@ -4,7 +4,7 @@ import java.util.Date;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
-import com.dessertoasis.demo.model.membership.Membership;
+import com.dessertoasis.demo.model.member.Member;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -44,7 +44,7 @@ public class Recipe {
 	//撰寫者ID(連結Member id)
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name="recipeAuthorID")
-	private Membership recipeAuthorID;
+	private Member recipeAuthorID;
 	
 	//製作時間
 	@Column(name = "cookingTime")
@@ -72,7 +72,7 @@ public class Recipe {
 	}
 
 	public Recipe(String recipeTitle, String pictureURL, String recipeIntroduction,
-			Integer categoryID, Membership recipeAuthorID, Integer cookingTime, String difficulty, String recipeSteps) {
+			Integer categoryID, Member recipeAuthorID, Integer cookingTime, String difficulty, String recipeSteps) {
 		this.recipeTitle = recipeTitle;
 		this.pictureURL = pictureURL;
 		this.recipeIntroduction = recipeIntroduction;
@@ -123,11 +123,11 @@ public class Recipe {
 		this.categoryID = categoryID;
 	}
 
-	public Membership getRecipeAuthorID() {
+	public Member getRecipeAuthorID() {
 		return recipeAuthorID;
 	}
 
-	public void setRecipeAuthorID(Membership recipeAuthorID) {
+	public void setRecipeAuthorID(Member recipeAuthorID) {
 		this.recipeAuthorID = recipeAuthorID;
 	}
 
