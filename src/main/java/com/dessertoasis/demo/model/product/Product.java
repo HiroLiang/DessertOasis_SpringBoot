@@ -22,10 +22,10 @@ public class Product {
 	@Id 
 	@Column(name = "prodID")
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private int prodID;
+	private Integer prodID;
 	
 	@Column(name = "prodTypeID")
-	private int prodTypeID;
+	private Integer prodTypeID;
 	
 	@Column(name = "prodName")
 	private String prodName;
@@ -34,10 +34,10 @@ public class Product {
 	private String prodDescription;
 	
 	@Column(name = "prodStock")
-	private int prodStock;
+	private Integer prodStock;
 	
 	@Column(name = "prodPrice")
-	private int prodPrice;
+	private Integer prodPrice;
 	
 	@Column(name = "prodPicURL")
 	private String prodPicURL;
@@ -59,6 +59,13 @@ public class Product {
 	
 	@Column(name = "prodRemark")
 	private String prodRemark;
+
+	public void setProdID(Integer id) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	
 
 	
 //	public Product() {
