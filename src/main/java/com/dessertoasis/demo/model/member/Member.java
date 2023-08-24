@@ -24,7 +24,7 @@ public class Member { //與會員帳號相關
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name="memberId")
+	@Column(name="memberId" , columnDefinition = "int")
 	private Integer memberId;
 	
 	@Column(name="fullName")
