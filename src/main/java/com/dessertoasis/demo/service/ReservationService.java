@@ -15,10 +15,7 @@ public class ReservationService {
 	@Autowired
 	private ReservationRepository rRepo;
 	
-	public List<Reservation> getReservationForClassroomInMonth(Integer roomId, Integer year, Integer month){
-		LocalDate startDate = LocalDate.of(year, month, 1);
-		LocalDate endDate = LocalDate.of(year, month, startDate.lengthOfMonth());
-		
+	public List<Reservation> getByRoomId(Integer roomId, LocalDate startDate, LocalDate endDate) {
 		return rRepo.findByRoomIdAndReservationDateBetween(roomId, startDate, endDate);
 	}
 }

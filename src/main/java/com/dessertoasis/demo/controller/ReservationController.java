@@ -1,5 +1,7 @@
 package com.dessertoasis.demo.controller;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,10 +20,13 @@ public class ReservationController {
 	
 	@GetMapping("/reservation/getinmonth")
 	public List<Reservation> getReservationForRoomInMonth(
-			@RequestParam("roomId") Integer roomId,
-			@RequestParam("year") Integer year,
-			@RequestParam("month") Integer month) {
+			@RequestParam("room") Integer roomId,
+			@RequestParam("start") String startStr,
+			@RequestParam("end") String endStr) {
 		
-		return rService.getReservationForClassroomInMonth(roomId, year, month);
+		LocalDate startDate = LocalDate.parse(startStr, DateTimeFormatter.ISO_DATE);
+		LocalDate endDate = LocalDate.parse(endStr, DateTimeFormatter.ISO_DATE);
+		
+		return rService.getByRoomId(roomId, startDate, endDate);
 	}
 }

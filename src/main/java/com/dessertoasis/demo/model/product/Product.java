@@ -3,8 +3,13 @@ import java.sql.Timestamp;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
+import com.dessertoasis.demo.model.member.MemberState;
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -20,45 +25,49 @@ import lombok.Data;
 public class Product {
 
 	@Id 
-	@Column(name = "prodID")
+	@Column(name = "prodID", columnDefinition = "int")
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private int prodID;
+	private Integer prodID;
 	
 	@Column(name = "prodTypeID")
-	private int prodTypeID;
+	private Integer prodTypeID;
 	
-	@Column(name = "prodName")
+	@Column(name = "prodName",columnDefinition = "nvarchar(100)")
 	private String prodName;
 	
-	@Column(name = "prodDescription")
+	@Column(name = "prodDescription",columnDefinition = "nvarchar(max)")
 	private String prodDescription;
 	
 	@Column(name = "prodStock")
-	private int prodStock;
+	private Integer prodStock;
 	
 	@Column(name = "prodPrice")
-	private int prodPrice;
+	private Integer prodPrice;
 	
-	@Column(name = "prodPicURL")
+	@Column(name = "prodPicURL",columnDefinition = "nvarchar(max)")
 	private String prodPicURL;
 	
 	@Column(name = "prodPurchase")
 	private Integer prodPurchase;
 	
 	
-	@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss:SSS")  // 在資料進 Java 環境時，做格式化
-	@Temporal(TemporalType.TIMESTAMP)
+	@JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX") // 在資料進 Java 環境時，做格式化
+//	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "prodAddtime")
 	private Timestamp prodAddtime;
 	
 	
-	@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss:SSS")  // 在資料進 Java 環境時，做格式化
-	@Temporal(TemporalType.TIMESTAMP)
+	@JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX")  // 在資料進 Java 環境時，做格式化
+//	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "prodShelftime")
 	private Timestamp prodShelftime;
 	
-	@Column(name = "prodRemark")
+	
+	@Column(name = "prodRemark",columnDefinition = "nvarchar(500)")
 	private String prodRemark;
+
+	
+	
 
 	
 //	public Product() {

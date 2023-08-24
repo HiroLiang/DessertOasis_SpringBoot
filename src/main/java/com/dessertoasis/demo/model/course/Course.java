@@ -9,9 +9,13 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
+import lombok.Data;
+
 
 @Entity
 @Table(name="course")
@@ -23,7 +27,7 @@ public class Course {
 	private Integer courseId;
 	
 	//教師編號
-	@Column(name = "teacherId")
+	@Column(name = "teacherId",insertable=false, updatable=false)
 	private Integer teacherId;
 	
 	//課程名稱
@@ -55,7 +59,7 @@ public class Course {
 	private String courseLocation;
 	
 	//課程分類編號
-	@Column(name="courseSortId")
+	@Column(name="courseSortId",nullable = false)
 	private Integer courseSortId;
 	
 	//剩餘名額
@@ -81,6 +85,11 @@ public class Course {
 	//標籤編號
 	@Column(name="tagId")
 	private Integer tagId;
+	
+	//多對一
+	@ManyToOne()
+	@JoinColumn(name = "teacherId", referencedColumnName = "teacherId", nullable = false)
+	private Teacher teacher;
 	
 	public Course() {
 	}

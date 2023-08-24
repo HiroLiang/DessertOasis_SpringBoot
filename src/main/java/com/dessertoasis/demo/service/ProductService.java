@@ -13,29 +13,29 @@ import com.dessertoasis.demo.model.product.ProductRepository;
 public class ProductService {
 
     @Autowired
-    private ProductRepository productRepository;
+    private ProductRepository prodRepo;
 
     public Product findProductById(Integer id) {
-        Optional<Product> optional = productRepository.findById(id);
+        Optional<Product> optional = prodRepo.findById(id);
         return optional.orElse(null);
     }
 
     public List<Product> findAllProduct() {
-        return productRepository.findAll();
+        return prodRepo.findAll();
     }
 
     public void insert(Product product) {
-        productRepository.save(product);
+    	prodRepo.save(product);
     }
 
     public void update(Product product) {
-        productRepository.save(product);
+    	prodRepo.save(product);
     }
 
     public boolean deleteProductById(Integer id) {
-        Optional<Product> optional = productRepository.findById(id);
+        Optional<Product> optional = prodRepo.findById(id);
         if (optional.isPresent()) {
-            productRepository.deleteById(id);
+        	prodRepo.deleteById(id);
             return true;
         }
         return false;
