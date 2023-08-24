@@ -52,7 +52,7 @@ public class Member { //與會員帳號相關
 	private String access;
 	
 	@Enumerated(EnumType.STRING)
-	@Column(name="memberStatus" , columnDefinition = "nvarchar(50) default 'ACTIVE'")
+	@Column(name="memberStatus" , columnDefinition = "nvarchar(50)")
 	private MemberState memberStatus;
 	
 	@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss:SSS")
