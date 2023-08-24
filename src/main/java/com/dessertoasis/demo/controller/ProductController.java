@@ -53,8 +53,7 @@ public class ProductController {
     public ResponseEntity<Product> editProduct(@PathVariable Integer id, @RequestBody Product product) {
         Product existingProduct = pService.findProductById(id);
         if (existingProduct != null) {
-            product.setProdID(id); // Ensure ID consistency
-            pService.update(product);
+            pService.update(product); // Use the provided product object
             return ResponseEntity.ok(product);
         } else {
             return ResponseEntity.notFound().build();
