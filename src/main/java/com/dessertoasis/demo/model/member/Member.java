@@ -7,6 +7,8 @@ import org.springframework.format.annotation.DateTimeFormat;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -49,8 +51,9 @@ public class Member { //與會員帳號相關
 	@Column(name="access")
 	private String access;
 	
-	@Column(name="memberStatus")
-	private String memberStatus;
+	@Enumerated(EnumType.STRING)
+	@Column(name="memberStatus" , columnDefinition = "nvarchar(50) default 'ACTIVE'")
+	private MemberState memberStatus;
 	
 	@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss:SSS")
 	@Temporal(TemporalType.TIMESTAMP)
