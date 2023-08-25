@@ -16,7 +16,7 @@ import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
 import lombok.Data;
 
-
+@Data
 @Entity
 @Table(name="course")
 public class Course {
@@ -35,18 +35,18 @@ public class Course {
 	private String courseName;
 	
 	//開課狀態
-	@Column(name="courseStatus")
+	@Column(name="courseStatus",columnDefinition = "nvarchar(50)")
 	private String courseStatus;
 	
 	//開課日期
-	@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss:SSS")  // 在資料進 Java 環境時，做格式化
-	@Temporal(TemporalType.TIMESTAMP)
+	@DateTimeFormat(pattern = "yyyy-MM-dd")  // 在資料進 Java 環境時，做格式化
+	@Temporal(TemporalType.DATE)
 	@Column(name="courseDate")
 	private Date courseDate;
 	
 	//報名截止日
-	@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss:SSS")  // 在資料進 Java 環境時，做格式化
-	@Temporal(TemporalType.TIMESTAMP)
+	@DateTimeFormat(pattern = "yyyy-MM-dd")  // 在資料進 Java 環境時，做格式化
+	@Temporal(TemporalType.DATE)
 	@Column(name="regDeadline")
 	private Date regDeadline;
 	

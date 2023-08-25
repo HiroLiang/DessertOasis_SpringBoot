@@ -78,7 +78,11 @@ public class CourseService {
         return cRepo.findByTeacher(teacher);
     }
 	
-	public List<CourseTeacherDTO> getAllCoursesWithTeacherNames() {
-        return cRepo.findAllCoursesWithTeacherNames();
+//	public List<CourseTeacherDTO> getAllCoursesWithTeacherNames() {
+//        return cRepo.findAllCoursesWithTeacherNames();
+//    }
+	
+	public List<CourseTeacherDTO> getAllCoursesWithTeacherInfo() {
+        return cRepo.findAllCoursesWithTeacherInfo();
     }
 }

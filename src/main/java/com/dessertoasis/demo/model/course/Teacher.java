@@ -57,4 +57,7 @@ public class Teacher {
 	public Teacher() {
 	}
 
+	public List<Course> getCourses(){
+		return courseList;
+	}
 }

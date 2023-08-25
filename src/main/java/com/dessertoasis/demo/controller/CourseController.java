@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.dessertoasis.demo.model.course.Course;
 import com.dessertoasis.demo.model.course.CourseTeacherDTO;
 import com.dessertoasis.demo.service.CourseService;
+import com.dessertoasis.demo.service.TeacherService;
 
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
@@ -25,6 +26,9 @@ public class CourseController {
 
 	@Autowired
 	private CourseService cService;
+	
+	@Autowired
+	private TeacherService tService;
 	
 	//查詢單筆課程(用課程id)
 	@GetMapping("/course/{id}")
@@ -106,8 +110,13 @@ public class CourseController {
 //        return cookieValue != null && cookieValue.contains("teacherId");
 //    }
 	
-	@GetMapping("/course/withTrName")
-	public List<CourseTeacherDTO> getAllCoursesWithTeacherNames() {
-        return cService.getAllCoursesWithTeacherNames();
+//	@GetMapping("/course/withTrName")
+//	public List<CourseTeacherDTO> getAllCoursesWithTeacherNames() {
+//        return cService.getAllCoursesWithTeacherNames();
+//    }
+	
+	@GetMapping("/course/withTName")
+	public List<CourseTeacherDTO> getAllCoursesWithTeacherInfo() {
+        return cService.getAllCoursesWithTeacherInfo();
     }
 }
