@@ -2,7 +2,6 @@ package com.dessertoasis.demo.controller;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -15,7 +14,10 @@ import com.dessertoasis.demo.model.course.Course;
 import com.dessertoasis.demo.model.course.Teacher;
 import com.dessertoasis.demo.model.course.TeacherRepository;
 import com.dessertoasis.demo.service.CourseService;
-import com.dessertoasis.demo.service.TeacherService;
+
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 @RestController
 public class TeacherController {
@@ -34,5 +36,36 @@ public class TeacherController {
             return cService.getCoursesByTeacher(teacher);
         }
         return Collections.emptyList();
+    }
+	
+	@GetMapping("/check-teacher")
+    public ResponseEntity<String> checkTeacher(HttpServletRequest request) {
+        // 從Cookie中獲得身份訊息
+        Cookie[] cookies = request.getCookies();
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if ("userType".equals(cookie.getName()) && "teacher".equals(cookie.getValue())) {
+                    // 是教師身分
+                    return ResponseEntity.ok("You are a teacher.");
+                }
+            }
+        }
+        
+        // 不是教師身分
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Access denied.");
+    }
+	
+	@GetMapping("/set-teacher-cookie")
+    public ResponseEntity<String> setTeacherCookie(HttpServletResponse response) {
+        // 創建一個名為"userType"的Cookie，並將值設置為"teacher"
+        Cookie userTypeCookie = new Cookie("userType", "teacher");
+
+        // 可以設置Cookie的其他屬性，如過期時間、域等
+        // userTypeCookie.setMaxAge(3600); // 过期时间设置为1小时
+
+        // 添加Cookie到response
+        response.addCookie(userTypeCookie);
+
+        return ResponseEntity.ok("Teacher cookie set successfully.");
     }
 }
