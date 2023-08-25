@@ -18,7 +18,7 @@ import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
 import lombok.Data;
 
-@Data	
+//@Data	
 @Entity 
 @Table(name = "product")
 
@@ -67,11 +67,8 @@ public class Product {
 	private String prodRemark;
 
 	
-	
-
-	
-//	public Product() {
-//	}
+	public Product() {
+	}
 //	
 //	
 //
@@ -130,81 +127,160 @@ public class Product {
 //		this.prodPicURL = prodPicURL;
 //	
 //	}
-//
-//	
-//	
-//
-//
-//
-//	public int getProdID() {
-//		return prodID;
-//	}
-//	public void setProdID(int prodID) {
-//		this.prodID = prodID;
-//	}
-//	public int getTypeID() {
-//		return typeID;
-//	}
-//	public void setTypeID(int typeID) {
-//		this.typeID = typeID;
-//	}
-//	public String getProdName() {
-//		return prodName;
-//	}
-//	public void setProdName(String prodName) {
-//		this.prodName = prodName;
-//	}
-//	public String getProdDescription() {
-//		return prodDescription;
-//	}
-//	public void setProdDescription(String prodDescription) {
-//		this.prodDescription = prodDescription;
-//	}
-//	public int getProdStock() {
-//		return prodStock;
-//	}
-//	public void setProdStock(int prodStock) {
-//		this.prodStock = prodStock;
-//	}
-//	public int getProdPrice() {
-//		return prodPrice;
-//	}
-//	public void setProdPrice(int prodPrice) {
-//		this.prodPrice = prodPrice;
-//	}
-//	public String getProdPicURL() {
-//		return prodPicURL;
-//	}
-//	public void setProdPicURL(String prodPicURL) {
-//		this.prodPicURL = prodPicURL;
-//	}
-//	public Integer getProdPurchase() {
-//		return prodPurchase;
-//	}
-//	public void setProdPurchase(Integer prodPurchase) {
-//		this.prodPurchase = prodPurchase;
-//	}
-//	public Timestamp getProdAddtime() {
-//		return prodAddtime;
-//	}
-//	public void setProdAddtime(Timestamp prodAddtime) {
-//		this.prodAddtime = prodAddtime;
-//	}
-//	public Timestamp getProdShelftime() {
-//		return prodShelftime;
-//	}
-//	public void setProdShelftime(Timestamp prodShelftime) {
-//		this.prodShelftime = prodShelftime;
-//	}
-//	public String getProdRemark() {
-//		return prodRemark;
-//	}
-//	public void setProdRemark(String prodRemark) {
-//		this.prodRemark = prodRemark;
-//	}
-//	public static long getSerialversionuid() {
-//		return serialVersionUID;
-//	}
-//	
+
+
+
+
+	public Integer getProdID() {
+		return prodID;
+	}
+
+
+
+
+	public void setProdID(Integer prodID) {
+		this.prodID = prodID;
+	}
+
+
+
+
+	public Integer getProdTypeID() {
+		return prodTypeID;
+	}
+
+
+
+
+	public void setProdTypeID(Integer prodTypeID) {
+		this.prodTypeID = prodTypeID;
+	}
+
+
+
+
+	public String getProdName() {
+		return prodName;
+	}
+
+
+
+
+	public void setProdName(String prodName) {
+		this.prodName = prodName;
+	}
+
+
+
+
+	public String getProdDescription() {
+		return prodDescription;
+	}
+
+
+
+
+	public void setProdDescription(String prodDescription) {
+		this.prodDescription = prodDescription;
+	}
+
+
+
+
+	public Integer getProdStock() {
+		return prodStock;
+	}
+
+
+
+
+	public void setProdStock(Integer prodStock) {
+		this.prodStock = prodStock;
+	}
+
+
+
+
+	public Integer getProdPrice() {
+		return prodPrice;
+	}
+
+
+
+
+	public void setProdPrice(Integer prodPrice) {
+		this.prodPrice = prodPrice;
+	}
+
+
+
+
+	public String getProdPicURL() {
+		return prodPicURL;
+	}
+
+
+
+
+	public void setProdPicURL(String prodPicURL) {
+		this.prodPicURL = prodPicURL;
+	}
+
+
+
+
+	public Integer getProdPurchase() {
+		return prodPurchase;
+	}
+
+
+
+
+	public void setProdPurchase(Integer prodPurchase) {
+		this.prodPurchase = prodPurchase;
+	}
+
+
+
+
+	public Timestamp getProdAddtime() {
+		return prodAddtime;
+	}
+
+
+
+
+	public void setProdAddtime(Timestamp prodAddtime) {
+		this.prodAddtime = prodAddtime;
+	}
+
+
+
+
+	public Timestamp getProdShelftime() {
+		return prodShelftime;
+	}
+
+
+
+
+	public void setProdShelftime(Timestamp prodShelftime) {
+		this.prodShelftime = prodShelftime;
+	}
+
+
+
+
+	public String getProdRemark() {
+		return prodRemark;
+	}
+
+
+
+
+	public void setProdRemark(String prodRemark) {
+		this.prodRemark = prodRemark;
+	}
+
 //	
 }

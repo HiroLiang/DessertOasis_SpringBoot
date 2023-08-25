@@ -22,13 +22,13 @@ public class Reservation {
 	
 	@Column(name = "roomId", insertable=false, updatable=false)
 	private Integer roomId;
-	private Integer teacherId;
+	private Integer memberId;
 	private LocalDate reservationDate;
 	private String reservationTime;
 	private String detail;
 	
 	@ManyToOne()
-	@JoinColumn(name = "roomID")
+	@JoinColumn(name = "roomId")
 	private Classroom classroom;
 	
 	public Reservation() {
