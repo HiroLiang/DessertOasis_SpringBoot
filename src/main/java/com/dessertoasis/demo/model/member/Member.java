@@ -27,28 +27,28 @@ public class Member { //與會員帳號相關
 	@Column(name="memberId" , columnDefinition = "int")
 	private Integer memberId;
 	
-	@Column(name="fullName")
+	@Column(name="fullName", columnDefinition ="NVARCHAR(30)")
 	private String fullName;
 	
-	@Column(name="memberName")
+	@Column(name="memberName", columnDefinition ="NVARCHAR(30)")
 	private String memberName;
 	
-	@Column(name="account")
+	@Column(name="account", columnDefinition ="VARCHAR(30)")
 	private String account;
 	
-	@Column(name="email")
+	@Column(name="email", columnDefinition ="VARCHAR(30)")
 	private String email;
 	
-	@Column(name="passwords")
+	@Column(name="passwords", columnDefinition ="VARCHAR(30)")
 	private String passwords;
 	
-	@Column(name="emailForCode")
+	@Column(name="emailForCode", columnDefinition ="VARCHAR(30)")
 	private String emailForCode;
 	
-	@Column(name="code")
+	@Column(name="code", columnDefinition ="VARCHAR(30)")
 	private String code;
 	
-	@Column(name="access")
+	@Column(name="access", columnDefinition ="NVARCHAR(30)")
 	private String access;
 	
 	@Enumerated(EnumType.STRING)
