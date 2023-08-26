@@ -4,6 +4,7 @@ import java.util.Date;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -87,9 +88,9 @@ public class Course {
 	private Integer tagId;
 	
 	//多對一
-	@ManyToOne()
-	@JoinColumn(name = "teacherId", referencedColumnName = "teacherId", nullable = false)
-	private Teacher teacher;
+//	@ManyToOne(cascade = CascadeType.ALL)
+//	@JoinColumn(name = "teacherId", referencedColumnName = "teacherId", nullable = false)
+//	private Teacher teacher;
 	
 	public Course() {
 	}

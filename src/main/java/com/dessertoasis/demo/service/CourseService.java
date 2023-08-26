@@ -74,15 +74,15 @@ public class CourseService {
 		return false;
 	}
 	
-	public List<Course> getCoursesByTeacher(Teacher teacher) {
-        return cRepo.findByTeacher(teacher);
-    }
+//	public List<Course> getCoursesByTeacher(Teacher teacher) {
+//        return cRepo.findByTeacher(teacher);
+//    }
 	
 //	public List<CourseTeacherDTO> getAllCoursesWithTeacherNames() {
 //        return cRepo.findAllCoursesWithTeacherNames();
 //    }
 	
-	public List<CourseTeacherDTO> getAllCoursesWithTeacherInfo() {
-        return cRepo.findAllCoursesWithTeacherInfo();
-    }
+//	public List<CourseTeacherDTO> getAllCoursesWithTeacherInfo() {
+//        return cRepo.findAllCoursesWithTeacherInfo();
+//    }
 }

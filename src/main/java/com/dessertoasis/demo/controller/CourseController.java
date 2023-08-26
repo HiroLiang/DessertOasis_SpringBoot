@@ -3,6 +3,8 @@ package com.dessertoasis.demo.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -45,11 +47,32 @@ public class CourseController {
 	} 
 	
 	//新增單筆課程
-	@PostMapping("/course/add")
-	public String addCourse(@RequestBody Course course) {
-		cService.insert(course);
-		return "新增課程成功";
-	}
+//	@PostMapping("/course/add")
+//	public String addCourse(@RequestBody Course course) {
+//		cService.insert(course);
+//		return "新增課程成功";
+//	}
+	
+	@PostMapping("/add-course")
+    public ResponseEntity<String> addCourse(@RequestBody Course course, HttpServletRequest request) {
+        // 從請求的Cookie中獲得user 是老師的身分
+        Cookie[] cookies = request.getCookies();
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+            	// 老師身分，允許添加課程
+                if ("userType".equals(cookie.getName()) && "teacher".equals(cookie.getValue())) {
+                    // 將課程資料存到資料庫
+                	cService.insert(course);
+                	System.out.println("新增課程成功");
+                    return ResponseEntity.ok("課程已添加");
+                }
+            }
+        }
+        // 如果不是老師身份，返回錯誤訊息
+        System.out.println("新增失敗");
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body("您没有權限執行此操作");
+    }
+
 	
 	//修改單筆課程
 	@Transactional
@@ -115,8 +138,8 @@ public class CourseController {
 //        return cService.getAllCoursesWithTeacherNames();
 //    }
 	
-	@GetMapping("/course/withTName")
-	public List<CourseTeacherDTO> getAllCoursesWithTeacherInfo() {
-        return cService.getAllCoursesWithTeacherInfo();
-    }
+//	@GetMapping("/course/withTName")
+//	public List<CourseTeacherDTO> getAllCoursesWithTeacherInfo() {
+//        return cService.getAllCoursesWithTeacherInfo();
+//    }
 }

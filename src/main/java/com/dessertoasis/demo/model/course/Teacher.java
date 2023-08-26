@@ -50,14 +50,14 @@ public class Teacher {
 	private String accountStatus;
 	
 	//一個教師有多堂課(一對多)
-	@JsonIgnore
-	@OneToMany(mappedBy = "teacher", cascade = CascadeType.ALL)
-	private List<Course> courseList;
+//	@JsonIgnore
+//	@OneToMany(mappedBy = "teacher", cascade = CascadeType.ALL)
+//	private List<Course> courseList;
 	
 	public Teacher() {
 	}
 
-	public List<Course> getCourses(){
-		return courseList;
-	}
+//	public List<Course> getCourses(){
+//		return courseList;
+//	}
 }

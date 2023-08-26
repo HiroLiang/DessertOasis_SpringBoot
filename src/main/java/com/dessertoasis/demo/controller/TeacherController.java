@@ -29,14 +29,14 @@ public class TeacherController {
 	private TeacherRepository tRepo;
 	
 	//依照老師編號列出該教師所有課程
-	@GetMapping("/teacher/{teacherId}/courses")
-    public List<Course> getTeacherCourses(@PathVariable Integer teacherId) {
-		Teacher teacher = tRepo.findByTeacherId(teacherId);
-		if (teacher != null) {
-            return cService.getCoursesByTeacher(teacher);
-        }
-        return Collections.emptyList();
-    }
+//	@GetMapping("/teacher/{teacherId}/courses")
+//    public List<Course> getTeacherCourses(@PathVariable Integer teacherId) {
+//		Teacher teacher = tRepo.findByTeacherId(teacherId);
+//		if (teacher != null) {
+//            return cService.getCoursesByTeacher(teacher);
+//        }
+//        return Collections.emptyList();
+//    }
 	
 	@GetMapping("/check-teacher")
     public ResponseEntity<String> checkTeacher(HttpServletRequest request) {
@@ -61,7 +61,7 @@ public class TeacherController {
         Cookie userTypeCookie = new Cookie("userType", "teacher");
 
         // 可以設置Cookie的其他屬性，如過期時間、域等
-        // userTypeCookie.setMaxAge(3600); // 过期时间设置为1小时
+        // userTypeCookie.setMaxAge(3600); // 過期时間設為1小時
 
         // 添加Cookie到response
         response.addCookie(userTypeCookie);
