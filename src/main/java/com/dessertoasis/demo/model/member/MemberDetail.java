@@ -23,24 +23,24 @@ public class MemberDetail {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name="memberDetailId")
+	@Column(name="memberDetailId", columnDefinition = "int")
 	private Integer memberDetailId;
 	
-	@Column(name="idNumber")
+	@Column(name="idNumber", columnDefinition = "varchar(10)")
 	private String idNumber;
 	
-	@Column(name="birthday")
+	@Column(name="birthday", columnDefinition = "date")
 	@DateTimeFormat(pattern = "yyyy-MM-dd")
 	@Temporal(TemporalType.DATE)
 	private Date birthday;
 	
-	@Column(name="deliveryAddress")
+	@Column(name="deliveryAddress", columnDefinition = "nvarchar(100)")
 	private String deliveryAddress;
 	
-	@Column(name="pic")
+	@Column(name="pic", columnDefinition = "varchar(max)")
 	private String pic;
 	
-	@Column(name="folderURL")
+	@Column(name="folderURL", columnDefinition = "varchar(max)")
 	private	String folderURL;
 	
 	public MemberDetail(){

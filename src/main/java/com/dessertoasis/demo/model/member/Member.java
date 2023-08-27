@@ -52,12 +52,12 @@ public class Member { //與會員帳號相關
 	private String access;
 	
 	@Enumerated(EnumType.STRING)
-	@Column(name="memberStatus" , columnDefinition = "nvarchar(50)")
+	@Column(name="memberStatus" , columnDefinition = "nvarchar(30)")
 	private MemberState memberStatus;
 	
 	@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss:SSS")
 	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name="signDate")
+	@Column(name="signDate" , columnDefinition ="datetime2(6)")
 	private Date signDate;
 
 	
@@ -66,5 +66,8 @@ public class Member { //與會員帳號相關
 	
 	@OneToOne(cascade = CascadeType.ALL, mappedBy = "member")
     private MemberDetail memberDetail;
+	
+	@OneToOne(cascade = CascadeType.ALL, mappedBy = "member")
+    private Company company;
 	
 }
