@@ -16,6 +16,6 @@ public class ReservationService {
 	private ReservationRepository rRepo;
 	
 	public List<Reservation> getByRoomId(Integer roomId, LocalDate startDate, LocalDate endDate) {
-		return rRepo.findByRoomIdAndReservationDateBetween(roomId, startDate, endDate);
+		return rRepo.find(roomId, startDate, endDate);
 	}
 }
