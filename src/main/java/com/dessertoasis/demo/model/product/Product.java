@@ -1,4 +1,5 @@
 package com.dessertoasis.demo.model.product;
+import java.math.BigDecimal;
 import java.sql.Timestamp;
 
 import org.springframework.format.annotation.DateTimeFormat;
@@ -41,8 +42,8 @@ public class Product {
 	@Column(name = "prodStock")
 	private Integer prodStock;
 	
-	@Column(name = "prodPrice")
-	private Integer prodPrice;
+	@Column(name = "prodPrice", columnDefinition = "DECIMAL(10, 2)")
+	private BigDecimal prodPrice;
 	
 	@Column(name = "prodPicURL",columnDefinition = "nvarchar(max)")
 	private String prodPicURL;
@@ -201,14 +202,14 @@ public class Product {
 
 
 
-	public Integer getProdPrice() {
+	public BigDecimal getProdPrice() {
 		return prodPrice;
 	}
 
 
 
 
-	public void setProdPrice(Integer prodPrice) {
+	public void setProdPrice(BigDecimal prodPrice) {
 		this.prodPrice = prodPrice;
 	}
 
