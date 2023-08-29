@@ -8,7 +8,6 @@ import com.dessertoasis.demo.model.member.Member;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -42,9 +41,9 @@ public class Recipe {
 	private Integer categoryID;
 	
 	//撰寫者ID(連結Member id)
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne
 	@JoinColumn(name="recipeAuthorID")
-	private Member recipeAuthorID;
+	private Member recipeAuthor;
 	
 	//製作時間
 	@Column(name = "cookingTime")
@@ -72,12 +71,12 @@ public class Recipe {
 	}
 
 	public Recipe(String recipeTitle, String pictureURL, String recipeIntroduction,
-			Integer categoryID, Member recipeAuthorID, Integer cookingTime, String difficulty, String recipeSteps) {
+			Integer categoryID, Member recipeAuthor, Integer cookingTime, String difficulty, String recipeSteps) {
 		this.recipeTitle = recipeTitle;
 		this.pictureURL = pictureURL;
 		this.recipeIntroduction = recipeIntroduction;
 		this.categoryID = categoryID;
-		this.recipeAuthorID = recipeAuthorID;
+		this.recipeAuthor = recipeAuthor;
 		this.cookingTime = cookingTime;
 		this.difficulty = difficulty;
 		this.recipeSteps = recipeSteps;
@@ -123,12 +122,12 @@ public class Recipe {
 		this.categoryID = categoryID;
 	}
 
-	public Member getRecipeAuthorID() {
-		return recipeAuthorID;
+	public Member getRecipeAuthor() {
+		return recipeAuthor;
 	}
 
-	public void setRecipeAuthorID(Member recipeAuthorID) {
-		this.recipeAuthorID = recipeAuthorID;
+	public void setRecipeAuthor(Member recipeAuthorID) {
+		this.recipeAuthor = recipeAuthorID;
 	}
 
 	public Integer getCookingTime() {
