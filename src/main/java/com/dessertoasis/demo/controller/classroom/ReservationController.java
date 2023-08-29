@@ -1,4 +1,4 @@
-package com.dessertoasis.demo.controller;
+package com.dessertoasis.demo.controller.classroom;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.dessertoasis.demo.model.classroom.Reservation;
-import com.dessertoasis.demo.service.ReservationService;
+import com.dessertoasis.demo.service.classroom.ReservationService;
 
 @RestController
 public class ReservationController {

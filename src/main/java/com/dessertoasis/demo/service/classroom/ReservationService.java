@@ -1,4 +1,4 @@
-package com.dessertoasis.demo.service;
+package com.dessertoasis.demo.service.classroom;
 
 import java.time.LocalDate;
 import java.util.List;
