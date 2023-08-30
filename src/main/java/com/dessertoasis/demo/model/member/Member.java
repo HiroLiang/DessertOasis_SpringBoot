@@ -1,8 +1,11 @@
 package com.dessertoasis.demo.model.member;
 
 import java.util.Date;
+import java.util.List;
 
 import org.springframework.format.annotation.DateTimeFormat;
+
+import com.dessertoasis.demo.model.recipe.Recipes;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -12,6 +15,7 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
@@ -60,6 +64,8 @@ public class Member { //與會員帳號相關
 	@Column(name="signDate" , columnDefinition ="datetime2(6)")
 	private Date signDate;
 
+	@OneToMany(mappedBy = "member",cascade = CascadeType.ALL)
+	private List<Recipes> recipes;
 	
 	public Member() {
 	}

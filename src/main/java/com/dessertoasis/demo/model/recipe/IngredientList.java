@@ -18,7 +18,7 @@ public class IngredientList {
 	@ManyToOne
 	@MapsId("recipeID")
 	@JoinColumn(name = "recipeID", referencedColumnName = "recipeID")
-	private Recipe recipe;
+	private Recipes recipe;
 	
 	@ManyToOne
 	@MapsId("ingredientID")
@@ -42,13 +42,13 @@ public class IngredientList {
 
 
 
-	public Recipe getRecipe() {
+	public Recipes getRecipe() {
 		return recipe;
 	}
 
 
 
-	public void setRecipe(Recipe recipe) {
+	public void setRecipe(Recipes recipe) {
 		this.recipe = recipe;
 	}
 
