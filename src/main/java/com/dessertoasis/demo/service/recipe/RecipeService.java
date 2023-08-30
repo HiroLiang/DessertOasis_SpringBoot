@@ -1,4 +1,4 @@
-package com.dessertoasis.demo.service;
+package com.dessertoasis.demo.service.recipe;
 
 import java.util.List;
 import java.util.Optional;

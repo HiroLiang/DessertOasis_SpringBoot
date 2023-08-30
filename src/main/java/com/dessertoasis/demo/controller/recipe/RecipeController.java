@@ -14,8 +14,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.dessertoasis.demo.model.recipe.Recipes;
+import com.dessertoasis.demo.service.recipe.RecipeService;
 import com.dessertoasis.demo.model.recipe.RecipeRepository;
-import com.dessertoasis.demo.service.RecipeService;
 
 
 
