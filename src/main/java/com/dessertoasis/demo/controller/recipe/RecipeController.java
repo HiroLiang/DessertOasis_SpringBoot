@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.dessertoasis.demo.model.recipe.Recipe;
+import com.dessertoasis.demo.model.recipe.Recipes;
 import com.dessertoasis.demo.model.recipe.RecipeRepository;
 import com.dessertoasis.demo.service.RecipeService;
 
@@ -30,7 +30,7 @@ public class RecipeController {
 
 	@PostMapping("/recipe/add")
 	@ResponseBody
-	public String AddRecipe(@RequestBody Recipe recipe) {
+	public String AddRecipe(@RequestBody Recipes recipe) {
 		recipeService.insert(recipe);
 		return "食譜新增成功";
 	}
@@ -38,14 +38,14 @@ public class RecipeController {
 	
 
 	@GetMapping("/recipe/all")
-	public List<Recipe> findAllRecipe() {
-		List<Recipe> recipes = recipeService.findAllRecipes();
+	public List<Recipes> findAllRecipe() {
+		List<Recipes> recipes = recipeService.findAllRecipes();
 		return recipes;
 	}
 	
 	@GetMapping("/recipe/{id}")
-	public Recipe findRecipeById(@PathVariable("id") Integer id) {
-		Recipe recipe = recipeService.findById(id);
+	public Recipes findRecipeById(@PathVariable("id") Integer id) {
+		Recipes recipe = recipeService.findById(id);
 		
 		return recipe;
 	}
@@ -58,9 +58,9 @@ public class RecipeController {
 	
 	//透過食譜名稱模糊搜尋食譜
 	@GetMapping("recipe/recipeTitle")
-	public List<Recipe> findRecipeByTitle(@RequestParam("rt") String recipeTitle){
+	public List<Recipes> findRecipeByTitle(@RequestParam("rt") String recipeTitle){
 		String nameLikeRecipe = "%" + recipeTitle + "%";
-		List<Recipe> optional = recipeRepo.findRecipeByTiltleLike(nameLikeRecipe);
+		List<Recipes> optional = recipeRepo.findRecipeByTiltleLike(nameLikeRecipe);
 		
 		if(optional != null) {
 			return optional;	
@@ -70,13 +70,13 @@ public class RecipeController {
 	
 	//透過類別搜尋食譜
 	@GetMapping("recipe/categoryID")
-	public List<Recipe> findRecipeByCategoryID(@RequestParam("cid") String categoryID){
+	public List<Recipes> findRecipeByCategoryID(@RequestParam("cid") String categoryID){
 		return recipeRepo.findRecipeByCategoryID(categoryID);
 	}
 	
 	//透過難易度搜尋食譜
 	@GetMapping("recipe/difficulty")
-	public List<Recipe> findRecipeByDifficulty(@RequestParam("dif") String difficulty){
+	public List<Recipes> findRecipeByDifficulty(@RequestParam("dif") String difficulty){
 		return recipeRepo.findRecipeByDifficulty(difficulty);
 	}
 	

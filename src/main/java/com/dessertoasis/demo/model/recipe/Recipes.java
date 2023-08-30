@@ -1,6 +1,7 @@
 package com.dessertoasis.demo.model.recipe;
 
 import java.util.Date;
+import java.util.List;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -33,8 +34,8 @@ public class Recipes {
 	
 	
 	//分類Id  OneToMany
-	@OneToMany	
-	private Category recipeCategory;
+	@OneToMany(mappedBy = "recipes")
+	private List<Category> recipeCategory;
 	
 	//食譜名稱
 	@Column(name = "recipeTitle", nullable=false,columnDefinition = "nvarchar(100)")
@@ -72,6 +73,7 @@ public class Recipes {
 	
 	public Recipes() {
 	}
+}
 
 	
 

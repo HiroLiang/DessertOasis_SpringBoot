@@ -6,7 +6,7 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.dessertoasis.demo.model.recipe.Recipe;
+import com.dessertoasis.demo.model.recipe.Recipes;
 import com.dessertoasis.demo.model.recipe.RecipeRepository;
 
 
@@ -17,8 +17,8 @@ public class RecipeService {
 	private RecipeRepository recipeRepo;
 
 	//利用id查詢
-	public Recipe findById(Integer id) {
-		Optional<Recipe> optional = recipeRepo.findById(id);
+	public Recipes findById(Integer id) {
+		Optional<Recipes> optional = recipeRepo.findById(id);
 
 		if (optional.isPresent()) {
 			return optional.get();
@@ -27,14 +27,14 @@ public class RecipeService {
 	}
 
 	//查詢全部
-	public List<Recipe> findAllRecipes() {
-		List<Recipe> result = recipeRepo.findAll();
+	public List<Recipes> findAllRecipes() {
+		List<Recipes> result = recipeRepo.findAll();
 		return result;
 	}
 
 	//刪除
 	public String deleteById(Integer id) {
-		Optional<Recipe> optional = recipeRepo.findById(id);
+		Optional<Recipes> optional = recipeRepo.findById(id);
 
 		if (optional.isPresent()) {
 			recipeRepo.deleteById(id);
@@ -44,7 +44,7 @@ public class RecipeService {
 	}
 
 	//新增
-	public void insert(Recipe recipe) {
+	public void insert(Recipes recipe) {
 		recipeRepo.save(recipe);
 	}
 
