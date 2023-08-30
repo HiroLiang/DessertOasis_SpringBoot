@@ -24,7 +24,7 @@ import lombok.Data;
 @Entity @Table(name = "recipes")
 public class Recipes {
 
-	@Id @Column(name="id") 
+	@Id @Column(name="recipeId") 
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer recipeId;
 	

@@ -64,7 +64,7 @@ public class Member { //與會員帳號相關
 	@Column(name="signDate" , columnDefinition ="datetime2(6)")
 	private Date signDate;
 
-	@OneToMany(mappedBy = "member",cascade = CascadeType.ALL)
+	@OneToMany(mappedBy = "recipeAuthor",cascade = CascadeType.ALL)
 	private List<Recipes> recipes;
 	
 	public Member() {
