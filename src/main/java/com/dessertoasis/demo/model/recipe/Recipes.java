@@ -5,7 +5,6 @@ import java.util.List;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
-import com.dessertoasis.demo.model.category.Category;
 import com.dessertoasis.demo.model.member.Member;
 
 import jakarta.persistence.Column;
@@ -25,17 +24,17 @@ public class Recipes {
 
 	@Id @Column(name="id") 
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Integer id;
+	private Integer recipeId;
 	
 //	//撰寫者ID(連結Member id)
 	@ManyToOne
-	@JoinColumn(name="memberId")
+	@JoinColumn(name="memberId", nullable = false,referencedColumnName = "memberId")
 	private Member recipeAuthor;
 	
 	
 	//分類Id  OneToMany
-	@OneToMany(mappedBy = "recipes")
-	private List<Category> recipeCategory;
+	@OneToMany(mappedBy = "recipe")
+	private List<RecipeCategory> recipeCategories;
 	
 	//食譜名稱
 	@Column(name = "recipeTitle", nullable=false,columnDefinition = "nvarchar(100)")
@@ -50,8 +49,8 @@ public class Recipes {
 	private String recipeIntroduction;
 	
 	//製作時間
-		@Column(name = "cookingTime",nullable=false,columnDefinition = "int")
-		private Integer cookingTime;
+	@Column(name = "cookingTime",nullable=false,columnDefinition = "int")
+	private Integer cookingTime;
 	
 	//難度
 	@Column(name = "difficulty",nullable=true,columnDefinition = "nvarchar(50)")

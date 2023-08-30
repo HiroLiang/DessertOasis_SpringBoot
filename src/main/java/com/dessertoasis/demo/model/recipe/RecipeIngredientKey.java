@@ -5,45 +5,42 @@ import java.util.Objects;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
+import lombok.Data;
 
+@Data
 @Embeddable
 public class RecipeIngredientKey implements Serializable {
 	private static final long serialVersionUID = 1L;
 
-	@Column(name = "recipeID")
-	private Integer recipeID;
+	@Column(name = "recipeId")
+	private Integer recipeId;
 
-	@Column(name = "ingredientID")
-	private Integer ingredientID;
+	@Column(name = "ingredientId")
+	private Integer ingredientId;
 
 	public RecipeIngredientKey() {
 	}
 	
-	
-
-	public RecipeIngredientKey(Integer recipeID, Integer ingredientID) {
-		this.recipeID = recipeID;
-		this.ingredientID = ingredientID;
+	public RecipeIngredientKey(Integer recipeId, Integer ingredientId) {
+		this.recipeId = recipeId;
+		this.ingredientId = ingredientId;
 	}
-
-
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(recipeID,ingredientID);
+		return Objects.hash(ingredientId, recipeId);
 	}
 
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj) {
+		if (this == obj)
 			return true;
-		}
-		if (obj == null || getClass() != obj.getClass()) {
+		if (obj == null)
 			return false;
-		}
-		RecipeIngredientKey that = (RecipeIngredientKey) obj;
-
-		return recipeID == that.recipeID && ingredientID == that.ingredientID;
+		if (getClass() != obj.getClass())
+			return false;
+		RecipeIngredientKey other = (RecipeIngredientKey) obj;
+		return Objects.equals(ingredientId, other.ingredientId) && Objects.equals(recipeId, other.recipeId);
 	}
-
+	
 }

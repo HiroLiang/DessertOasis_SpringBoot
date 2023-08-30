@@ -1,47 +1,34 @@
 package com.dessertoasis.demo.model.recipe;
 
-import java.io.Serializable;
-import java.util.Objects;
+import com.dessertoasis.demo.model.category.Category;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Embeddable;
+import jakarta.persistence.EmbeddedId;
+import jakarta.persistence.Entity;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.MapsId;
+import jakarta.persistence.Table;
+import lombok.Data;
 
-@Embeddable
-public class RecipeCategory implements Serializable{
-	private static final long serialVersionUID = 1L;
+@Data
+@Entity
+@Table(name="recipeCategory")
+public class RecipeCategory {
 	
-	@Column(name="recipeID")
-	private Integer recipeID;
-	
-	@Column(name="categoryID")
-	private Integer categoryId;
+	@EmbeddedId
+	private RecipeCategoryKey id;
 
+	@ManyToOne
+	@MapsId("recipeId")
+	@JoinColumn(name = "recipeId",referencedColumnName = "recipeId")
+	private Recipes recipe;
+	
+	@ManyToOne
+	@MapsId("categoryId")
+	@JoinColumn(name = "categoryId",referencedColumnName = "categoryId")
+	private Category category;
+	
 	public RecipeCategory() {
-	
 	}
 
-	public RecipeCategory(Integer recipeID, Integer categoryId) {
-		this.recipeID = recipeID;
-		this.categoryId = categoryId;
-	}
-
-	@Override
-	public int hashCode() {
-		return Objects.hash(categoryId, recipeID);
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		RecipeCategory other = (RecipeCategory) obj;
-		return Objects.equals(categoryId, other.categoryId) && Objects.equals(recipeID, other.recipeID);
-	}
-
-	
-	
 }

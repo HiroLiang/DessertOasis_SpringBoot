@@ -2,6 +2,7 @@ package com.dessertoasis.demo.model.category;
 
 import java.util.List;
 
+import com.dessertoasis.demo.model.recipe.RecipeCategory;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.Column;
@@ -38,6 +39,10 @@ public class Category {
 
     @OneToMany(mappedBy = "parent")
     private List<Category> children;
-    
+   
+    //食譜分類
+    @OneToMany(mappedBy = "category")
+    private List<RecipeCategory> recipeCategories;
+   
     
 }

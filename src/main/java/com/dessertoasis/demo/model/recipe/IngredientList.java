@@ -7,77 +7,37 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.MapsId;
 import jakarta.persistence.Table;
+import lombok.Data;
 
+@Data
 @Entity
 @Table(name = "ingredientList")
 public class IngredientList {
 
+	//複合主鍵
 	@EmbeddedId
 	private RecipeIngredientKey id;
 	
+	//食譜id
 	@ManyToOne
-	@MapsId("recipeID")
-	@JoinColumn(name = "recipeID", referencedColumnName = "recipeID")
+	@MapsId("recipeId")
+	@JoinColumn(name = "recipeId", referencedColumnName = "recipeId")
 	private Recipes recipe;
 	
+	//食材id
 	@ManyToOne
-	@MapsId("ingredientID")
-	@JoinColumn(name = "ingredientID", referencedColumnName ="ingredientID")
+	@MapsId("ingredientId")
+	@JoinColumn(name = "ingredientID", referencedColumnName ="ingredientId")
 	private Ingredient ingredient;
 	
-	@Column(name="ingredientQuantity")
-	private double ingredientQuantity;
+	//食材份量
+	@Column(name="ingredientQuantity",nullable=false,columnDefinition = "FLOAT")
+	private float ingredientQuantity;
 	
-		
+	//食材單位
+	@Column(name="ingredientUnit",nullable=false,columnDefinition = "nvarchar(20)")
+	private String ingredientUnit;
 	
-	public RecipeIngredientKey getId() {
-		return id;
-	}
-
-
-
-	public void setId(RecipeIngredientKey id) {
-		this.id = id;
-	}
-
-
-
-	public Recipes getRecipe() {
-		return recipe;
-	}
-
-
-
-	public void setRecipe(Recipes recipe) {
-		this.recipe = recipe;
-	}
-
-
-
-	public Ingredient getIngredient() {
-		return ingredient;
-	}
-
-
-
-	public void setIngredient(Ingredient ingredient) {
-		this.ingredient = ingredient;
-	}
-
-
-
-	public double getIngredientQuantity() {
-		return ingredientQuantity;
-	}
-
-
-
-	public void setIngredientQuantity(double ingredientQuantity) {
-		this.ingredientQuantity = ingredientQuantity;
-	}
-
-
-
 	public IngredientList() {
 	}
 
