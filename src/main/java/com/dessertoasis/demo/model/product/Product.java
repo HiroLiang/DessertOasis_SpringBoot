@@ -1,6 +1,7 @@
 package com.dessertoasis.demo.model.product;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
+import java.util.List;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -14,6 +15,7 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
@@ -26,12 +28,12 @@ import lombok.Data;
 public class Product {
 
 	@Id 
-	@Column(name = "prodID", columnDefinition = "int")
+	@Column(name = "id", columnDefinition = "int")
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Integer prodID;
+	private Integer id;
 	
-	@Column(name = "prodTypeID")
-	private Integer prodTypeID;
+	@Column(name = "categoryId")
+	private Integer categoryId;
 	
 	@Column(name = "prodName",columnDefinition = "nvarchar(100)")
 	private String prodName;
@@ -45,8 +47,6 @@ public class Product {
 	@Column(name = "prodPrice", columnDefinition = "DECIMAL(10, 2)")
 	private BigDecimal prodPrice;
 	
-	@Column(name = "prodPicURL",columnDefinition = "nvarchar(max)")
-	private String prodPicURL;
 	
 	@Column(name = "prodPurchase")
 	private Integer prodPurchase;
@@ -54,18 +54,23 @@ public class Product {
 	
 	@JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX") // 在資料進 Java 環境時，做格式化
 //	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name = "prodAddtime")
-	private Timestamp prodAddtime;
+	@Column(name = "updateTime")
+	private Timestamp updateTime;
+	
+	@Column(name = "saleAfterUpdate")
+	private Integer saleAfterUpdate;
 	
 	
-	@JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX")  // 在資料進 Java 環境時，做格式化
-//	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name = "prodShelftime")
-	private Timestamp prodShelftime;
 	
+	@Column(name = "productStatus",columnDefinition = "nvarchar(100)")
+	private String productStatus;
 	
 	@Column(name = "prodRemark",columnDefinition = "nvarchar(500)")
 	private String prodRemark;
+	
+	
+	 @OneToMany(mappedBy = "product")
+	    private List<ProductPicture> pictures;
 
 	
 	public Product() {
@@ -130,34 +135,24 @@ public class Product {
 //	}
 
 
-
-
-	public Integer getProdID() {
-		return prodID;
+	public Integer getId() {
+		return id;
 	}
 
 
-
-
-	public void setProdID(Integer prodID) {
-		this.prodID = prodID;
+	public void setId(Integer id) {
+		this.id = id;
 	}
 
 
-
-
-	public Integer getProdTypeID() {
-		return prodTypeID;
+	public Integer getCategoryId() {
+		return categoryId;
 	}
 
 
-
-
-	public void setProdTypeID(Integer prodTypeID) {
-		this.prodTypeID = prodTypeID;
+	public void setCategoryId(Integer categoryId) {
+		this.categoryId = categoryId;
 	}
-
-
 
 
 	public String getProdName() {
@@ -165,13 +160,9 @@ public class Product {
 	}
 
 
-
-
 	public void setProdName(String prodName) {
 		this.prodName = prodName;
 	}
-
-
 
 
 	public String getProdDescription() {
@@ -179,13 +170,9 @@ public class Product {
 	}
 
 
-
-
 	public void setProdDescription(String prodDescription) {
 		this.prodDescription = prodDescription;
 	}
-
-
 
 
 	public Integer getProdStock() {
@@ -193,13 +180,9 @@ public class Product {
 	}
 
 
-
-
 	public void setProdStock(Integer prodStock) {
 		this.prodStock = prodStock;
 	}
-
-
 
 
 	public BigDecimal getProdPrice() {
@@ -207,27 +190,9 @@ public class Product {
 	}
 
 
-
-
 	public void setProdPrice(BigDecimal prodPrice) {
 		this.prodPrice = prodPrice;
 	}
-
-
-
-
-	public String getProdPicURL() {
-		return prodPicURL;
-	}
-
-
-
-
-	public void setProdPicURL(String prodPicURL) {
-		this.prodPicURL = prodPicURL;
-	}
-
-
 
 
 	public Integer getProdPurchase() {
@@ -235,41 +200,39 @@ public class Product {
 	}
 
 
-
-
 	public void setProdPurchase(Integer prodPurchase) {
 		this.prodPurchase = prodPurchase;
 	}
 
 
-
-
-	public Timestamp getProdAddtime() {
-		return prodAddtime;
+	public Timestamp getUpdateTime() {
+		return updateTime;
 	}
 
 
-
-
-	public void setProdAddtime(Timestamp prodAddtime) {
-		this.prodAddtime = prodAddtime;
+	public void setUpdateTime(Timestamp updateTime) {
+		this.updateTime = updateTime;
 	}
 
 
-
-
-	public Timestamp getProdShelftime() {
-		return prodShelftime;
+	public Integer getSaleAfterUpdate() {
+		return saleAfterUpdate;
 	}
 
 
-
-
-	public void setProdShelftime(Timestamp prodShelftime) {
-		this.prodShelftime = prodShelftime;
+	public void setSaleAfterUpdate(Integer saleAfterUpdate) {
+		this.saleAfterUpdate = saleAfterUpdate;
 	}
 
 
+	public String getProductStatus() {
+		return productStatus;
+	}
+
+
+	public void setProductStatus(String productStatus) {
+		this.productStatus = productStatus;
+	}
 
 
 	public String getProdRemark() {
@@ -277,11 +240,12 @@ public class Product {
 	}
 
 
-
-
 	public void setProdRemark(String prodRemark) {
 		this.prodRemark = prodRemark;
 	}
+
+
+
 
 //	
 }
