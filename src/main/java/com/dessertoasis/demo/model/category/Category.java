@@ -25,7 +25,7 @@ public class Category {
     @Column(name = "categoryId")
     private Integer categoryId;
 
-    @Column(name = "categoryName")
+    @Column(name = "categoryName", columnDefinition = "nvarchar(100)")
     private String categoryName;
     
     @Column(name = "parentId", insertable = false, updatable = false)

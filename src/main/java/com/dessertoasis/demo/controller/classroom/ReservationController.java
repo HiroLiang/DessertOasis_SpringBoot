@@ -18,7 +18,7 @@ public class ReservationController {
 	@Autowired
 	private ReservationService rService;
 	
-	@GetMapping("/reservation/getinmonth")
+	@GetMapping("/reservation/getForRoom")
 	public List<Reservation> getReservationForRoomInMonth(
 			@RequestParam("room") Integer roomId,
 			@RequestParam("start") String startStr,
