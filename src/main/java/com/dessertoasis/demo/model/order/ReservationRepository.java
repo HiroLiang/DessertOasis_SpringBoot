@@ -1,4 +1,4 @@
-package com.dessertoasis.demo.model.classroom;
+package com.dessertoasis.demo.model.order;
 
 import java.time.LocalDate;
 import java.util.List;

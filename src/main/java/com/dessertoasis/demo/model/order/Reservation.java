@@ -1,8 +1,8 @@
-package com.dessertoasis.demo.model.classroom;
+package com.dessertoasis.demo.model.order;
 
 import java.time.LocalDate;
 
-import com.dessertoasis.demo.model.order.Order;
+import com.dessertoasis.demo.model.classroom.Classroom;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

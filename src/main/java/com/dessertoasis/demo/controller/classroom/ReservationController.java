@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.dessertoasis.demo.model.classroom.Reservation;
+import com.dessertoasis.demo.model.order.Reservation;
 import com.dessertoasis.demo.service.classroom.ReservationService;
 
 @RestController

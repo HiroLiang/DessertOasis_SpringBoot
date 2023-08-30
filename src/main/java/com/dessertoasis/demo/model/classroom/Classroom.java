@@ -2,6 +2,7 @@ package com.dessertoasis.demo.model.classroom;
 
 import java.util.List;
 
+import com.dessertoasis.demo.model.order.Reservation;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.CascadeType;
