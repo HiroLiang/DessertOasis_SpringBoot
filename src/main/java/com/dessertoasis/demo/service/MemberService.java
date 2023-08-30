@@ -26,6 +26,9 @@ public class MemberService {
 //		mRepo.save(member);
 //	}
 	
+	 public Member findByAccount(String account) {
+	        return mRepo.findByAccount(account);
+	    }
 	
 	//查詢單筆
 	public Member findByMemberId(Integer id) {
@@ -59,6 +62,10 @@ public class MemberService {
     
     //密碼加密
     public Member addMember(Member member) {
+    	System.out.println("Member object: " + member);
+    	    
+    	String rawPassword = member.getPasswords();
+    	System.out.println("Raw password: " + rawPassword);
     	member.setPasswords(passwordEncoder.encode(member.getPasswords()));
 		return mRepo.save(member);
 	}

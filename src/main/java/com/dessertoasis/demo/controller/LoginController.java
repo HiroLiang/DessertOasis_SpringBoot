@@ -17,19 +17,27 @@ public class LoginController {
     private MemberService mService;
 	
 	@PostMapping("/memberLogin")
-	public String MemberLogin(@RequestBody Member member,HttpSession session) {
+	public Member  MemberLogin(@RequestBody Member member,HttpSession session) {
 	
-		Member memberLogin = mService.memberLogin(member.getAccount(), member.getPasswords(), session);
-		
-		
-		
-		if(memberLogin!=null) {
-			session.setAttribute("loggedInMember", memberLogin);
-			return "登入成功";	
-		}
-		
-		
-		return "登入失敗";	
-	}
+//		 System.out.println("MemberLogin - Start");
+//		    System.out.println("Received Account: " + member.getAccount());
+//		    System.out.println("Received Password: " + member.getPasswords());
 
+		    Member memberLogin = mService.memberLogin(member.getAccount(), member.getPasswords(), session);
+
+		    if (memberLogin != null) {
+		        session.setAttribute("loggedInMember", memberLogin);
+//		        System.out.println("Login successful");
+		        
+		        return memberLogin;
+		    }
+
+//		    System.out.println("Login failed");
+		    return null;
+
+	}
 }
+
+//↓↓↓↓↓↓↓↓↓↓↓↓↓跳轉頁面使用session取出member資料↓↓↓↓↓↓↓↓↓↓↓↓↓
+//Member loggedInMember = (Member) session.getAttribute("loggedInMember");
+

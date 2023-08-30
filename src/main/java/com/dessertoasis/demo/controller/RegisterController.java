@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.dessertoasis.demo.model.member.Member;
+import com.dessertoasis.demo.model.member.MemberState;
 import com.dessertoasis.demo.service.MemberService;
 
 @RestController
@@ -16,7 +17,7 @@ public class RegisterController {
 
     @PostMapping("/memberRegister")
     public String register(@RequestBody Member member) {
-       
+    	
     	// 驗證註冊資訊，檢查是否有相同的帳號
         if (mService.checkIfAccountExist(member.getAccount())) {
             return "帳號已存在";
@@ -27,8 +28,13 @@ public class RegisterController {
         newMember.setAccount(member.getAccount());
         newMember.setEmail(member.getEmail());
         newMember.setPasswords(member.getPasswords());
+        
+        member.getMemberStatus();//創立新帳號為不活耀狀態
+		newMember.setMemberStatus(MemberState.INACTIVE); 
+		
         newMember = mService.addMember(newMember);
         
+       
         return "註冊成功";
     }
 }
