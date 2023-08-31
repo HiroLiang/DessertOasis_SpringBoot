@@ -20,22 +20,21 @@ import lombok.Data;
 public class Reservation {
 	
 	@Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "id")
 	private Integer id;
 	
-	@Column(name = "roomId", insertable=false, updatable=false)
+	@Column(insertable=false, updatable=false)
 	private Integer roomId;
 	
-	@Column(name = "ordId", insertable=false, updatable=false)
+	@Column(insertable=false, updatable=false)
 	private Integer ordId;
 	
-	@Column(name="reservationDate")
+	@Column
 	private LocalDate reservationDate;
 	
-	@Column(name="reservationTime", columnDefinition = "varchar(5)")
+	@Column(columnDefinition = "varchar(5)")
 	private String reservationTime;
 	
-	@Column(name="detail", columnDefinition = "nvarchar(100)")
+	@Column(columnDefinition = "nvarchar(100)")
 	private String detail;
 	
 	@ManyToOne

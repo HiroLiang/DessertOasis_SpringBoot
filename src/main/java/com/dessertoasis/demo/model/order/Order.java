@@ -1,12 +1,15 @@
 package com.dessertoasis.demo.model.order;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.Data;
 
@@ -16,18 +19,23 @@ import lombok.Data;
 public class Order {
 	
 	@Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name="id")
 	private Integer id;
 	
-	@Column(name="memberId")
+	@Column
 	private Integer memberId;
 	
-	@Column(name="ordDate", columnDefinition = "DateTime2")
+	@Column(columnDefinition = "DateTime2")
 	private LocalDateTime ordDate;
 	
-	@Column(name="ordStatus")
+	@Column(columnDefinition = "nvarcahr(20)")
 	private String ordStatus;
 	
-	@Column(name="updateDate", columnDefinition = "DateTime2")
+	@Column(columnDefinition = "DateTime2")
 	private LocalDateTime updateDate;
+	
+	@OneToMany(mappedBy = "ord", cascade = CascadeType.ALL)
+	private List<Reservation> reservationList;
+	
+	@OneToMany(mappedBy = "ord", cascade = CascadeType.ALL)
+	private List<ProdOrderItem> prodOrderItemList;
 }

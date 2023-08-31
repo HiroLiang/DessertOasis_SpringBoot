@@ -3,23 +3,17 @@ import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.List;
 
-import org.springframework.format.annotation.DateTimeFormat;
-
-import com.dessertoasis.demo.model.member.MemberState;
+import com.dessertoasis.demo.model.order.ProdOrderItem;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
-import jakarta.persistence.Temporal;
-import jakarta.persistence.TemporalType;
-import lombok.Data;
 
 //@Data	
 @Entity 
@@ -71,7 +65,10 @@ public class Product {
 	
 	 @OneToMany(mappedBy = "product")
 	    private List<ProductPicture> pictures;
-
+	 
+	 @JsonIgnore
+	 @OneToMany(mappedBy = "prodOrderItem")
+	 private List<ProdOrderItem> prodOrderItemsList;
 	
 	public Product() {
 	}
