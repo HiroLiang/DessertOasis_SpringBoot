@@ -3,6 +3,7 @@ package com.dessertoasis.demo.model.order;
 import java.time.LocalDate;
 
 import com.dessertoasis.demo.model.classroom.Classroom;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -37,10 +38,14 @@ public class Reservation {
 	@Column(columnDefinition = "nvarchar(100)")
 	private String detail;
 	
+	@Column
+	private Integer price; 
+	
 	@ManyToOne
 	@JoinColumn(name = "roomId")
 	private Classroom classroom;
 	
+	@JsonIgnoreProperties({"reservationList", "prodOrderItemList", "courseOrderItemList"})
 	@ManyToOne
 	@JoinColumn(name = "ordId")
 	private Order order;
