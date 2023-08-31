@@ -16,8 +16,6 @@ import com.dessertoasis.demo.model.recipe.Recipes;
 import com.dessertoasis.demo.service.recipe.RecipeService;
 import com.dessertoasis.demo.model.recipe.RecipeRepository;
 
-
-
 @RestController
 public class RecipeController {
 
@@ -37,7 +35,7 @@ public class RecipeController {
 	
 
 	@GetMapping("/recipe/all")
-	public List<Recipes> findAllRecipe() {
+	public List<Recipes> findAllRecipes() {
 		List<Recipes> recipes = recipeService.findAllRecipes();
 		return recipes;
 	}
