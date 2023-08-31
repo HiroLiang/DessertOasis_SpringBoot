@@ -75,15 +75,15 @@ public class CourseController {
 
 	
 	//修改單筆課程
-	@Transactional
-	@PutMapping("/course/update/{id}")
-	public String updateCourse(@PathVariable Integer id, @RequestBody Course course) {
-		 Course result = cService.updateById(id, course);
-		 if(result == null) {
-			 return "修改課程失敗";
-		 }
-		return "修改課程成功";
-	}
+//	@Transactional
+//	@PutMapping("/course/update/{id}")
+//	public String updateCourse(@PathVariable Integer id, @RequestBody Course course) {
+//		 Course result = cService.updateById(id, course);
+//		 if(result == null) {
+//			 return "修改課程失敗";
+//		 }
+//		return "修改課程成功";
+//	}
 	
 	//刪除單筆課程
 	@DeleteMapping("/course/{id}")
@@ -96,23 +96,23 @@ public class CourseController {
 		return "刪除失敗";
 	}
 	
-	@PostMapping("/checkTeacher")
-    @ResponseBody
-	public String checkTeacher(HttpServletRequest request,@RequestBody Course course) {
-		// 獲取請求中的所有Cookie
-        Cookie[] cookies = request.getCookies();
-        
-        if (cookies != null) {
-            for (Cookie cookie : cookies) {
-            	System.out.println(cookie.getName());
-            	if(cookie.getName().equals("login1")&& cookie.getValue().equals("true")) {
-            		System.out.println(course.getTeacherId());
-            		if(course.getTeacherId()== 2) {
-//            			System.out.println(course.getTeacherId());
-            			return "這是 Teacher id";
-            		}
-            		return "這不是 Teacher id";
-            	}
+//	@PostMapping("/checkTeacher")
+//    @ResponseBody
+//	public String checkTeacher(HttpServletRequest request,@RequestBody Course course) {
+//		// 獲取請求中的所有Cookie
+//        Cookie[] cookies = request.getCookies();
+//        
+//        if (cookies != null) {
+//            for (Cookie cookie : cookies) {
+//            	System.out.println(cookie.getName());
+//            	if(cookie.getName().equals("login1")&& cookie.getValue().equals("true")) {
+//            		System.out.println(course.getTeacherId());
+//            		if(course.getTeacherId()== 2) {
+////            			System.out.println(course.getTeacherId());
+//            			return "這是 Teacher id";
+//            		}
+//            		return "這不是 Teacher id";
+//            	}
 //                // 检查Cookie的名称是否为"teacher"，这里假设教师信息存储在名为"teacher"的Cookie中
 //                if ("teacherId".equals(cookie.getName())) {
 //                    // 如果找到名为"teacher"的Cookie，編寫逻辑判断教师信息是否存在于Cookie中
@@ -122,9 +122,9 @@ public class CourseController {
 //                        return "这是一个教师Cookie";
 //                    }
 //                }
-            }
-        }return "這不是一个教師Cookie";
-	}
+//            }
+//        }return "這不是一个教師Cookie";
+//	}
 	
 //	private boolean isTeacherId(String cookieValue) {
 //        // 编写逻辑来判断Cookie中的值是否表示教师

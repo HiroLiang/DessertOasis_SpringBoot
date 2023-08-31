@@ -5,8 +5,14 @@ import java.util.List;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
+
+
+import com.dessertoasis.demo.model.recipe.RecipeCategory;
+import com.dessertoasis.demo.model.recipe.Recipes;
+import com.dessertoasis.demo.model.category.Category;
 import com.dessertoasis.demo.model.order.CourseOrderItem;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -14,13 +20,20 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+
+
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+
+
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
 import lombok.Data;
 
-@Data
+//@Data
 @Entity
 @Table(name="course")
 public class Course {
@@ -30,102 +43,94 @@ public class Course {
 	@Column(name="id")
 	private Integer id;
 	
-	//教師編號
-	@Column(name = "teacherId",insertable=false, updatable=false)
-	private Integer teacherId;
+	//教師ID FK(連結教師ID)
+	@ManyToOne
+	@JoinColumn(name = "teacherId",referencedColumnName = "teacherId")
+	private Teacher teacherId;
+	
+	//食譜ID FK(連接食譜ID)
+	@OneToOne
+	private Recipes recipesId;
+	
+	//分類ID FK(連接分類ID)
+	@ManyToOne
+    @JoinColumn(name = "categoryId", referencedColumnName = "Id")
+    private Category category;
 	
 	//課程名稱
 	@Column(name="courseName",columnDefinition = "nvarchar(200)")
 	private String courseName;
 	
-	//開課狀態
-	@Column(name="courseStatus",columnDefinition = "nvarchar(50)")
-	private String courseStatus;
+	//課程介紹
+	@Column(name="courseIntroduction",columnDefinition = "nvarchar(max)")
+	private String courseIntroduction;
 	
-	//開課日期
-	@DateTimeFormat(pattern = "yyyy-MM-dd")  // 在資料進 Java 環境時，做格式化
-	@Temporal(TemporalType.DATE)
-	@Column(name="courseDate")
-	private Date courseDate;
+	//課程特色
+	@Column(name="courseFeature",columnDefinition = "nvarchar(max)")
+	private String courseFeature;
+	
+	//課程目標
+	@Column(name="courseDestination",columnDefinition = "nvarchar(max)")
+	private String courseDestination;
+	
+	//課程目標
+	@Column(name="serviceTarget",columnDefinition = "nvarchar(max)")
+	private String serviceTarget;
 	
 	//報名截止日
 	@DateTimeFormat(pattern = "yyyy-MM-dd")  // 在資料進 Java 環境時，做格式化
 	@Temporal(TemporalType.DATE)
-	@Column(name="regDeadline")
-	private Date regDeadline;
+	@Column(name="closeDate")
+	private Date closeDate;
 	
-	//課程介紹
-	@Column(name="courseDescription",columnDefinition = "nvarchar(max)")
-	private String courseDescription;
+	//更新日期
+	@DateTimeFormat(pattern = "yyyy-MM-dd")  // 在資料進 Java 環境時，做格式化
+	@Temporal(TemporalType.DATE)
+	@Column(name="updateDate")
+	private Date updateDate;
 	
 	//上課地點
-	@Column(name="courseLocation",columnDefinition = "nvarchar(150)")
-	private String courseLocation;
+	@Column(name="coursePlace",columnDefinition = "nvarchar(150)")
+	private String coursePlace;
 	
-//	//課程分類編號
-//	@Column(name="courseCategoryId",nullable = false,columnDefinition = "int")
-//	private Integer courseSortId;
-	
-	//分類Id  OneToMany
-//	@OneToMany(mappedBy = "course")
-//	private List<CourseCategory> courseCategories;
+
+	//開課狀態
+	@Column(name="courseStatus",columnDefinition = "nvarchar(50)")
+	private String courseStatus;
+
 	
 	//剩餘名額
-	@Column(name="remainingPlaces",columnDefinition = "int")
-	private Integer remainingPlaces;
+	@Column(name="remainPlaces",columnDefinition = "int")
+	private Integer remainPlaces;
 	
 	//報名價格
 	@Column(name="coursePrice",columnDefinition = "int")
 	private Integer coursePrice;
 	
-	//課程圖片路徑
-	@Column(name="coursePictureUrl",columnDefinition = "varchar(max)")
-	private String coursePictureUrl;
-	
-	//課程影片編號
-	@Column(name="courseVideoId",columnDefinition = "int")
-	private Integer courseVideoId;
-	
-	//食譜編號
-	@Column(name="recipeId",columnDefinition = "int")
-	private Integer recipeId;
-	
-	//標籤編號
-	@Column(name="tagId",columnDefinition = "int")
-	private Integer tagId;
-	
-	//多對一
-//	@ManyToOne(cascade = CascadeType.ALL)
-//	@JoinColumn(name = "teacherId", referencedColumnName = "teacherId", nullable = false)
-//	private Teacher teacher;
-	
-	@JsonIgnore
-	@OneToMany(mappedBy = "course", cascade = CascadeType.ALL)
-	private List<CourseOrderItem> CourseOrderItemList;
-	
 	public Course() {
 	}
 
-//	public Course(Integer teacherId, String courseName, String courseStatus, Date courseDate, Date regDeadline,
-//			String courseDescription, String courseLocation, Integer courseSortId, Integer remainingPlaces,
-//			Integer coursePrice, String coursePictureUrl, Integer courseVideoId, Integer recipeId, Integer tagId) {
-//		super();
-//		this.teacherId = teacherId;
-//		this.courseName = courseName;
-//		this.courseStatus = courseStatus;
-//		this.courseDate = courseDate;
-//		this.regDeadline = regDeadline;
-//		this.courseDescription = courseDescription;
-//		this.courseLocation = courseLocation;
-//		this.courseSortId = courseSortId;
-//		this.remainingPlaces = remainingPlaces;
-//		this.coursePrice = coursePrice;
-//		this.coursePictureUrl = coursePictureUrl;
-//		this.courseVideoId = courseVideoId;
-//		this.recipeId = recipeId;
-//		this.tagId = tagId;
-//	}
+	public Course(Teacher teacherId, Recipes recipesId, Category category, String courseName, String courseIntroduction,
+			String courseFeature, String courseDestination, String serviceTarget, Date closeDate, Date updateDate,
+			String coursePlace, String courseStatus, Integer remainPlaces, Integer coursePrice) {
+		super();
+		this.teacherId = teacherId;
+		this.recipesId = recipesId;
+		this.category = category;
+		this.courseName = courseName;
+		this.courseIntroduction = courseIntroduction;
+		this.courseFeature = courseFeature;
+		this.courseDestination = courseDestination;
+		this.serviceTarget = serviceTarget;
+		this.closeDate = closeDate;
+		this.updateDate = updateDate;
+		this.coursePlace = coursePlace;
+		this.courseStatus = courseStatus;
+		this.remainPlaces = remainPlaces;
+		this.coursePrice = coursePrice;
+	}
 
+<<<<<<< HEAD
 	
 //	public Integer getCourseSortId() {
 //		return courseSortId;
@@ -136,4 +141,129 @@ public class Course {
 //	}
 
 		
+=======
+	public Integer getCourseId() {
+		return courseId;
+	}
+
+	public void setCourseId(Integer courseId) {
+		this.courseId = courseId;
+	}
+
+	public Teacher getTeacherId() {
+		return teacherId;
+	}
+
+	public void setTeacherId(Teacher teacherId) {
+		this.teacherId = teacherId;
+	}
+
+	public Recipes getRecipesId() {
+		return recipesId;
+	}
+
+	public void setRecipesId(Recipes recipesId) {
+		this.recipesId = recipesId;
+	}
+
+	public Category getCategory() {
+		return category;
+	}
+
+	public void setCategory(Category category) {
+		this.category = category;
+	}
+
+	public String getCourseName() {
+		return courseName;
+	}
+
+	public void setCourseName(String courseName) {
+		this.courseName = courseName;
+	}
+
+	public String getCourseIntroduction() {
+		return courseIntroduction;
+	}
+
+	public void setCourseIntroduction(String courseIntroduction) {
+		this.courseIntroduction = courseIntroduction;
+	}
+
+	public String getCourseFeature() {
+		return courseFeature;
+	}
+
+	public void setCourseFeature(String courseFeature) {
+		this.courseFeature = courseFeature;
+	}
+
+	public String getCourseDestination() {
+		return courseDestination;
+	}
+
+	public void setCourseDestination(String courseDestination) {
+		this.courseDestination = courseDestination;
+	}
+
+	public String getServiceTarget() {
+		return serviceTarget;
+	}
+
+	public void setServiceTarget(String serviceTarget) {
+		this.serviceTarget = serviceTarget;
+	}
+
+	public Date getCloseDate() {
+		return closeDate;
+	}
+
+	public void setCloseDate(Date closeDate) {
+		this.closeDate = closeDate;
+	}
+
+	public Date getUpdateDate() {
+		return updateDate;
+	}
+
+	public void setUpdateDate(Date updateDate) {
+		this.updateDate = updateDate;
+	}
+
+	public String getCoursePlace() {
+		return coursePlace;
+	}
+
+	public void setCoursePlace(String coursePlace) {
+		this.coursePlace = coursePlace;
+	}
+
+	public String getCourseStatus() {
+		return courseStatus;
+	}
+
+	public void setCourseStatus(String courseStatus) {
+		this.courseStatus = courseStatus;
+	}
+
+	public Integer getRemainPlaces() {
+		return remainPlaces;
+	}
+
+	public void setRemainPlaces(Integer remainPlaces) {
+		this.remainPlaces = remainPlaces;
+	}
+
+	public Integer getCoursePrice() {
+		return coursePrice;
+	}
+
+	public void setCoursePrice(Integer coursePrice) {
+		this.coursePrice = coursePrice;
+	}
+
+
+	
+	
+>>>>>>> origin/test-branch
 }

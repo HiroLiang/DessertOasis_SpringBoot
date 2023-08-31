@@ -9,8 +9,8 @@ import lombok.Data;
 //@Table(name="courseCategory")
 public class CourseCategory {
 
-	public CourseCategory() {
-		
-	}
+//	public CourseCategory() {
+//		
+//	}
 
 }
