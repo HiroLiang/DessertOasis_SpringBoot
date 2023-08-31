@@ -3,7 +3,6 @@ package com.dessertoasis.demo.model.recipe;
 import java.io.Serializable;
 import java.util.Objects;
 
-import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import lombok.Data;
 
@@ -12,10 +11,8 @@ import lombok.Data;
 public class RecipeIngredientKey implements Serializable {
 	private static final long serialVersionUID = 1L;
 
-	@Column(name = "recipeId")
 	private Integer recipeId;
 
-	@Column(name = "ingredientId")
 	private Integer ingredientId;
 
 	public RecipeIngredientKey() {

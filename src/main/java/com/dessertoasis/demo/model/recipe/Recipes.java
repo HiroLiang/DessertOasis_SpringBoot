@@ -24,15 +24,14 @@ import lombok.Data;
 @Entity @Table(name = "recipes")
 public class Recipes {
 
-	@Id @Column(name="recipeId") 
+	@Id @Column(name="id") 
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Integer recipeId;
+	private Integer id;
 	
 //	//撰寫者ID(連結Member id)
 	@ManyToOne
 	@JoinColumn(name="memberId", nullable = false,referencedColumnName = "memberId")
 	private Member recipeAuthor;
-	
 	
 	//分類Id  OneToMany
 	@OneToMany(mappedBy = "recipe")

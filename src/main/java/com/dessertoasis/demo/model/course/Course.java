@@ -5,12 +5,8 @@ import java.util.List;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
-<<<<<<< HEAD
-import com.dessertoasis.demo.model.recipe.RecipeCategory;
-=======
 import com.dessertoasis.demo.model.order.CourseOrderItem;
 import com.fasterxml.jackson.annotation.JsonIgnore;
->>>>>>> ea183b55a4914b9049ac29bb767ce8393c5bf0e3
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -18,11 +14,6 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-<<<<<<< HEAD
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-=======
->>>>>>> ea183b55a4914b9049ac29bb767ce8393c5bf0e3
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
@@ -76,8 +67,8 @@ public class Course {
 //	private Integer courseSortId;
 	
 	//分類Id  OneToMany
-	@OneToMany(mappedBy = "course")
-	private List<CourseCategory> courseCategories;
+//	@OneToMany(mappedBy = "course")
+//	private List<CourseCategory> courseCategories;
 	
 	//剩餘名額
 	@Column(name="remainingPlaces",columnDefinition = "int")
@@ -115,25 +106,25 @@ public class Course {
 	public Course() {
 	}
 
-	public Course(Integer teacherId, String courseName, String courseStatus, Date courseDate, Date regDeadline,
-			String courseDescription, String courseLocation, Integer courseSortId, Integer remainingPlaces,
-			Integer coursePrice, String coursePictureUrl, Integer courseVideoId, Integer recipeId, Integer tagId) {
-		super();
-		this.teacherId = teacherId;
-		this.courseName = courseName;
-		this.courseStatus = courseStatus;
-		this.courseDate = courseDate;
-		this.regDeadline = regDeadline;
-		this.courseDescription = courseDescription;
-		this.courseLocation = courseLocation;
-		this.courseSortId = courseSortId;
-		this.remainingPlaces = remainingPlaces;
-		this.coursePrice = coursePrice;
-		this.coursePictureUrl = coursePictureUrl;
-		this.courseVideoId = courseVideoId;
-		this.recipeId = recipeId;
-		this.tagId = tagId;
-	}
+//	public Course(Integer teacherId, String courseName, String courseStatus, Date courseDate, Date regDeadline,
+//			String courseDescription, String courseLocation, Integer courseSortId, Integer remainingPlaces,
+//			Integer coursePrice, String coursePictureUrl, Integer courseVideoId, Integer recipeId, Integer tagId) {
+//		super();
+//		this.teacherId = teacherId;
+//		this.courseName = courseName;
+//		this.courseStatus = courseStatus;
+//		this.courseDate = courseDate;
+//		this.regDeadline = regDeadline;
+//		this.courseDescription = courseDescription;
+//		this.courseLocation = courseLocation;
+//		this.courseSortId = courseSortId;
+//		this.remainingPlaces = remainingPlaces;
+//		this.coursePrice = coursePrice;
+//		this.coursePictureUrl = coursePictureUrl;
+//		this.courseVideoId = courseVideoId;
+//		this.recipeId = recipeId;
+//		this.tagId = tagId;
+//	}
 
 	public Integer getCourseId() {
 		return courseId;
@@ -199,13 +190,13 @@ public class Course {
 		this.courseLocation = courseLocation;
 	}
 
-	public Integer getCourseSortId() {
-		return courseSortId;
-	}
-
-	public void setCourseSortId(Integer courseSortId) {
-		this.courseSortId = courseSortId;
-	}
+//	public Integer getCourseSortId() {
+//		return courseSortId;
+//	}
+//
+//	public void setCourseSortId(Integer courseSortId) {
+//		this.courseSortId = courseSortId;
+//	}
 
 	public Integer getRemainingPlaces() {
 		return remainingPlaces;

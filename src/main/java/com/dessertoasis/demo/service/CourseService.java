@@ -51,7 +51,7 @@ public class CourseService {
 			result.setRegDeadline(course.getRegDeadline());
 			result.setCourseDescription(course.getCourseDescription());
 			result.setCourseLocation(course.getCourseLocation());
-			result.setCourseSortId(course.getCourseSortId());
+//			result.setCourseSortId(course.getCourseSortId());
 			result.setRemainingPlaces(course.getRemainingPlaces());
 			result.setCoursePrice(course.getCoursePrice());
 			result.setCoursePictureUrl(course.getCoursePictureUrl());

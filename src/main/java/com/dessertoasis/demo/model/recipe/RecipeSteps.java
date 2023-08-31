@@ -22,7 +22,7 @@ public class RecipeSteps {
 	
 	//食譜id fk
 	@ManyToOne
-	@JoinColumn(name = "recipeId",referencedColumnName = "recipeId")
+	@JoinColumn(name = "recipeId",referencedColumnName = "id")
 	private Recipes recipe;
 	 
 	//對應食譜的第幾步驟
