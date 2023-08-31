@@ -30,7 +30,7 @@ public class Teacher {
 	
 	//會員ID FK
 	@OneToOne
-	@JoinColumn(name="memberId", nullable = false,referencedColumnName = "memberId")
+	@JoinColumn(name="memberId", nullable = false)
 	private Member memberId;
 	
 	@Column(name="teacherContract",columnDefinition = "nvarchar(max)")

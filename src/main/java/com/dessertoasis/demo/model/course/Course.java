@@ -33,7 +33,7 @@ import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
 import lombok.Data;
 
-//@Data
+@Data
 @Entity
 @Table(name="course")
 public class Course {
@@ -45,7 +45,7 @@ public class Course {
 	
 	//教師ID FK(連結教師ID)
 	@ManyToOne
-	@JoinColumn(name = "teacherId",referencedColumnName = "teacherId")
+	@JoinColumn(name = "teacherId")
 	private Teacher teacherId;
 	
 	//食譜ID FK(連接食譜ID)
@@ -54,7 +54,7 @@ public class Course {
 	
 	//分類ID FK(連接分類ID)
 	@ManyToOne
-    @JoinColumn(name = "categoryId", referencedColumnName = "Id")
+    @JoinColumn(name = "categoryId")
     private Category category;
 	
 	//課程名稱
@@ -130,140 +130,5 @@ public class Course {
 		this.coursePrice = coursePrice;
 	}
 
-<<<<<<< HEAD
-	
-//	public Integer getCourseSortId() {
-//		return courseSortId;
-//	}
-//
-//	public void setCourseSortId(Integer courseSortId) {
-//		this.courseSortId = courseSortId;
-//	}
 
-		
-=======
-	public Integer getCourseId() {
-		return courseId;
-	}
-
-	public void setCourseId(Integer courseId) {
-		this.courseId = courseId;
-	}
-
-	public Teacher getTeacherId() {
-		return teacherId;
-	}
-
-	public void setTeacherId(Teacher teacherId) {
-		this.teacherId = teacherId;
-	}
-
-	public Recipes getRecipesId() {
-		return recipesId;
-	}
-
-	public void setRecipesId(Recipes recipesId) {
-		this.recipesId = recipesId;
-	}
-
-	public Category getCategory() {
-		return category;
-	}
-
-	public void setCategory(Category category) {
-		this.category = category;
-	}
-
-	public String getCourseName() {
-		return courseName;
-	}
-
-	public void setCourseName(String courseName) {
-		this.courseName = courseName;
-	}
-
-	public String getCourseIntroduction() {
-		return courseIntroduction;
-	}
-
-	public void setCourseIntroduction(String courseIntroduction) {
-		this.courseIntroduction = courseIntroduction;
-	}
-
-	public String getCourseFeature() {
-		return courseFeature;
-	}
-
-	public void setCourseFeature(String courseFeature) {
-		this.courseFeature = courseFeature;
-	}
-
-	public String getCourseDestination() {
-		return courseDestination;
-	}
-
-	public void setCourseDestination(String courseDestination) {
-		this.courseDestination = courseDestination;
-	}
-
-	public String getServiceTarget() {
-		return serviceTarget;
-	}
-
-	public void setServiceTarget(String serviceTarget) {
-		this.serviceTarget = serviceTarget;
-	}
-
-	public Date getCloseDate() {
-		return closeDate;
-	}
-
-	public void setCloseDate(Date closeDate) {
-		this.closeDate = closeDate;
-	}
-
-	public Date getUpdateDate() {
-		return updateDate;
-	}
-
-	public void setUpdateDate(Date updateDate) {
-		this.updateDate = updateDate;
-	}
-
-	public String getCoursePlace() {
-		return coursePlace;
-	}
-
-	public void setCoursePlace(String coursePlace) {
-		this.coursePlace = coursePlace;
-	}
-
-	public String getCourseStatus() {
-		return courseStatus;
-	}
-
-	public void setCourseStatus(String courseStatus) {
-		this.courseStatus = courseStatus;
-	}
-
-	public Integer getRemainPlaces() {
-		return remainPlaces;
-	}
-
-	public void setRemainPlaces(Integer remainPlaces) {
-		this.remainPlaces = remainPlaces;
-	}
-
-	public Integer getCoursePrice() {
-		return coursePrice;
-	}
-
-	public void setCoursePrice(Integer coursePrice) {
-		this.coursePrice = coursePrice;
-	}
-
-
-	
-	
->>>>>>> origin/test-branch
 }
