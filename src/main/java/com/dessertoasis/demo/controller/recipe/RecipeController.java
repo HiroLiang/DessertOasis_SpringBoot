@@ -68,10 +68,10 @@ public class RecipeController {
 	}
 	
 	//透過類別搜尋食譜
-	@GetMapping("recipe/categoryID")
-	public List<Recipes> findRecipeByCategoryID(@RequestParam("cid") String categoryID){
-		return recipeRepo.findRecipeByCategoryID(categoryID);
-	}
+//	@GetMapping("recipe/categoryID")
+//	public List<Recipes> findRecipeByCategoryID(@RequestParam("cid") String categoryID){
+//		return recipeRepo.findRecipeByCategoryID(categoryID);
+//	}
 	
 	//透過難易度搜尋食譜
 	@GetMapping("recipe/difficulty")
