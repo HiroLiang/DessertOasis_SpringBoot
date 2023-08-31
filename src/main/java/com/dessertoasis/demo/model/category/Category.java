@@ -44,5 +44,7 @@ public class Category {
     @OneToMany(mappedBy = "category")
     private List<RecipeCategory> recipeCategories;
    
-    
+    //課程分類
+//    @OneToMany(mappedBy = "category")
+//    private List<CourseCategory> courseCategories;
 }
