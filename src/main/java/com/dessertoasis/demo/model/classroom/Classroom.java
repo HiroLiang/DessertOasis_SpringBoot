@@ -2,6 +2,7 @@ package com.dessertoasis.demo.model.classroom;
 
 import java.util.List;
 
+import com.dessertoasis.demo.model.cart.ReservationCart;
 import com.dessertoasis.demo.model.order.Reservation;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -45,6 +46,10 @@ public class Classroom {
 	@JsonIgnore
 	@OneToMany(mappedBy = "classroom", cascade = CascadeType.ALL)
 	private List<Reservation> reservationList;
+	
+	@JsonIgnore
+	@OneToMany(mappedBy = "classroom", cascade = CascadeType.ALL)
+	private List<ReservationCart> reservationCartList;
 	
 	public Classroom() {
 		

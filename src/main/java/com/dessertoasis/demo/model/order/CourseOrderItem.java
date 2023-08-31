@@ -3,6 +3,7 @@ package com.dessertoasis.demo.model.order;
 import com.dessertoasis.demo.model.course.Course;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -29,4 +30,7 @@ public class CourseOrderItem {
 	@ManyToOne
 	@JoinColumn(name = "courseId")
 	private Course course;
+	
+	@Column
+	private Integer price;
 }

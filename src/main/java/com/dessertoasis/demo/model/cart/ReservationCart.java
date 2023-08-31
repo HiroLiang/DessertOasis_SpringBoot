@@ -1,6 +1,8 @@
 package com.dessertoasis.demo.model.cart;
 
-import com.dessertoasis.demo.model.member.Member;
+import java.time.LocalDate;
+
+import com.dessertoasis.demo.model.classroom.Classroom;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -14,23 +16,23 @@ import lombok.Data;
 
 @Data
 @Entity
-@Table(name = "cart")
-public class Cart {
+@Table(name = "reservationCart")
+public class ReservationCart {
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
 	
 	@ManyToOne
-	@JoinColumn(name = "memberId")
-	private Member member;
+	@JoinColumn(name = "roomId")
+	private Classroom classroom;
 	
 	@Column
-	private Integer categoryId;
+	private LocalDate reservationDate;
 	
-	@Column
-	private Integer interetedId;
+	@Column(columnDefinition = "varchar(5)")
+	private String reservationTime;
 	
-	@Column
-	private Integer prodQuantity;
+	@Column(columnDefinition = "nvarchar(50)")
+	private String detail;
 }

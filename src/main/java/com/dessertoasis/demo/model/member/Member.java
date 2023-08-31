@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
+import com.dessertoasis.demo.model.cart.Cart;
 import com.dessertoasis.demo.model.order.Order;
 import com.dessertoasis.demo.model.recipe.Recipes;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -83,7 +84,9 @@ public class Member { //與會員帳號相關
 	@OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
 	private List<Order> orderList;
 
-	
+	@JsonIgnore
+	@OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
+	private List<Cart> cartList;
 
 //	public Company getCompany() {
 //		return company;
