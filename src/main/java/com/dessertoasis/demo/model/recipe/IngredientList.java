@@ -21,13 +21,13 @@ public class IngredientList {
 	//食譜id
 	@ManyToOne
 	@MapsId("recipeId")
-	@JoinColumn(name = "recipeId", referencedColumnName = "id")
+	@JoinColumn(name = "recipeId")
 	private Recipes recipe;
 	
 	//食材id
 	@ManyToOne
 	@MapsId("ingredientId")
-	@JoinColumn(name = "ingredientId", referencedColumnName ="ingredientId")
+	@JoinColumn(name = "ingredientId")
 	private Ingredient ingredient;
 	
 	//食材份量

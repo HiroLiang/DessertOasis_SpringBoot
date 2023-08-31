@@ -22,8 +22,8 @@ public class Teacher {
 
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
-	@Column(name="teacherId")
-	private Integer teacherId;
+	@Column(name="id")
+	private Integer id;
 	
 	@Column(name="memberId", nullable = false)
 	private Integer memberId;

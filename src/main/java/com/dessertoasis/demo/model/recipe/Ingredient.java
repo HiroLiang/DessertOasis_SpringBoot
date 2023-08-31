@@ -14,9 +14,9 @@ import lombok.Data;
 public class Ingredient {
 
 	//食材編號
-	@Id @Column(name = "ingredientId")
+	@Id @Column(name = "id")
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Integer ingredientId;
+	private Integer id;
 	
 	//食材名稱
 	@Column(name = "ingredientName",nullable=false,columnDefinition = "nvarchar(50)")

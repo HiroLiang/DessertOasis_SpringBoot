@@ -23,8 +23,8 @@ public class MemberDetail {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name="memberDetailId", columnDefinition = "int")
-	private Integer memberDetailId;
+	@Column(name="id", columnDefinition = "int")
+	private Integer id;
 	
 	@Column(name="idNumber", columnDefinition = "varchar(10)")
 	private String idNumber;

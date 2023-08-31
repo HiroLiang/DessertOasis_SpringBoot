@@ -44,7 +44,7 @@ public class CourseService {
 		
 		if(optional.isPresent()) {
 			Course result = optional.get();
-			result.setTeacherId(id);
+			result.setId(id);
 			result.setCourseName(course.getCourseName());
 			result.setCourseStatus(course.getCourseStatus());
 			result.setCourseDate(course.getCourseDate());

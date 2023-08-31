@@ -27,8 +27,8 @@ public class Course {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name="courseId")
-	private Integer courseId;
+	@Column(name="id")
+	private Integer id;
 	
 	//教師編號
 	@Column(name = "teacherId",insertable=false, updatable=false)
@@ -126,70 +126,7 @@ public class Course {
 //		this.tagId = tagId;
 //	}
 
-	public Integer getCourseId() {
-		return courseId;
-	}
-
-	public void setCourseId(Integer courseId) {
-		this.courseId = courseId;
-	}
-
-	public Integer getTeacherId() {
-		return teacherId;
-	}
-
-	public void setTeacherId(Integer teacherId) {
-		this.teacherId = teacherId;
-	}
-
-	public String getCourseName() {
-		return courseName;
-	}
-
-	public void setCourseName(String courseName) {
-		this.courseName = courseName;
-	}
-
-	public String getCourseStatus() {
-		return courseStatus;
-	}
-
-	public void setCourseStatus(String courseStatus) {
-		this.courseStatus = courseStatus;
-	}
-
-	public Date getCourseDate() {
-		return courseDate;
-	}
-
-	public void setCourseDate(Date courseDate) {
-		this.courseDate = courseDate;
-	}
-
-	public Date getRegDeadline() {
-		return regDeadline;
-	}
-
-	public void setRegDeadline(Date regDeadline) {
-		this.regDeadline = regDeadline;
-	}
-
-	public String getCourseDescription() {
-		return courseDescription;
-	}
-
-	public void setCourseDescription(String courseDescription) {
-		this.courseDescription = courseDescription;
-	}
-
-	public String getCourseLocation() {
-		return courseLocation;
-	}
-
-	public void setCourseLocation(String courseLocation) {
-		this.courseLocation = courseLocation;
-	}
-
+	
 //	public Integer getCourseSortId() {
 //		return courseSortId;
 //	}
@@ -198,53 +135,5 @@ public class Course {
 //		this.courseSortId = courseSortId;
 //	}
 
-	public Integer getRemainingPlaces() {
-		return remainingPlaces;
-	}
-
-	public void setRemainingPlaces(Integer remainingPlaces) {
-		this.remainingPlaces = remainingPlaces;
-	}
-
-	public Integer getCoursePrice() {
-		return coursePrice;
-	}
-
-	public void setCoursePrice(Integer coursePrice) {
-		this.coursePrice = coursePrice;
-	}
-
-	public String getCoursePictureUrl() {
-		return coursePictureUrl;
-	}
-
-	public void setCoursePictureUrl(String coursePictureUrl) {
-		this.coursePictureUrl = coursePictureUrl;
-	}
-
-	public Integer getCourseVideoId() {
-		return courseVideoId;
-	}
-
-	public void setCourseVideoId(Integer courseVideoId) {
-		this.courseVideoId = courseVideoId;
-	}
-
-	public Integer getRecipeId() {
-		return recipeId;
-	}
-
-	public void setRecipeId(Integer recipeId) {
-		this.recipeId = recipeId;
-	}
-
-	public Integer getTagId() {
-		return tagId;
-	}
-
-	public void setTagId(Integer tagId) {
-		this.tagId = tagId;
-	}
-
-	
+		
 }

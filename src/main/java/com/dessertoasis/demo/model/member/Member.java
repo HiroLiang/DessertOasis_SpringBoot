@@ -30,8 +30,8 @@ public class Member { //與會員帳號相關
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name="memberId" , columnDefinition = "int")
-	private Integer memberId;
+	@Column(name="id" , columnDefinition = "int")
+	private Integer id;
 	
 	@Column(name="fullName", columnDefinition ="NVARCHAR(100)")
 	private String fullName;
@@ -75,125 +75,23 @@ public class Member { //與會員帳號相關
 	@OneToOne(cascade = CascadeType.ALL, mappedBy = "member")
     private MemberDetail memberDetail;
 	
-	@OneToOne(cascade = CascadeType.ALL, mappedBy = "member")
-    private Company company;
+//	@OneToOne(cascade = CascadeType.ALL, mappedBy = "member")
+//    private Company company;
 	
 	@JsonIgnore
 	@OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
 	private List<Order> orderList;
 
-	public Integer getMemberId() {
-		return memberId;
-	}
-
-	public void setMemberId(Integer memberId) {
-		this.memberId = memberId;
-	}
-
-	public String getFullName() {
-		return fullName;
-	}
-
-	public void setFullName(String fullName) {
-		this.fullName = fullName;
-	}
-
-	public String getMemberName() {
-		return memberName;
-	}
-
-	public void setMemberName(String memberName) {
-		this.memberName = memberName;
-	}
-
-	public String getAccount() {
-		return account;
-	}
-
-	public void setAccount(String account) {
-		this.account = account;
-	}
-
-	public String getEmail() {
-		return email;
-	}
-
-	public void setEmail(String email) {
-		this.email = email;
-	}
-
-	public String getPasswords() {
-		return passwords;
-	}
-
-	public void setPasswords(String passwords) {
-		this.passwords = passwords;
-	}
-
-	public String getEmailForCode() {
-		return emailForCode;
-	}
-
-	public void setEmailForCode(String emailForCode) {
-		this.emailForCode = emailForCode;
-	}
-
-	public String getCode() {
-		return code;
-	}
-
-	public void setCode(String code) {
-		this.code = code;
-	}
-
-	public String getAccess() {
-		return access;
-	}
-
-	public void setAccess(String access) {
-		this.access = access;
-	}
-
-	public MemberState getMemberStatus() {
-		return memberStatus;
-	}
-
-	public void setMemberStatus(MemberState memberStatus) {
-		this.memberStatus = memberStatus;
-	}
-
-	public Date getSignDate() {
-		return signDate;
-	}
-
-	public void setSignDate(Date signDate) {
-		this.signDate = signDate;
-	}
-
-	public List<Recipes> getRecipes() {
-		return recipes;
-	}
-
-	public void setRecipes(List<Recipes> recipes) {
-		this.recipes = recipes;
-	}
-
-	public MemberDetail getMemberDetail() {
-		return memberDetail;
-	}
-
-	public void setMemberDetail(MemberDetail memberDetail) {
-		this.memberDetail = memberDetail;
-	}
-
-	public Company getCompany() {
-		return company;
-	}
-
-	public void setCompany(Company company) {
-		this.company = company;
-	}
 	
+
+//	public Company getCompany() {
+//		return company;
+//	}
+//
+//	public void setCompany(Company company) {
+//		this.company = company;
+//	}
+//	
 	
 	
 	
