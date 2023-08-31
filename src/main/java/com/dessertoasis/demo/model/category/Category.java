@@ -2,6 +2,7 @@ package com.dessertoasis.demo.model.category;
 
 import java.util.List;
 
+import com.dessertoasis.demo.model.product.Product;
 import com.dessertoasis.demo.model.recipe.RecipeCategory;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
@@ -39,6 +40,9 @@ public class Category {
     //食譜分類
     @OneToMany(mappedBy = "category")
     private List<RecipeCategory> recipeCategories;
+    //商品
+    @OneToMany(mappedBy = "category")
+    private List<Product> products;
    
     
 }
