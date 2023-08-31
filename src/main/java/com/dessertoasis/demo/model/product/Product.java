@@ -3,6 +3,7 @@ import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.List;
 
+import com.dessertoasis.demo.model.category.Category;
 import com.dessertoasis.demo.model.order.ProdOrderItem;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -12,6 +13,8 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
@@ -26,8 +29,13 @@ public class Product {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
 	
-	@Column(name = "categoryId")
-	private Integer categoryId;
+//	@Column(name = "categoryId")
+//	private Integer categoryId;
+	
+	@ManyToOne
+    @JoinColumn(name = "categoryId", referencedColumnName = "categoryId")
+    private Category category;
+	
 	
 	@Column(name = "prodName",columnDefinition = "nvarchar(100)")
 	private String prodName;
@@ -142,14 +150,14 @@ public class Product {
 	}
 
 
-	public Integer getCategoryId() {
-		return categoryId;
-	}
-
-
-	public void setCategoryId(Integer categoryId) {
-		this.categoryId = categoryId;
-	}
+//	public Integer getCategoryId() {
+//		return categoryId;
+//	}
+//
+//
+//	public void setCategoryId(Integer categoryId) {
+//		this.categoryId = categoryId;
+//	}
 
 
 	public String getProdName() {
