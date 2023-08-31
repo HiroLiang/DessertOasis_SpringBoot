@@ -123,7 +123,7 @@ public class CourseController {
 //                    }
 //                }
             }
-        }return "这不是一个教师Cookie";
+        }return "這不是一个教師Cookie";
 	}
 	
 //	private boolean isTeacherId(String cookieValue) {
