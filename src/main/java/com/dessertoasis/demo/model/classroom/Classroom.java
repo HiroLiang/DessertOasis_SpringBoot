@@ -21,25 +21,25 @@ import lombok.Data;
 public class Classroom {
 
 	@Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name="id", columnDefinition = "int")
+	@Column(columnDefinition = "int")
 	private Integer id;
 	
-	@Column(name="roomName", columnDefinition ="NVARCHAR(30)")
+	@Column(columnDefinition ="NVARCHAR(30)")
 	private String roomName;
 	
-	@Column(name="roomLocation", columnDefinition = "NVARCHAR(100)")
+	@Column(columnDefinition = "NVARCHAR(100)")
 	private String roomLocation;
 	
-	@Column(name="maxContain", columnDefinition = "int")
+	@Column
 	private Integer maxContain;
 	
-	@Column(name="morningPrice", columnDefinition="int")
+	@Column
 	private Integer morningPrice;
 	
-	@Column(name="afternoonPrice", columnDefinition="int")
+	@Column
 	private Integer afternoonPrice;
 	
-	@Column(name="nightPrice", columnDefinition="int")
+	@Column
 	private Integer nightPrice;
 	
 	@JsonIgnore
