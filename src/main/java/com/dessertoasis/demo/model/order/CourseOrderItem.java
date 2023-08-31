@@ -1,9 +1,8 @@
 package com.dessertoasis.demo.model.order;
 
-import com.dessertoasis.demo.model.product.Product;
+import com.dessertoasis.demo.model.course.Course;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
-import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -15,8 +14,8 @@ import lombok.Data;
 
 @Data
 @Entity
-@Table(name = "prodOrderItem")
-public class ProdOrderItem {
+@Table(name = "courseOrderItem")
+public class CourseOrderItem {
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -28,12 +27,6 @@ public class ProdOrderItem {
 	private Order order;
 	
 	@ManyToOne
-	@JoinColumn(name = "prodId")
-	private Product product;
-	
-	@Column
-	private Integer price;
-	
-	@Column
-	private Integer quantity; 
+	@JoinColumn(name = "courseId")
+	private Course course;
 }

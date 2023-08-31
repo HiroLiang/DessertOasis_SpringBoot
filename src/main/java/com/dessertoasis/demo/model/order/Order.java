@@ -27,15 +27,18 @@ public class Order {
 	@Column(columnDefinition = "DateTime2")
 	private LocalDateTime ordDate;
 	
-	@Column(columnDefinition = "nvarcahr(20)")
+	@Column(columnDefinition = "nvarchar(20)")
 	private String ordStatus;
 	
 	@Column(columnDefinition = "DateTime2")
 	private LocalDateTime updateDate;
 	
-	@OneToMany(mappedBy = "ord", cascade = CascadeType.ALL)
+	@OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
 	private List<Reservation> reservationList;
 	
-	@OneToMany(mappedBy = "ord", cascade = CascadeType.ALL)
+	@OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
 	private List<ProdOrderItem> prodOrderItemList;
+	
+	@OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
+	private List<CourseOrderItem> courseOrderItemList;
 }
