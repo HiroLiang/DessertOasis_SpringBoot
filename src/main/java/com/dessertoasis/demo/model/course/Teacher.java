@@ -2,6 +2,7 @@ package com.dessertoasis.demo.model.course;
 
 import java.util.List;
 
+import com.dessertoasis.demo.model.member.Member;
 import com.dessertoasis.demo.model.order.Reservation;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -11,7 +12,9 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.Data;
 
@@ -25,17 +28,19 @@ public class Teacher {
 	@Column(name="teacherId")
 	private Integer teacherId;
 	
-	@Column(name="memberId", nullable = false)
-	private Integer memberId;
+	//會員ID FK
+	@OneToOne
+	@JoinColumn(name="memberId", nullable = false,referencedColumnName = "memberId")
+	private Member memberId;
 	
-	@Column(name="teacherContract")
+	@Column(name="teacherContract",columnDefinition = "nvarchar(max)")
 	private String teacherContract;
 	
-	@Column(name="teacherName")
+	@Column(name="teacherName",columnDefinition = "nvarchar(50)")
 	private String teacherName;
 	
-	@Column(name="teacherPicURL")
-	private String teacherPicURL;
+	@Column(name="teacherProfilePic",columnDefinition = "nvarchar(max)")
+	private String teacherProfilePic;
 	
 	@Column(name="teacherTel")
 	private Integer teacherTel;
@@ -43,11 +48,11 @@ public class Teacher {
 	@Column(name="teacherMail")
 	private String teacherMail;
 	
-	@Column(name="teacherProfile")
+	@Column(name="teacherProfile",columnDefinition = "nvarchar(max)")
 	private String teacherProfile;
 	
-	@Column(name="accountStatus")
-	private String accountStatus;
+	@Column(name="teacherAccountStatus",columnDefinition = "nvarchar(100)")
+	private String teacherAccountStatus;
 	
 	//一個教師有多堂課(一對多)
 //	@JsonIgnore

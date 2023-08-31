@@ -39,30 +39,30 @@ public class CourseService {
 	}
 	
 	//修改單筆課程
-	public Course updateById(Integer id,Course course) {
-		Optional<Course> optional = cRepo.findById(id);
-		
-		if(optional.isPresent()) {
-			Course result = optional.get();
-			result.setTeacherId(id);
-			result.setCourseName(course.getCourseName());
-			result.setCourseStatus(course.getCourseStatus());
-			result.setCourseDate(course.getCourseDate());
-			result.setRegDeadline(course.getRegDeadline());
-			result.setCourseDescription(course.getCourseDescription());
-			result.setCourseLocation(course.getCourseLocation());
-			result.setCourseSortId(course.getCourseSortId());
-			result.setRemainingPlaces(course.getRemainingPlaces());
-			result.setCoursePrice(course.getCoursePrice());
-			result.setCoursePictureUrl(course.getCoursePictureUrl());
-			result.setCourseVideoId(course.getCourseVideoId());
-			result.setRecipeId(course.getRecipeId());
-			result.setTagId(course.getTagId());
-			return result;
-		}
-		return null;
-	}
-	
+//	public Course updateById(Integer id,Course course) {
+//		Optional<Course> optional = cRepo.findById(id);
+//		
+//		if(optional.isPresent()) {
+//			Course result = optional.get();
+//			result.setTeacherId(id);
+//			result.setCourseName(course.getCourseName());
+//			result.setCourseStatus(course.getCourseStatus());
+//			result.setCourseDate(course.getCourseDate());
+//			result.setRegDeadline(course.getRegDeadline());
+//			result.setCourseDescription(course.getCourseDescription());
+//			result.setCourseLocation(course.getCourseLocation());
+//			result.setCourseSortId(course.getCourseSortId());
+//			result.setRemainingPlaces(course.getRemainingPlaces());
+//			result.setCoursePrice(course.getCoursePrice());
+//			result.setCoursePictureUrl(course.getCoursePictureUrl());
+//			result.setCourseVideoId(course.getCourseVideoId());
+//			result.setRecipeId(course.getRecipeId());
+//			result.setTagId(course.getTagId());
+//			return result;
+//		}
+//		return null;
+//	}
+//	
 	//刪除單筆課程
 	public boolean deleteById(Integer id) {
 		Optional<Course> optional = cRepo.findById(id);
