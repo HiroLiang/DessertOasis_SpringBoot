@@ -32,7 +32,7 @@ public class Course {
 	private Integer teacherId;
 	
 	//課程名稱
-	@Column(name="courseName")
+	@Column(name="courseName",columnDefinition = "nvarchar(200)")
 	private String courseName;
 	
 	//開課狀態
@@ -52,39 +52,39 @@ public class Course {
 	private Date regDeadline;
 	
 	//課程介紹
-	@Column(name="courseDescription")
+	@Column(name="courseDescription",columnDefinition = "nvarchar(max)")
 	private String courseDescription;
 	
 	//上課地點
-	@Column(name="courseLocation")
+	@Column(name="courseLocation",columnDefinition = "nvarchar(150)")
 	private String courseLocation;
 	
 	//課程分類編號
-	@Column(name="courseSortId",nullable = false)
+	@Column(name="courseCategoryId",nullable = false,columnDefinition = "int")
 	private Integer courseSortId;
 	
 	//剩餘名額
-	@Column(name="remainingPlaces")
+	@Column(name="remainingPlaces",columnDefinition = "int")
 	private Integer remainingPlaces;
 	
 	//報名價格
-	@Column(name="coursePrice")
+	@Column(name="coursePrice",columnDefinition = "int")
 	private Integer coursePrice;
 	
 	//課程圖片路徑
-	@Column(name="coursePictureUrl")
+	@Column(name="coursePictureUrl",columnDefinition = "varchar(max)")
 	private String coursePictureUrl;
 	
 	//課程影片編號
-	@Column(name="courseVideoId")
+	@Column(name="courseVideoId",columnDefinition = "int")
 	private Integer courseVideoId;
 	
 	//食譜編號
-	@Column(name="recipeId")
+	@Column(name="recipeId",columnDefinition = "int")
 	private Integer recipeId;
 	
 	//標籤編號
-	@Column(name="tagId")
+	@Column(name="tagId",columnDefinition = "int")
 	private Integer tagId;
 	
 	//多對一
