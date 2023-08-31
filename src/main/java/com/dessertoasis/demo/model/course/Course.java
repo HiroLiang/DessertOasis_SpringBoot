@@ -54,7 +54,7 @@ public class Course {
 	
 	//分類ID FK(連接分類ID)
 	@ManyToOne
-    @JoinColumn(name = "categoryId", referencedColumnName = "categoryId")
+    @JoinColumn(name = "categoryId", referencedColumnName = "Id")
     private Category category;
 	
 	//課程名稱
