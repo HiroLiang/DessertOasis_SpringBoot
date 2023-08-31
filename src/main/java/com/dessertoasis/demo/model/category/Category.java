@@ -5,7 +5,7 @@ import java.util.List;
 import com.dessertoasis.demo.model.course.Course;
 import com.dessertoasis.demo.model.product.Product;
 import com.dessertoasis.demo.model.recipe.RecipeCategory;
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -25,16 +25,12 @@ public class Category {
 	
 	@Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "categoryId")
-    private Integer categoryId;
+    private Integer id;
 
     @Column(name = "categoryName", columnDefinition = "nvarchar(100)")
     private String categoryName;
     
-    @Column(name = "parentId", insertable = false, updatable = false)
-    private Integer parentId;
-    
-    @JsonIgnore
+    @JsonIgnoreProperties({"children"})
     @ManyToOne
     @JoinColumn(name = "parentId")
     private Category parent;

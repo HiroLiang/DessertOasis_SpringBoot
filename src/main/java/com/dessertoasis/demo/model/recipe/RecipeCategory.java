@@ -20,12 +20,12 @@ public class RecipeCategory {
 
 	@ManyToOne
 	@MapsId("recipeId")
-	@JoinColumn(name = "recipeId",referencedColumnName = "recipeId")
+	@JoinColumn(name = "recipeId")
 	private Recipes recipe;
 	
 	@ManyToOne
 	@MapsId("categoryId")
-	@JoinColumn(name = "categoryId",referencedColumnName = "categoryId")
+	@JoinColumn(name = "categoryId")
 	private Category category;
 	
 	public RecipeCategory() {
