@@ -23,12 +23,6 @@ public class Reservation {
 	@Id @GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
 	
-	@Column(insertable=false, updatable=false)
-	private Integer roomId;
-	
-	@Column(insertable=false, updatable=false)
-	private Integer ordId;
-	
 	@Column
 	private LocalDate reservationDate;
 	
