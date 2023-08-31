@@ -5,7 +5,7 @@ import java.util.List;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
-<<<<<<< HEAD
+
 
 import com.dessertoasis.demo.model.recipe.RecipeCategory;
 import com.dessertoasis.demo.model.recipe.Recipes;
@@ -13,10 +13,6 @@ import com.dessertoasis.demo.model.category.Category;
 import com.dessertoasis.demo.model.order.CourseOrderItem;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-=======
-import com.dessertoasis.demo.model.order.CourseOrderItem;
-import com.fasterxml.jackson.annotation.JsonIgnore;
->>>>>>> 359ee95f66c285edcd6e1e988d266c4658499823
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -24,13 +20,12 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-<<<<<<< HEAD
+
 
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 
-=======
->>>>>>> 359ee95f66c285edcd6e1e988d266c4658499823
+
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
@@ -98,19 +93,11 @@ public class Course {
 	@Column(name="coursePlace",columnDefinition = "nvarchar(150)")
 	private String coursePlace;
 	
-<<<<<<< HEAD
+
 	//開課狀態
 	@Column(name="courseStatus",columnDefinition = "nvarchar(50)")
 	private String courseStatus;
-=======
-//	//課程分類編號
-//	@Column(name="courseCategoryId",nullable = false,columnDefinition = "int")
-//	private Integer courseSortId;
-	
-	//分類Id  OneToMany
-//	@OneToMany(mappedBy = "course")
-//	private List<CourseCategory> courseCategories;
->>>>>>> 359ee95f66c285edcd6e1e988d266c4658499823
+
 	
 	//剩餘名額
 	@Column(name="remainPlaces",columnDefinition = "int")
@@ -123,7 +110,6 @@ public class Course {
 	public Course() {
 	}
 
-<<<<<<< HEAD
 	public Course(Teacher teacherId, Recipes recipesId, Category category, String courseName, String courseIntroduction,
 			String courseFeature, String courseDestination, String serviceTarget, Date closeDate, Date updateDate,
 			String coursePlace, String courseStatus, Integer remainPlaces, Integer coursePrice) {
@@ -143,27 +129,6 @@ public class Course {
 		this.remainPlaces = remainPlaces;
 		this.coursePrice = coursePrice;
 	}
-=======
-//	public Course(Integer teacherId, String courseName, String courseStatus, Date courseDate, Date regDeadline,
-//			String courseDescription, String courseLocation, Integer courseSortId, Integer remainingPlaces,
-//			Integer coursePrice, String coursePictureUrl, Integer courseVideoId, Integer recipeId, Integer tagId) {
-//		super();
-//		this.teacherId = teacherId;
-//		this.courseName = courseName;
-//		this.courseStatus = courseStatus;
-//		this.courseDate = courseDate;
-//		this.regDeadline = regDeadline;
-//		this.courseDescription = courseDescription;
-//		this.courseLocation = courseLocation;
-//		this.courseSortId = courseSortId;
-//		this.remainingPlaces = remainingPlaces;
-//		this.coursePrice = coursePrice;
-//		this.coursePictureUrl = coursePictureUrl;
-//		this.courseVideoId = courseVideoId;
-//		this.recipeId = recipeId;
-//		this.tagId = tagId;
-//	}
->>>>>>> 359ee95f66c285edcd6e1e988d266c4658499823
 
 	public Integer getCourseId() {
 		return courseId;
@@ -273,53 +238,8 @@ public class Course {
 		return remainPlaces;
 	}
 
-<<<<<<< HEAD
 	public void setRemainPlaces(Integer remainPlaces) {
 		this.remainPlaces = remainPlaces;
-=======
-	public void setCourseDate(Date courseDate) {
-		this.courseDate = courseDate;
-	}
-
-	public Date getRegDeadline() {
-		return regDeadline;
-	}
-
-	public void setRegDeadline(Date regDeadline) {
-		this.regDeadline = regDeadline;
-	}
-
-	public String getCourseDescription() {
-		return courseDescription;
-	}
-
-	public void setCourseDescription(String courseDescription) {
-		this.courseDescription = courseDescription;
-	}
-
-	public String getCourseLocation() {
-		return courseLocation;
-	}
-
-	public void setCourseLocation(String courseLocation) {
-		this.courseLocation = courseLocation;
-	}
-
-//	public Integer getCourseSortId() {
-//		return courseSortId;
-//	}
-//
-//	public void setCourseSortId(Integer courseSortId) {
-//		this.courseSortId = courseSortId;
-//	}
-
-	public Integer getRemainingPlaces() {
-		return remainingPlaces;
-	}
-
-	public void setRemainingPlaces(Integer remainingPlaces) {
-		this.remainingPlaces = remainingPlaces;
->>>>>>> 359ee95f66c285edcd6e1e988d266c4658499823
 	}
 
 	public Integer getCoursePrice() {
@@ -329,5 +249,8 @@ public class Course {
 	public void setCoursePrice(Integer coursePrice) {
 		this.coursePrice = coursePrice;
 	}
+
+
+	
 	
 }
