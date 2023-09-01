@@ -39,8 +39,8 @@ public class Teacher {
 	@Column(name = "teacherTel",columnDefinition = "int")
 	private Integer teacherTel;
 
-	@Column(name = "teacherEmail",columnDefinition = "nvarchar(100)")
-	private String teacherEmail;
+	@Column(name = "teacherMail",columnDefinition = "nvarchar(100)")
+	private String teacherMail;
 
 	@Column(name = "teacherProfile", columnDefinition = "nvarchar(max)")
 	private String teacherProfile;
@@ -49,8 +49,8 @@ public class Teacher {
 	private String teacherAccountStatus;
 
 	//會員ID (FK)，要有對方的物件當屬性
-//	@Column(name = "memberId", nullable = false, insertable = false, updatable = false)
-//	private Integer memberId;
+	@Column(name = "memberId", nullable = false, insertable = false, updatable = false)
+	private Integer memberId;
 	
 	//一個老師有一個會員id
 	@OneToOne(cascade = CascadeType.ALL)

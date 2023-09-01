@@ -35,11 +35,7 @@ public class Course {
 	
 	//教師ID FK(連結教師ID)
 	@ManyToOne
-<<<<<<< HEAD
-	@JoinColumn(name = "teacherId", nullable = false, insertable = false, updatable = false)
-=======
 	@JoinColumn(name = "teacherId")
->>>>>>> e94c6bc3131acfbbf47291b6be1d4b45b305e31b
 	private Teacher teacher;
 	
 	//食譜ID FK(連接食譜ID)
@@ -114,11 +110,6 @@ public class Course {
 	public Course() {
 	}
 
-<<<<<<< HEAD
-
-
-
-=======
 	public Course(Integer id, Teacher teacher, Recipes recipes, Category category, String courseName,
 			String courseIntroduction, String courseFeature, String courseDestination, String serviceTarget,
 			Date closeDate, Date updateDate, String coursePlace, String courseStatus, Integer remainPlaces,
@@ -140,5 +131,5 @@ public class Course {
 		this.remainPlaces = remainPlaces;
 		this.coursePrice = coursePrice;
 	}
->>>>>>> e94c6bc3131acfbbf47291b6be1d4b45b305e31b
+
 }
