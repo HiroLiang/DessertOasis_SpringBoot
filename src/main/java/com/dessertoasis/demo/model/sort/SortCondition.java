@@ -3,7 +3,39 @@ package com.dessertoasis.demo.model.sort;
 import java.util.List;
 
 public class SortCondition {
-	
+	/*
+	 * 		物件結構： 
+	 * 		{
+	 * 			"sortWay":"ASC",
+	 * 			"sortBy":"fullName", 
+	 * 			"page":1, "pageSize":10,
+	 * 			"dateRules":[ 
+	 * 				{
+	 * 					"key":"date", 
+	 * 					"type":"Date", 
+	 * 					"start":"2020-02-02T11:11:11",
+	 * 					"end":"2021-12-12T11:11:11" 
+	 * 				}
+	 * 			],
+	 * 			"searchRules":[ 
+	 * 				{ 
+	 * 					"key":"fullName",
+	 * 					"type":"String", 
+	 * 					"input":"大中天" 
+	 * 				},
+	 * 				{ 
+	 * 					"key":"teacherMail", 
+	 * 					"type":"String",
+	 * 					"input":"qqq@qqq.com" 
+	 * 				} 
+	 * 			], 
+	 * 			"numKey":"teacherTel", 
+	 * 			"numStart":8, 
+	 * 			"numEnd":12 
+	 * 		}
+	 * 
+	 * 		兩個List的數量可以自由增加
+	 */
 	private SortWay sortWay;
 	private String sortBy;
 	private Integer page;
@@ -13,11 +45,11 @@ public class SortCondition {
 	private String numKey;
 	private Integer numStart;
 	private Integer numEnd;
-	
-	public enum SortWay{
-		DESC,ASC
+
+	public enum SortWay {
+		DESC, ASC
 	}
-	
+
 	public SortCondition() {
 		super();
 	}
@@ -35,7 +67,7 @@ public class SortCondition {
 		this.numStart = numStart;
 		this.numEnd = numEnd;
 	}
-	
+
 	public String getNumKey() {
 		return numKey;
 	}

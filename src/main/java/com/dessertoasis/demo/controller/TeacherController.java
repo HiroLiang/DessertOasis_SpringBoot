@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.dessertoasis.demo.model.course.Teacher;
+import com.dessertoasis.demo.model.course.TeacherDemo;
 import com.dessertoasis.demo.model.sort.SortCondition;
 import com.dessertoasis.demo.service.TeacherService;
 
@@ -25,8 +26,8 @@ public class TeacherController {
 	private TeacherService tService;
 
 	@PostMapping("/getTeacherPage")
-	public List<Teacher> getTeacherDatas(@RequestBody SortCondition sortCod) {
-		List<Teacher> teacherPage = tService.getTeacherPage(sortCod);
+	public List<TeacherDemo> getTeacherDatas(@RequestBody SortCondition sortCod) {
+		List<TeacherDemo> teacherPage = tService.getTeacherPage(sortCod);
 
 		return teacherPage;
 	}

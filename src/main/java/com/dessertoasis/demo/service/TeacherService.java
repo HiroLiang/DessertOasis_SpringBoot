@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.dessertoasis.demo.model.course.Teacher;
+import com.dessertoasis.demo.model.course.TeacherDemo;
 import com.dessertoasis.demo.model.course.TeacherRepository;
 import com.dessertoasis.demo.model.member.Member;
 import com.dessertoasis.demo.model.sort.DateRules;
@@ -41,14 +42,16 @@ public class TeacherService {
 		return data;
 	}
 
-	public List<Teacher> getTeacherPage(SortCondition sortCod) {
+	//動態條件搜索
+	public List<TeacherDemo> getTeacherPage(SortCondition sortCod) {
 		CriteriaBuilder cb = em.getCriteriaBuilder();
 		// 決定select table
-		CriteriaQuery<Teacher> cq = cb.createQuery(Teacher.class);
+		CriteriaQuery<TeacherDemo> cq = cb.createQuery(TeacherDemo.class);
 		Root<Teacher> root = cq.from(Teacher.class);
 		// 決定join Table
 		Join<Teacher, Member> memberJoin = root.join("member");
 		// 決定搜索欄位
+		//需要有搜索範圍的構造方法
 		cq.multiselect(root.get("id"), memberJoin.get("fullName"), root.get("teacherTel"), root.get("teacherMail"));
 		// 計算條件數量
 		List<DateRules> dateRules = sortCod.getDateRules();
@@ -122,10 +125,10 @@ public class TeacherService {
 		}else {
 			cq.where(predicates);
 		}
-		TypedQuery<Teacher> typedQuery = em.createQuery(cq);
+		TypedQuery<TeacherDemo> typedQuery = em.createQuery(cq);
 		typedQuery.setFirstResult((sortCod.getPage() - 1) * sortCod.getPageSize());
 		typedQuery.setMaxResults(sortCod.getPageSize());
-		List<Teacher> result = typedQuery.getResultList();
+		List<TeacherDemo> result = typedQuery.getResultList();
 		System.out.println(result);
 		return result;
 	}
@@ -135,11 +138,9 @@ public class TeacherService {
 		try {
 			BeanInfo beanInfo = Introspector.getBeanInfo(bean.getClass());
 			PropertyDescriptor[] propertyDescriptors = beanInfo.getPropertyDescriptors();
-
 			for (PropertyDescriptor propertyDescriptor : propertyDescriptors) {
-				if (propertyDescriptor.getName().equals(propertyName)) {
+				if (propertyDescriptor.getName().equals(propertyName)) 
 					return true;
-				}
 			}
 		} catch (IntrospectionException e) {
 			e.printStackTrace();

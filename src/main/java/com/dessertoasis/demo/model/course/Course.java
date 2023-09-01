@@ -46,11 +46,11 @@ public class Course {
 	//教師ID FK(連結教師ID)
 	@ManyToOne
 	@JoinColumn(name = "teacherId")
-	private Teacher teacherId;
+	private Teacher teacher;
 	
 	//食譜ID FK(連接食譜ID)
 	@OneToOne
-	private Recipes recipesId;
+	private Recipes recipes;
 	
 	//分類ID FK(連接分類ID)
 	@ManyToOne
@@ -110,12 +110,14 @@ public class Course {
 	public Course() {
 	}
 
-	public Course(Teacher teacherId, Recipes recipesId, Category category, String courseName, String courseIntroduction,
-			String courseFeature, String courseDestination, String serviceTarget, Date closeDate, Date updateDate,
-			String coursePlace, String courseStatus, Integer remainPlaces, Integer coursePrice) {
+	public Course(Integer id, Teacher teacher, Recipes recipes, Category category, String courseName,
+			String courseIntroduction, String courseFeature, String courseDestination, String serviceTarget,
+			Date closeDate, Date updateDate, String coursePlace, String courseStatus, Integer remainPlaces,
+			Integer coursePrice) {
 		super();
-		this.teacherId = teacherId;
-		this.recipesId = recipesId;
+		this.id = id;
+		this.teacher = teacher;
+		this.recipes = recipes;
 		this.category = category;
 		this.courseName = courseName;
 		this.courseIntroduction = courseIntroduction;
@@ -129,6 +131,4 @@ public class Course {
 		this.remainPlaces = remainPlaces;
 		this.coursePrice = coursePrice;
 	}
-
-
 }
