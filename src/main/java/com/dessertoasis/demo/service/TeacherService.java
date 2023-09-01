@@ -51,7 +51,6 @@ public class TeacherService {
 		// 決定join Table
 		Join<Teacher, Member> memberJoin = root.join("member");
 		// 決定搜索欄位
-		//需要有搜索範圍的構造方法
 		cq.multiselect(root.get("id"), memberJoin.get("fullName"), root.get("teacherTel"), root.get("teacherMail"));
 		// 計算條件數量
 		List<DateRules> dateRules = sortCod.getDateRules();
