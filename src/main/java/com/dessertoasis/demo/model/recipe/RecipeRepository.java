@@ -33,6 +33,8 @@ public interface RecipeRepository extends JpaRepository<Recipes, Integer> {
 	
 	
 	
+//	List<Recipes> findRecipeByCategory();
+	
 	
 
 }

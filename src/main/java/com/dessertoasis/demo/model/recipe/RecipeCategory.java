@@ -1,6 +1,7 @@
 package com.dessertoasis.demo.model.recipe;
 
 import com.dessertoasis.demo.model.category.Category;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Entity;
@@ -18,11 +19,13 @@ public class RecipeCategory {
 	@EmbeddedId
 	private RecipeCategoryKey id;
 
+	@JsonIgnore
 	@ManyToOne
 	@MapsId("recipeId")
 	@JoinColumn(name = "recipeId")
 	private Recipes recipe;
 	
+	@JsonIgnore
 	@ManyToOne
 	@MapsId("categoryId")
 	@JoinColumn(name = "categoryId")

@@ -71,6 +71,7 @@ public class RecipeService {
 			for (int i = 0; i < latest10Recipes.size(); i++) {
 				Recipes recipe = latest10Recipes.get(i);
 				RecipeDTO rDto = new RecipeDTO();
+				rDto.setId(recipe.getId());
 				rDto.setRecipeAuthorId(recipe.getRecipeAuthor().getId());
 				rDto.setRecipeTitle(recipe.getRecipeTitle());
 				rDto.setRecipeCategories(recipe.getRecipeCategories());
@@ -92,6 +93,7 @@ public class RecipeService {
 			for (int i = 0; i < hottest10Recipes.size(); i++) {
 				Recipes recipe = hottest10Recipes.get(i);
 				RecipeDTO rDto = new RecipeDTO();
+				rDto.setId(recipe.getId());
 				rDto.setRecipeAuthorId(recipe.getRecipeAuthor().getId());
 				rDto.setRecipeTitle(recipe.getRecipeTitle());
 				rDto.setRecipeCategories(recipe.getRecipeCategories());

@@ -6,7 +6,6 @@ import java.util.List;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import com.dessertoasis.demo.model.member.Member;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -29,13 +28,14 @@ public class Recipes {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
 	
-//	//撰寫者ID(連結Member id)
-	
+	//撰寫者ID(連結Member id)
 	@ManyToOne
 	@JoinColumn(name="memberId", nullable = false)
 	private Member recipeAuthor;
 	
+	
 	//分類Id  OneToMany
+//	@JsonIgnore
 	@OneToMany(mappedBy = "recipe")
 	private List<RecipeCategory> recipeCategories;
 	
