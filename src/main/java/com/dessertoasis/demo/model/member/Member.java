@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import com.dessertoasis.demo.model.cart.Cart;
+import com.dessertoasis.demo.model.course.Teacher;
 import com.dessertoasis.demo.model.order.Order;
 import com.dessertoasis.demo.model.recipe.Recipes;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -76,6 +77,9 @@ public class Member { //與會員帳號相關
 	
 	@OneToOne(cascade = CascadeType.ALL, mappedBy = "member")
     private MemberDetail memberDetail;
+	
+	@OneToOne(cascade = CascadeType.ALL, mappedBy = "member")
+	private Teacher teacher;
 	
 //	@OneToOne(cascade = CascadeType.ALL, mappedBy = "member")
 //    private Company company;

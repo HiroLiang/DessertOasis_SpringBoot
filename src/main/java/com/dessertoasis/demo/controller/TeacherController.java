@@ -1,19 +1,17 @@
 package com.dessertoasis.demo.controller;
 
-import java.util.Collections;
+
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.dessertoasis.demo.model.course.Course;
-import com.dessertoasis.demo.model.course.Teacher;
-import com.dessertoasis.demo.model.course.TeacherRepository;
-import com.dessertoasis.demo.service.CourseService;
+import com.dessertoasis.demo.model.sort.DateRules;
+import com.dessertoasis.demo.model.sort.SearchRules;
+import com.dessertoasis.demo.service.TeacherService;
 
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
@@ -23,10 +21,15 @@ import jakarta.servlet.http.HttpServletResponse;
 public class TeacherController {
 
 	@Autowired
-	private CourseService cService;
+	private TeacherService tService;
 	
-	@Autowired
-	private TeacherRepository tRepo;
+	@GetMapping
+	public String getTeacherDatas(Integer page, Integer pageSize , String[] sortRule,List<DateRules> dateRules,List<SearchRules> searchRules,String[] numberRange) {
+		tService.getTeacherPage(page, pageSize, sortRule, dateRules, searchRules, numberRange);
+		
+		return null;
+	}
+
 	
 	//依照老師編號列出該教師所有課程
 //	@GetMapping("/teacher/{teacherId}/courses")

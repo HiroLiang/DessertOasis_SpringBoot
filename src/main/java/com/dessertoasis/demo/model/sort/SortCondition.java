@@ -4,8 +4,6 @@ import java.util.List;
 
 public class SortCondition {
 	
-	private List<String> tables;
-	private List<List<String>> selectedOptions;
 	private SortWay sortWay;
 	private String sortBy;
 	private Integer page;
@@ -22,33 +20,15 @@ public class SortCondition {
 		super();
 	}
 
-	public SortCondition(List<String> tables, List<List<String>> selectedOptions, SortWay sortWay, String sortBy,
-			Integer page, Integer pageSize, List<String> searchBy, List<List<String>> searchList) {
+	public SortCondition(SortWay sortWay, String sortBy, Integer page, Integer pageSize, List<String> searchBy,
+			List<List<String>> searchList) {
 		super();
-		this.tables = tables;
-		this.selectedOptions = selectedOptions;
 		this.sortWay = sortWay;
 		this.sortBy = sortBy;
 		this.page = page;
 		this.pageSize = pageSize;
 		this.searchBy = searchBy;
 		this.searchList = searchList;
-	}
-
-	public List<String> getTables() {
-		return tables;
-	}
-
-	public void setTables(List<String> tables) {
-		this.tables = tables;
-	}
-
-	public List<List<String>> getSelectedOptions() {
-		return selectedOptions;
-	}
-
-	public void setSelectedOptions(List<List<String>> selectedOptions) {
-		this.selectedOptions = selectedOptions;
 	}
 
 	public SortWay getSortWay() {
