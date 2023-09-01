@@ -1,5 +1,7 @@
 package com.dessertoasis.demo.controller;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -8,6 +10,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.dessertoasis.demo.model.course.Teacher;
 import com.dessertoasis.demo.model.sort.SortCondition;
 import com.dessertoasis.demo.service.TeacherService;
 
@@ -22,10 +25,10 @@ public class TeacherController {
 	private TeacherService tService;
 
 	@PostMapping("/getTeacherPage")
-	public String getTeacherDatas(@RequestBody SortCondition sortCod) {
-		tService.getTeacherPage(sortCod);
+	public List<Teacher> getTeacherDatas(@RequestBody SortCondition sortCod) {
+		List<Teacher> teacherPage = tService.getTeacherPage(sortCod);
 
-		return null;
+		return teacherPage;
 	}
 
 	// 依照老師編號列出該教師所有課程

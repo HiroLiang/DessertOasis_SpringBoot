@@ -41,7 +41,7 @@ public class TeacherService {
 		return data;
 	}
 
-	public String getTeacherPage(SortCondition sortCod) {
+	public List<Teacher> getTeacherPage(SortCondition sortCod) {
 		CriteriaBuilder cb = em.getCriteriaBuilder();
 		// 決定select table
 		CriteriaQuery<Teacher> cq = cb.createQuery(Teacher.class);
@@ -102,6 +102,7 @@ public class TeacherService {
 				counter++;
 			}
 		}
+		//取得排序條件
 		if(sortCod.getSortBy()!=null) {
 			if(hasProperty(teacher, sortCod.getSortBy())) {
 				if(sortCod.getSortWay().equals(SortWay.ASC)) {
@@ -126,9 +127,10 @@ public class TeacherService {
 		typedQuery.setMaxResults(sortCod.getPageSize());
 		List<Teacher> result = typedQuery.getResultList();
 		System.out.println(result);
-		return null;
+		return result;
 	}
 
+	//確認class中有沒有該屬性
 	public static boolean hasProperty(Object bean, String propertyName) {
 		try {
 			BeanInfo beanInfo = Introspector.getBeanInfo(bean.getClass());
