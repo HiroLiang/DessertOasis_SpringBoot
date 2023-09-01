@@ -5,14 +5,8 @@ import java.util.List;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
-
-
-import com.dessertoasis.demo.model.recipe.RecipeCategory;
-import com.dessertoasis.demo.model.recipe.Recipes;
 import com.dessertoasis.demo.model.category.Category;
-import com.dessertoasis.demo.model.order.CourseOrderItem;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
+import com.dessertoasis.demo.model.recipe.Recipes;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -20,12 +14,8 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-
-
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-
-
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
@@ -45,8 +35,8 @@ public class Course {
 	
 	//教師ID FK(連結教師ID)
 	@ManyToOne
-	@JoinColumn(name = "teacherId")
-	private Teacher teacherId;
+	@JoinColumn(name = "teacherId", nullable = false, insertable = false, updatable = false)
+	private Teacher teacher;
 	
 	//食譜ID FK(連接食譜ID)
 	@OneToOne
@@ -107,28 +97,20 @@ public class Course {
 	@Column(name="coursePrice",columnDefinition = "int")
 	private Integer coursePrice;
 	
+	@OneToMany(mappedBy="course",cascade = CascadeType.ALL)
+	private List<CourseCtag> courseList;
+	
+//	@ManyToMany
+//    @JoinTable(name="course_coursetag", joinColumns = {@JoinColumn(name="course_id")}, inverseJoinColumns = {@JoinColumn(name="coursetag_id")})
+//    private List<CourseCtag> courseTags;
+	
+	@OneToMany(mappedBy = "course")
+	private List<CoursePicture> coursePictureList;
+	
 	public Course() {
 	}
 
-	public Course(Teacher teacherId, Recipes recipesId, Category category, String courseName, String courseIntroduction,
-			String courseFeature, String courseDestination, String serviceTarget, Date closeDate, Date updateDate,
-			String coursePlace, String courseStatus, Integer remainPlaces, Integer coursePrice) {
-		super();
-		this.teacherId = teacherId;
-		this.recipesId = recipesId;
-		this.category = category;
-		this.courseName = courseName;
-		this.courseIntroduction = courseIntroduction;
-		this.courseFeature = courseFeature;
-		this.courseDestination = courseDestination;
-		this.serviceTarget = serviceTarget;
-		this.closeDate = closeDate;
-		this.updateDate = updateDate;
-		this.coursePlace = coursePlace;
-		this.courseStatus = courseStatus;
-		this.remainPlaces = remainPlaces;
-		this.coursePrice = coursePrice;
-	}
+
 
 
 }
