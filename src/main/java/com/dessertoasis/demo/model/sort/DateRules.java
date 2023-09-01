@@ -2,6 +2,7 @@ package com.dessertoasis.demo.model.sort;
 
 import java.util.Date;
 
+
 public class DateRules {
 	
 	private String key;

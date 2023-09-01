@@ -69,7 +69,27 @@ public class Teacher {
 	public Teacher() {
 	}
 
-//	public List<Course> getCourses(){
-//		return courseList;
-//	}
+	public Teacher(Integer id, Integer memberId, String teacherContract, String teacherName, String teacherProfilePic,
+			Integer teacherTel, String teacherMail, String teacherProfile, String teacherAccountStatus, Member member) {
+		super();
+		this.id = id;
+		this.memberId = memberId;
+		this.teacherContract = teacherContract;
+		this.teacherName = teacherName;
+		this.teacherProfilePic = teacherProfilePic;
+		this.teacherTel = teacherTel;
+		this.teacherMail = teacherMail;
+		this.teacherProfile = teacherProfile;
+		this.teacherAccountStatus = teacherAccountStatus;
+		this.member = member;
+	}
+
+	public Teacher(Integer id,String fullName, Integer teacherTel, String teacherMail) {
+		super();
+		this.id = id;
+		this.teacherTel = teacherTel;
+		this.teacherMail = teacherMail;
+		this.member.setFullName(fullName);
+	}
+
 }
