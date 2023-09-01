@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.dessertoasis.demo.model.recipe.Recipes;
 import com.dessertoasis.demo.service.recipe.RecipeService;
+import com.dessertoasis.demo.model.recipe.RecipeDTO;
 import com.dessertoasis.demo.model.recipe.RecipeRepository;
 
 @RestController
@@ -41,8 +42,8 @@ public class RecipeController {
 	}
 	
 	@GetMapping("/recipe/{id}")
-	public Recipes findRecipeById(@PathVariable("id") Integer id) {
-		Recipes recipe = recipeService.findById(id);
+	public RecipeDTO findRecipeById(@PathVariable("id") Integer id) {
+		RecipeDTO recipe = recipeService.findById(id);
 		
 		return recipe;
 	}
@@ -77,6 +78,30 @@ public class RecipeController {
 		return recipeRepo.findRecipeByDifficulty(difficulty);
 	}
 	
+	/*--------------------------------------------食譜主頁使用controller ------------------------------------------------*/
+	
+	//取得最新的10筆食譜
+	@GetMapping("recipe/latest10Recipes")
+	public List<RecipeDTO> findTop10RecipeByCreateTime(){
+		List<RecipeDTO> recipes = recipeService.findTop10RecipeByCreateTime();
+		
+		if(recipes !=null && !recipes.isEmpty()) {
+			return recipes;
+		}
+		return null;
+	}
+	
+	//取得訪問數最高的10筆食譜
+	@GetMapping("recipe/hottest10Recipes")
+	public List<RecipeDTO> findTop10RecipeByVisitCount(){
+		List<RecipeDTO> recipes = recipeService.findTop10RecipeByVisitCount();
+		
+		if(recipes !=null && !recipes.isEmpty()) {
+			return recipes;
+		}
+		return null;
+	}
+
 	
 	
 	
