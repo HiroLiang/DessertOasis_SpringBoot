@@ -20,7 +20,7 @@ public class RegisterController {
     	
     	// 驗證註冊資訊，檢查是否有相同的帳號
         if (mService.checkIfAccountExist(member.getAccount())) {
-            return "帳號已存在";
+            return "N";
         }
         
         // 創建會員並加密密碼
@@ -35,6 +35,6 @@ public class RegisterController {
         newMember = mService.addMember(newMember);
         
        
-        return "註冊成功";
+        return "Y";
     }
 }

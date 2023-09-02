@@ -17,7 +17,7 @@ public class LoginController {
     private MemberService mService;
 	
 	@PostMapping("/memberLogin")
-	public Member  MemberLogin(@RequestBody Member member,HttpSession session) {
+	public String  MemberLogin(@RequestBody Member member,HttpSession session) {
 	
 //		 System.out.println("MemberLogin - Start");
 //		    System.out.println("Received Account: " + member.getAccount());
@@ -29,13 +29,15 @@ public class LoginController {
 		        session.setAttribute("loggedInMember", memberLogin);
 //		        System.out.println("Login successful");
 		        
-		        return memberLogin;
+		        return "Y";
 		    }
 
 //		    System.out.println("Login failed");
-		    return null;
+		    return "N";
 
 	}
+	
+
 }
 
 //↓↓↓↓↓↓↓↓↓↓↓↓↓跳轉頁面使用session取出member資料↓↓↓↓↓↓↓↓↓↓↓↓↓
