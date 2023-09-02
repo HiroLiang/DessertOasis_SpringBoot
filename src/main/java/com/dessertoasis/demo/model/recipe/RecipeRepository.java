@@ -6,6 +6,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import com.dessertoasis.demo.model.category.Category;
+
 public interface RecipeRepository extends JpaRepository<Recipes, Integer> {
 	
 	//食譜名稱模糊搜尋
@@ -32,9 +34,10 @@ public interface RecipeRepository extends JpaRepository<Recipes, Integer> {
 	List<Recipes> findTop10RecipeByVisitCount();
 	
 	
+	 @Query("SELECT r FROM Recipes r JOIN r.recipeCategories rc WHERE rc.category = :category")
+	    List<Recipes> findRecipesByCategory(@Param("category") Category category);
 	
-//	List<Recipes> findRecipeByCategory();
-	
-	
+    List<Recipes> findByRecipeCategoriesCategory(Category category);
+
 
 }

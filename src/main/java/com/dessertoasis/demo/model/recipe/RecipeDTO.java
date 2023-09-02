@@ -13,6 +13,9 @@ public class RecipeDTO {
 	//分類Id
 	private List<RecipeCategory> recipeCategories;
 	
+	//分類Id取其中分類id
+	private List<Integer>recipeCategoryIds;
+	
 	//食譜名稱
 	private String recipeTitle;
 	
@@ -59,6 +62,14 @@ public class RecipeDTO {
 
 	public void setRecipeCategories(List<RecipeCategory> recipeCategories) {
 		this.recipeCategories = recipeCategories;
+	}
+
+	public List<Integer> getRecipeCategoryIds() {
+		return recipeCategoryIds;
+	}
+
+	public void setRecipeCategoryIds(List<Integer> recipeCategoryIds) {
+		this.recipeCategoryIds = recipeCategoryIds;
 	}
 
 	public String getRecipeTitle() {

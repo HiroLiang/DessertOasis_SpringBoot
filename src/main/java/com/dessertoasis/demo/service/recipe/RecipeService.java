@@ -8,6 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.dessertoasis.demo.model.recipe.Recipes;
+import com.dessertoasis.demo.model.category.Category;
+import com.dessertoasis.demo.model.recipe.RecipeCategory;
 import com.dessertoasis.demo.model.recipe.RecipeDTO;
 import com.dessertoasis.demo.model.recipe.RecipeRepository;
 
@@ -63,7 +65,7 @@ public class RecipeService {
 	/*--------------------------------------------食譜主頁使用service ------------------------------------------------*/
 
 	//取得最新的10筆食譜
-	public List<RecipeDTO> findTop10RecipeByCreateTime(){
+	public List<RecipeDTO> findTop10RecipesByCreateTime(){
 		List<Recipes> latest10Recipes = recipeRepo.findTop10RecipeByCreateTime();
 		List<RecipeDTO>latest10RecipeDTO = new ArrayList<>();
 		
@@ -85,7 +87,7 @@ public class RecipeService {
 	}
 
 	//取得訪問數最高的10筆食譜
-	public List<RecipeDTO>findTop10RecipeByVisitCount(){
+	public List<RecipeDTO> findTop10RecipesByVisitCount(){
 		List<Recipes> hottest10Recipes = recipeRepo.findTop10RecipeByVisitCount();
 		List<RecipeDTO>hottest10RecipeDTO = new ArrayList<>();
 		
@@ -96,7 +98,7 @@ public class RecipeService {
 				rDto.setId(recipe.getId());
 				rDto.setRecipeAuthorId(recipe.getRecipeAuthor().getId());
 				rDto.setRecipeTitle(recipe.getRecipeTitle());
-				rDto.setRecipeCategories(recipe.getRecipeCategories());
+//				rDto.setRecipeCategories(recipe.getRecipeCategories());
 				rDto.setPictureURL(recipe.getPictureURL());
 				rDto.setRecipeIntroduction(recipe.getRecipeIntroduction());
 				
@@ -105,7 +107,31 @@ public class RecipeService {
 		}
 		return hottest10RecipeDTO;
 	}
-		
+	
+	public List<RecipeDTO> find10RecipeByCategory(Category category){
+		List<Recipes> recipes = recipeRepo.findRecipesByCategory(category);
+		List<RecipeDTO> categoryRecipeDTO = new ArrayList<>();
+		if(recipes != null && !recipes.isEmpty()) {
+			for (int i = 0; i < Math.min(10, recipes.size()); i++) {
+				Recipes recipe = recipes.get(i);
+				RecipeDTO rDto = new RecipeDTO();
+				rDto.setId(recipe.getId());
+				rDto.setRecipeAuthorId(recipe.getRecipeAuthor().getId());
+				rDto.setRecipeTitle(recipe.getRecipeTitle());
+				List<RecipeCategory> recipeCategories = recipe.getRecipeCategories();
+				List<Integer> categoryIds = new ArrayList<>();
+				for (RecipeCategory rc : recipeCategories) {
+	                categoryIds.add(rc.getCategory().getId());
+	            }
+				rDto.setRecipeCategoryIds(categoryIds);
+				rDto.setPictureURL(recipe.getPictureURL());
+				rDto.setRecipeIntroduction(recipe.getRecipeIntroduction());
+				
+				categoryRecipeDTO.add(rDto);
+			}
+		}
+		return categoryRecipeDTO;
+	}
 
 	
 	

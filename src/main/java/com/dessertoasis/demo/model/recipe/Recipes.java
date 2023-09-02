@@ -35,7 +35,6 @@ public class Recipes {
 	
 	
 	//分類Id  OneToMany
-//	@JsonIgnore
 	@OneToMany(mappedBy = "recipe")
 	private List<RecipeCategory> recipeCategories;
 	
