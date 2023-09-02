@@ -3,6 +3,7 @@ package com.dessertoasis.demo.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -16,9 +17,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.dessertoasis.demo.model.product.ProdSearchDTO;
 import com.dessertoasis.demo.model.product.Product;
 import com.dessertoasis.demo.model.product.ProductRepository;
 import com.dessertoasis.demo.service.ProductService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 @RestController
 @RequestMapping("/product")
@@ -65,4 +69,14 @@ public class ProductController {
         pService.deleteProductById(id);
         return ResponseEntity.noContent().build();
     }
+    
+    @GetMapping("/search")
+    public ResponseEntity<Page<Product>> searchProducts(
+        @RequestBody ProdSearchDTO criteria,
+        @PageableDefault(size = 20) Pageable pageable
+    ) {
+        Page<Product> products = pService.searchProducts(criteria, pageable);
+        return ResponseEntity.ok(products);
+    }
+
 }
