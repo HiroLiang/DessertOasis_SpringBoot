@@ -22,4 +22,8 @@ public class ReservationCartService {
 		}
 		return optional.get();
 	}
+	
+	public void deleteById(Integer id) {
+		rcRepository.deleteById(id);
+	}
 }

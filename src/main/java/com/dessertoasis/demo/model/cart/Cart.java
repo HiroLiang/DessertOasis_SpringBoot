@@ -21,6 +21,9 @@ public class Cart {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
 	
+	@Column(name = "memberId", insertable = false, updatable = false)
+	private Integer memberId;
+	
 	@ManyToOne
 	@JoinColumn(name = "memberId")
 	private Member member;
@@ -29,8 +32,13 @@ public class Cart {
 	private Integer categoryId;
 	
 	@Column
-	private Integer interetedId;
+	private Integer interestedId;
 	
 	@Column
 	private Integer prodQuantity;
+
+	public Cart() {
+		
+	}
+	
 }

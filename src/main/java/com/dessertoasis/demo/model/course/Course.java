@@ -8,6 +8,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 import com.dessertoasis.demo.model.category.Category;
 import com.dessertoasis.demo.model.order.CourseOrderItem;
 import com.dessertoasis.demo.model.recipe.Recipes;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -108,6 +109,7 @@ public class Course {
 	@OneToMany(mappedBy = "course")
 	private List<CoursePicture> coursePictureList;
 	
+	@JsonIgnore
 	@OneToMany(mappedBy = "course")
 	private List<CourseOrderItem> courseOrderItems;
 	

@@ -260,12 +260,12 @@ public class Product {
 	}
 
 
-	public List<ProdOrderItem> getProdOrderItemList() {
+	public List<ProdOrderItem> getProdOrderItems() {
 		return prodOrderItems;
 	}
 
 
-	public void setProdOrderItemList(List<ProdOrderItem> prodOrderItems) {
+	public void setProdOrderItems(List<ProdOrderItem> prodOrderItems) {
 		this.prodOrderItems = prodOrderItems;
 	}
 
