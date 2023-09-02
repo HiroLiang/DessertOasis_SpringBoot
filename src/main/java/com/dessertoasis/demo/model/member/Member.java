@@ -86,11 +86,11 @@ public class Member { //與會員帳號相關
 	
 	@JsonIgnore
 	@OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
-	private List<Order> orderList;
+	private List<Order> orders;
 
 	@JsonIgnore
 	@OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
-	private List<Cart> cartList;
+	private List<Cart> carts;
 
 //	public Company getCompany() {
 //		return company;

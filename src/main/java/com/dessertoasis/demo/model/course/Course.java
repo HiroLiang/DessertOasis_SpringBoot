@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import com.dessertoasis.demo.model.category.Category;
+import com.dessertoasis.demo.model.order.CourseOrderItem;
 import com.dessertoasis.demo.model.recipe.Recipes;
 
 import jakarta.persistence.CascadeType;
@@ -106,6 +107,9 @@ public class Course {
 	
 	@OneToMany(mappedBy = "course")
 	private List<CoursePicture> coursePictureList;
+	
+	@OneToMany(mappedBy = "course")
+	private List<CourseOrderItem> courseOrderItems;
 	
 	public Course() {
 	}

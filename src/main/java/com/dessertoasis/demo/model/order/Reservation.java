@@ -39,7 +39,7 @@ public class Reservation {
 	@JoinColumn(name = "roomId")
 	private Classroom classroom;
 	
-	@JsonIgnoreProperties({"reservationList", "prodOrderItemList", "courseOrderItemList"})
+	@JsonIgnoreProperties({"reservations", "prodOrderItems", "courseOrderItems"})
 	@ManyToOne
 	@JoinColumn(name = "ordId")
 	private Order order;

@@ -7,6 +7,7 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.dessertoasis.demo.model.cart.Cart;
@@ -37,7 +38,7 @@ public class CartController {
 	private ReservationCartService rcService;
 	
 	@GetMapping("/cart/findall")
-	public Map<String, Object> findAllCartsByMemberId(Integer memberId) {
+	public Map<String, Object> findAllCartsByMemberId(@RequestParam("memberId") Integer memberId) {
 		
 		List<Cart> cartList = cartService.findByMemberId(memberId);
 		

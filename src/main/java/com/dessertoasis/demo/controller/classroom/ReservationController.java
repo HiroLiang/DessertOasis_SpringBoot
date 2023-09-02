@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -18,9 +19,9 @@ public class ReservationController {
 	@Autowired
 	private ReservationService rService;
 	
-	@GetMapping("/reservation/getForRoom")
+	@GetMapping("/reservations/{roomId}")
 	public List<Reservation> getReservationForRoomInMonth(
-			@RequestParam("room") Integer roomId,
+			@PathVariable("roomId") Integer roomId,
 			@RequestParam("start") String startStr,
 			@RequestParam("end") String endStr) {
 		

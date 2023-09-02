@@ -17,4 +17,8 @@ public class ClassroomService {
 	public List<Classroom> findAll() {
 		return cRepo.findAll();
 	}
+	
+	public Classroom findById(Integer id) {
+		return cRepo.findById(id).get();
+	}
 }

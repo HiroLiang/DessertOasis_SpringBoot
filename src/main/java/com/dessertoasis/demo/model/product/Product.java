@@ -76,7 +76,7 @@ public class Product {
 	 
 	 @JsonIgnore
 	 @OneToMany(mappedBy = "product")
-	 private List<ProdOrderItem> prodOrderItemList;
+	 private List<ProdOrderItem> prodOrderItems;
 	
 	public Product() {
 	}
@@ -261,12 +261,12 @@ public class Product {
 
 
 	public List<ProdOrderItem> getProdOrderItemList() {
-		return prodOrderItemList;
+		return prodOrderItems;
 	}
 
 
-	public void setProdOrderItemList(List<ProdOrderItem> prodOrderItemList) {
-		this.prodOrderItemList = prodOrderItemList;
+	public void setProdOrderItemList(List<ProdOrderItem> prodOrderItems) {
+		this.prodOrderItems = prodOrderItems;
 	}
 
 

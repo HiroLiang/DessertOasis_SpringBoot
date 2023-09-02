@@ -22,7 +22,7 @@ public class CourseOrderItem {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
 	
-	@JsonIgnoreProperties({"reservationList", "prodOrderItemList", "courseOrderItemList"})
+	@JsonIgnoreProperties({"reservations", "prodOrderItems", "courseOrderItems"})
 	@ManyToOne
 	@JoinColumn(name = "ordId")
 	private Order order;
