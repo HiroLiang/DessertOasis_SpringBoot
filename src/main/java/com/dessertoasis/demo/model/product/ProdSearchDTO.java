@@ -9,9 +9,7 @@ public class ProdSearchDTO {
 	    private Integer minprodStock;
 	    private Integer maxprodStock;
 
-	    // 可以根據需要添加更多的查詢條件字段
-
-	    // Getter 和 Setter 方法
+	    
 
 	    public String getProdName() {
 	        return prodName;
