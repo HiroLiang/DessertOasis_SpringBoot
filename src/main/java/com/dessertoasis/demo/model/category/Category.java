@@ -30,6 +30,9 @@ public class Category {
     @Column(name = "categoryName", columnDefinition = "nvarchar(100)")
     private String categoryName;
     
+    @Column(name = "parentId", insertable = false, updatable = false)
+    private Integer parentId;
+    
     @JsonIgnoreProperties({"children", "parent"})
     @ManyToOne
     @JoinColumn(name = "parentId")

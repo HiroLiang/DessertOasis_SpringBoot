@@ -11,18 +11,18 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.dessertoasis.demo.model.cart.Cart;
 import com.dessertoasis.demo.model.cart.ReservationCart;
-import com.dessertoasis.demo.model.course.Course;
+import com.dessertoasis.demo.model.classroom.Classroom;
 import com.dessertoasis.demo.model.member.Member;
 import com.dessertoasis.demo.service.CourseService;
 import com.dessertoasis.demo.service.MemberService;
 import com.dessertoasis.demo.service.ProductService;
 import com.dessertoasis.demo.service.cart.CartService;
 import com.dessertoasis.demo.service.cart.ReservationCartService;
+import com.dessertoasis.demo.service.classroom.ClassroomService;
 
 @RestController
 public class CartController {
@@ -45,6 +45,9 @@ public class CartController {
 	
 	@Autowired
 	private ReservationCartService rcService;
+	
+	@Autowired
+	private ClassroomService roomService;
 	
 	// 取出會員購物車所有東西
 	@GetMapping("/carts/{memberId}")
@@ -90,12 +93,22 @@ public class CartController {
 	public String addToCart(@RequestBody Cart cart) {
 		Integer memberId = cart.getMemberId();
 		Member member = memberService.findByMemberId(memberId);
-		if (member != null) {
-			cart.setMember(member);
-			cartService.insert(cart);
-			return "加入購物車成功";
+		if (member == null) {
+			return "加入購物車失敗，沒有此會員";
 		}
-		return "加入購物車失敗，沒有此會員";
+		cart.setMember(member);
+		cartService.insert(cart);
+		return "加入購物車成功";
+	}
+	
+	@PostMapping("/reservationCart")
+	public ReservationCart addToReservationCart(@RequestBody ReservationCart rc) {
+		Integer roomId = rc.getRoomId();
+		Classroom room = roomService.findById(roomId);
+		if (room == null) {
+			return null;
+		}
+		return rcService.insert(rc);
 	}
 	
 	// 刪除購物車項目

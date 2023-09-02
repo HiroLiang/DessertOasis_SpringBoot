@@ -19,6 +19,6 @@ public class ClassroomService {
 	}
 	
 	public Classroom findById(Integer id) {
-		return cRepo.findById(id).get();
+		return cRepo.findById(id).orElse(null);
 	}
 }

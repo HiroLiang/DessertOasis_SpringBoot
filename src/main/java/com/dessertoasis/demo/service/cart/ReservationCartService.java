@@ -23,6 +23,10 @@ public class ReservationCartService {
 		return optional.get();
 	}
 	
+	public ReservationCart insert(ReservationCart rc) {
+		return rcRepository.save(rc);
+	}
+	
 	public void deleteById(Integer id) {
 		rcRepository.deleteById(id);
 	}
