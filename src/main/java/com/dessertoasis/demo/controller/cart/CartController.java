@@ -108,6 +108,7 @@ public class CartController {
 		if (room == null) {
 			return null;
 		}
+		rc.setClassroom(room);
 		return rcService.insert(rc);
 	}
 	
