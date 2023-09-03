@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.dessertoasis.demo.model.cart.Cart;
 import com.dessertoasis.demo.model.cart.ReservationCart;
+import com.dessertoasis.demo.model.cart.ReservationCartDTO;
 import com.dessertoasis.demo.model.classroom.Classroom;
 import com.dessertoasis.demo.model.member.Member;
 import com.dessertoasis.demo.service.CourseService;
@@ -75,7 +76,8 @@ public class CartController {
 			}else {
 				Map<String, Object> reservationCart = new HashMap<>();
 				reservationCart.put("cartId", cart.getId());
-				reservationCart.put("reservation", rcService.findById(cart.getInterestedId()));
+				ReservationCartDTO reservation = new ReservationCartDTO(rcService.findById(cart.getInterestedId()));
+				reservationCart.put("reservation", reservation);
 				reservationCartList.add(reservationCart);
 			}
 		}
@@ -101,6 +103,7 @@ public class CartController {
 		return "加入購物車成功";
 	}
 	
+	// 加入預約購物車
 	@PostMapping("/reservationCart")
 	public ReservationCart addToReservationCart(@RequestBody ReservationCart rc) {
 		Integer roomId = rc.getRoomId();
