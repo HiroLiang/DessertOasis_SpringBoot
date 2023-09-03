@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.dessertoasis.demo.model.recipe.Recipes;
 import com.dessertoasis.demo.service.recipe.RecipeService;
 import com.dessertoasis.demo.model.category.Category;
+import com.dessertoasis.demo.model.recipe.RecipeCarouselDTO;
 import com.dessertoasis.demo.model.recipe.RecipeDTO;
 import com.dessertoasis.demo.model.recipe.RecipeRepository;
 
@@ -83,8 +84,8 @@ public class RecipeController {
 	
 	//取得最新的10筆食譜
 	@GetMapping("recipe/latest10Recipes")
-	public List<RecipeDTO> findTop10RecipeByCreateTime(){
-		List<RecipeDTO> recipes = recipeService.findTop10RecipesByCreateTime();
+	public List<RecipeCarouselDTO> findTop10RecipeByCreateTime(){
+		List<RecipeCarouselDTO> recipes = recipeService.findTop10RecipesByCreateTime();
 		
 		if(recipes !=null && !recipes.isEmpty()) {
 			return recipes;
@@ -94,8 +95,8 @@ public class RecipeController {
 	
 	//取得訪問數最高的10筆食譜
 	@GetMapping("recipe/hottest10Recipes")
-	public List<RecipeDTO> findTop10RecipeByVisitCount(){
-		List<RecipeDTO> recipes = recipeService.findTop10RecipesByVisitCount();
+	public List<RecipeCarouselDTO> findTop10RecipeByVisitCount(){
+		List<RecipeCarouselDTO> recipes = recipeService.findTop10RecipesByVisitCount();
 		
 		if(recipes !=null && !recipes.isEmpty()) {
 			return recipes;
@@ -104,10 +105,10 @@ public class RecipeController {
 	}
 	
 	//取得特定類別的10筆食譜
-	@GetMapping("recipe/category")
-	public List<RecipeDTO> find10RecipeByCategory(@RequestParam Integer categoryId){
+	@GetMapping("/recipe/get10categoryRecipes")
+	public List<RecipeCarouselDTO> find10RecipeByCategory(@RequestParam("cid") Integer cid){
 		Category category = new Category();
-		category.setId(categoryId);
+		category.setId(cid);
 		return recipeService.find10RecipeByCategory(category);
 	}
 
