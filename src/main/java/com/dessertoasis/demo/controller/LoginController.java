@@ -3,11 +3,13 @@ package com.dessertoasis.demo.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.dessertoasis.demo.model.member.Member;
 import com.dessertoasis.demo.service.MemberService;
 
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
 @RestController
@@ -17,28 +19,34 @@ public class LoginController {
     private MemberService mService;
 	
 	@PostMapping("/memberLogin")
-	public String  MemberLogin(@RequestBody Member member,HttpSession session) {
-	
-//		 System.out.println("MemberLogin - Start");
-//		    System.out.println("Received Account: " + member.getAccount());
-//		    System.out.println("Received Password: " + member.getPasswords());
+	public String  MemberLogin(@RequestBody Member member,HttpSession session,HttpServletResponse response) {
 
+		
+		//輸入資料匹配資料庫=>登入成功回傳 Y; 登入失敗回傳 N
 		    Member memberLogin = mService.memberLogin(member.getAccount(), member.getPasswords(), session);
 
 		    if (memberLogin != null) {
 		        session.setAttribute("loggedInMember", memberLogin);
-//		        System.out.println("Login successful");
+//		        Cookie cookie = new Cookie("isLogin", "1");
 		        
+//		        response.addCookie(cookie);
 		        return "Y";
 		    }
-
-//		    System.out.println("Login failed");
-		    return "N";
+		    	return "N";
 
 	}
 	
+	//登出
+	@RequestMapping("/memberLogout")
+	public String logout(HttpSession session) {
+	    session.invalidate(); // 
+	    return "redirect:/"; // 
+	}
+
 
 }
+
+
 
 //↓↓↓↓↓↓↓↓↓↓↓↓↓跳轉頁面使用session取出member資料↓↓↓↓↓↓↓↓↓↓↓↓↓
 //Member loggedInMember = (Member) session.getAttribute("loggedInMember");
