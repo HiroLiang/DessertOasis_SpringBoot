@@ -56,8 +56,9 @@ public class Member { //與會員帳號相關
 	@Column(name="code", columnDefinition ="VARCHAR(100)")
 	private String code;
 	
+	@Enumerated(EnumType.STRING)
 	@Column(name="access", columnDefinition ="NVARCHAR(30)")
-	private String access;
+	private MemberAccess access;
 	
 	@Enumerated(EnumType.STRING)
 	@Column(name="memberStatus" , columnDefinition = "nvarchar(30)")
@@ -65,7 +66,7 @@ public class Member { //與會員帳號相關
 	
 	@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss:SSS")
 	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name="signDate" , columnDefinition ="datetime2(6)")
+	@Column(name="signDate" , columnDefinition ="datetime2(0)")
 	private Date signDate;
 
 	@JsonIgnore

@@ -1,11 +1,14 @@
 package com.dessertoasis.demo.controller;
 
+import java.util.Date;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.dessertoasis.demo.model.member.Member;
+import com.dessertoasis.demo.model.member.MemberAccess;
 import com.dessertoasis.demo.model.member.MemberState;
 import com.dessertoasis.demo.service.MemberService;
 
@@ -32,6 +35,10 @@ public class RegisterController {
         member.getMemberStatus();//創立新帳號為不活耀狀態
 		newMember.setMemberStatus(MemberState.INACTIVE); 
 		
+		member.getAccess();//創立新帳號為一般會員
+		newMember.setAccess(MemberAccess.NORMAL);
+        newMember.setSignDate(new Date());
+        
         newMember = mService.addMember(newMember);
         
        
