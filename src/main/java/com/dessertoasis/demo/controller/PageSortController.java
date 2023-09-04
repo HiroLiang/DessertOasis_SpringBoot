@@ -1,8 +1,12 @@
 package com.dessertoasis.demo.controller;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.dessertoasis.demo.model.sort.SortCondition;
@@ -29,7 +33,9 @@ public class PageSortController {
 		return null;
 	}
 	
+	@GetMapping("/getSearchHint")
+	public List<String> getSearchHint(@RequestParam String tableName , @RequestParam String columnName , @RequestParam String searchValue){
 	
-	
-	
+		return null;
+	}
 }
