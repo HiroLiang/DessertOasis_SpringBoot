@@ -38,6 +38,9 @@ public class Order {
 	@Column(columnDefinition = "DateTime2")
 	private LocalDateTime updateDate;
 	
+	@Column(columnDefinition = "nvarchar(max)")
+	private String prodOrderMark;
+	
 	@OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
 	private List<Reservation> reservationList;
 	

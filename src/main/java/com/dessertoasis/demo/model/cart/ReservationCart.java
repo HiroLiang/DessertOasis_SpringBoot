@@ -23,9 +23,6 @@ public class ReservationCart {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
 	
-	@Column(name = "roomId", insertable = false, updatable = false)
-	private Integer roomId;
-	
 	@ManyToOne
 	@JoinColumn(name = "roomId")
 	private Classroom classroom;
@@ -38,4 +35,5 @@ public class ReservationCart {
 	
 	@Column(columnDefinition = "nvarchar(50)")
 	private String detail;
+
 }

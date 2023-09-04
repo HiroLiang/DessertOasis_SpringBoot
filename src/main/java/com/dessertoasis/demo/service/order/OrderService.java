@@ -1,4 +1,4 @@
-package com.dessertoasis.demo.service;
+package com.dessertoasis.demo.service.order;
 
 import java.util.List;
 
@@ -17,16 +17,5 @@ public class OrderService {
 	@Autowired
 	private OrderRepository oRepo;
 	
-	public List<Order> findAll() {
-		return oRepo.findAll();
-	}
 	
-	public Page<Order> findByPage(Integer pageNum, Integer size, String sort, String props) {
-		Sort.Direction dir = (sort == "asc")? Sort.Direction.ASC : Sort.Direction.DESC;
-		
-		PageRequest request = PageRequest.of(pageNum, size, dir, props);
-		Page<Order> page = oRepo.findAll(request);
-		
-		return page;
-	}
 }
