@@ -7,6 +7,8 @@ import com.dessertoasis.demo.model.category.Category;
 import com.dessertoasis.demo.model.order.ProdOrderItem;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -15,6 +17,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.MapsId;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
@@ -33,7 +36,9 @@ public class Product {
 //	private Integer categoryId;
 	
 	@ManyToOne
+	@MapsId("id")
     @JoinColumn(name = "categoryId")
+	@JsonIgnoreProperties({"products"})
     private Category category;
 	
 	
@@ -269,7 +274,7 @@ public class Product {
 		this.prodOrderItems = prodOrderItems;
 	}
 
-
+	
 
 
 //	
