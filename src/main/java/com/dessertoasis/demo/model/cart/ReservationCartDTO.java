@@ -11,13 +11,17 @@ import lombok.Data;
 @Data
 public class ReservationCartDTO {
 	
+	private Integer cartId;
+	private Integer reservationCartId;
 	private Classroom classroom;
 	private LocalDate reservationDate;
 	private String reservationTime;
 	private String detail;
 	private Integer price;
 	
-	public ReservationCartDTO(ReservationCart rc) {
+	public ReservationCartDTO(Cart cart, ReservationCart rc) {
+		this.cartId = cart.getId();
+		this.reservationCartId = rc.getId();
 		this.classroom = rc.getClassroom();
 		this.reservationDate = rc.getReservationDate();
 		this.reservationTime = rc.getReservationTime();

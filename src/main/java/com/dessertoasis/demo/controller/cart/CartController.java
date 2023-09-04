@@ -1,9 +1,7 @@
 package com.dessertoasis.demo.controller.cart;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -14,10 +12,14 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.dessertoasis.demo.model.cart.Cart;
+import com.dessertoasis.demo.model.cart.CourseCartDTO;
+import com.dessertoasis.demo.model.cart.ProductCartDTO;
 import com.dessertoasis.demo.model.cart.ReservationCart;
 import com.dessertoasis.demo.model.cart.ReservationCartDTO;
 import com.dessertoasis.demo.model.classroom.Classroom;
+import com.dessertoasis.demo.model.course.Course;
 import com.dessertoasis.demo.model.member.Member;
+import com.dessertoasis.demo.model.product.Product;
 import com.dessertoasis.demo.service.CourseService;
 import com.dessertoasis.demo.service.MemberService;
 import com.dessertoasis.demo.service.ProductService;
@@ -50,50 +52,55 @@ public class CartController {
 	@Autowired
 	private ClassroomService roomService;
 	
-	// 取出會員購物車所有東西
-	@GetMapping("/carts/{memberId}")
-	public Map<String, Object> findAllCartsByMemberId(@PathVariable("memberId") Integer memberId) {
-		
+	// 取出會員之購物車的所有商品
+	@GetMapping("/cart/product/{memberId}")
+	public List<ProductCartDTO> getProductCart(@PathVariable("memberId") Integer memberId) {
 		List<Cart> cartList = cartService.findByMemberId(memberId);
-		
-		if (cartList == null) return null;
-		
-		List<Map<String, Object>> productList = new ArrayList<>();
-		List<Map<String, Object>> courseList = new ArrayList<>();
-		List<Map<String, Object>> reservationCartList = new ArrayList<>();	
+		List<ProductCartDTO> productCart = new ArrayList<>();
 		for (Cart cart : cartList) {
 			if (cart.getCategoryId() == productCategoryId) {
-				Map<String, Object> product = new HashMap<>();
-				product.put("cartId", cart.getId());
-				product.put("product", productService.findProductById(cart.getInterestedId()));
-				product.put("quantity", cart.getProdQuantity());
-				productList.add(product);
-			}else if (cart.getCategoryId() == courseCategoryId) {
-				Map<String, Object> course = new HashMap<>();
-				course.put("cartId", cart.getId());
-				course.put("course", courseService.findById(cart.getInterestedId()));
-				courseList.add(course);
-			}else {
-				Map<String, Object> reservationCart = new HashMap<>();
-				reservationCart.put("cartId", cart.getId());
-				ReservationCartDTO reservation = new ReservationCartDTO(rcService.findById(cart.getInterestedId()));
-				reservationCart.put("reservation", reservation);
-				reservationCartList.add(reservationCart);
+				Product product = productService.findProductById(cart.getInterestedId());
+				ProductCartDTO productCartItem = new ProductCartDTO(cart, product);
+				productCart.add(productCartItem);
 			}
 		}
-		
-		Map<String, Object> cart = new HashMap<>();
-		cart.put("productCart", productList);
-		cart.put("courseCart", courseList);
-		cart.put("reservationCart", reservationCartList);
-		
-		return cart;
+		return productCart;
+	}
+	
+	// 取出會員之購物車的所有課程
+	@GetMapping("/cart/course/{memberId}")
+	public List<CourseCartDTO> getCourseCart(@PathVariable("memberId") Integer memberId) {
+		List<Cart> cartList = cartService.findByMemberId(memberId);
+		List<CourseCartDTO> courseCart = new ArrayList<>();
+		for (Cart cart : cartList) {
+			if (cart.getCategoryId() == courseCategoryId) {
+				Course course = courseService.findById(cart.getInterestedId());
+				CourseCartDTO courseCartItem = new CourseCartDTO(cart, course);
+				courseCart.add(courseCartItem);
+			}
+		}
+		return courseCart;
+	}
+	
+	// 取出會員之購物車的所有教室預約
+	@GetMapping("/cart/reservation/{memberId}")
+	public List<ReservationCartDTO> getReservationCart(@PathVariable("memberId") Integer memberId) {
+		List<Cart> cartList = cartService.findByMemberId(memberId);
+		List<ReservationCartDTO> rsvCart = new ArrayList<>();
+		for (Cart cart : cartList) {
+			if (cart.getCategoryId() == reservationCategoryId) {
+				ReservationCart rc = rcService.findById(cart.getInterestedId());
+				ReservationCartDTO rsvCartItem = new ReservationCartDTO(cart, rc);
+				rsvCart.add(rsvCartItem);
+			}
+		}
+		return rsvCart;
 	}
 	
 	// 加入購物車
-	@PostMapping("/cart")
-	public String addToCart(@RequestBody Cart cart) {
-		Integer memberId = cart.getMemberId();
+	@PostMapping("/cart/{memberId}")
+	public String addToCart(@PathVariable("memberId") Integer memberId, @RequestBody Cart cart) {
+		System.out.println(memberId);
 		Member member = memberService.findByMemberId(memberId);
 		if (member == null) {
 			return "加入購物車失敗，沒有此會員";
@@ -103,10 +110,9 @@ public class CartController {
 		return "加入購物車成功";
 	}
 	
-	// 加入預約購物車
-	@PostMapping("/reservationCart")
-	public ReservationCart addToReservationCart(@RequestBody ReservationCart rc) {
-		Integer roomId = rc.getRoomId();
+	// 加入預約教室購物車
+	@PostMapping("/reservationCart/room/{roomId}")
+	public ReservationCart addToReservationCart(@PathVariable("roomId")Integer roomId, @RequestBody ReservationCart rc) {
 		Classroom room = roomService.findById(roomId);
 		if (room == null) {
 			return null;

@@ -21,9 +21,6 @@ public class Cart {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
 	
-	@Column(name = "memberId", insertable = false, updatable = false)
-	private Integer memberId;
-	
 	@ManyToOne
 	@JoinColumn(name = "memberId")
 	private Member member;
