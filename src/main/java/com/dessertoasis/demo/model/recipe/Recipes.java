@@ -33,10 +33,13 @@ public class Recipes {
 	@JoinColumn(name="memberId", nullable = false)
 	private Member recipeAuthor;
 	
-	
 	//分類Id  OneToMany
 	@OneToMany(mappedBy = "recipe")
 	private List<RecipeCategory> recipeCategories;
+	
+	//食譜步驟
+	@OneToMany(mappedBy = "recipe")
+	private List<RecipeSteps> recipeSteps;
 	
 	//食譜名稱
 	@Column(name = "recipeTitle", nullable=false,columnDefinition = "nvarchar(100)")

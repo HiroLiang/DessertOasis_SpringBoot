@@ -37,7 +37,4 @@ public interface RecipeRepository extends JpaRepository<Recipes, Integer> {
 	 @Query("SELECT r FROM Recipes r JOIN r.recipeCategories rc WHERE rc.category = :category")
 	    List<Recipes> findRecipesByCategory(@Param("category") Category category);
 	
-    List<Recipes> findByRecipeCategoriesCategory(Category category);
-
-
 }

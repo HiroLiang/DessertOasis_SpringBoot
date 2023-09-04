@@ -10,9 +10,6 @@ public class RecipeDTO {
 	//撰寫者ID(連結Member id)
 	private Integer recipeAuthorId;
 	
-	//分類Id
-	private List<RecipeCategory> recipeCategories;
-	
 	//分類Id取其中分類id
 	private List<Integer>recipeCategoryIds;
 	
@@ -40,6 +37,7 @@ public class RecipeDTO {
 	//食譜每月計數器(統計每月熱門食譜)
 	private Integer recipeMonthlyVisitCount;
 
+
 	public Integer getId() {
 		return id;
 	}
@@ -54,14 +52,6 @@ public class RecipeDTO {
 
 	public void setRecipeAuthorId(Integer recipeAuthorId) {
 		this.recipeAuthorId = recipeAuthorId;
-	}
-
-	public List<RecipeCategory> getRecipeCategories() {
-		return recipeCategories;
-	}
-
-	public void setRecipeCategories(List<RecipeCategory> recipeCategories) {
-		this.recipeCategories = recipeCategories;
 	}
 
 	public List<Integer> getRecipeCategoryIds() {

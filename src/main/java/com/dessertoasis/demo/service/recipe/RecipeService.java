@@ -9,7 +9,11 @@ import org.springframework.stereotype.Service;
 
 import com.dessertoasis.demo.model.recipe.Recipes;
 import com.dessertoasis.demo.model.category.Category;
+import com.dessertoasis.demo.model.category.CategoryRepository;
+import com.dessertoasis.demo.model.member.Member;
+import com.dessertoasis.demo.model.member.MemberRepository;
 import com.dessertoasis.demo.model.recipe.RecipeCategory;
+import com.dessertoasis.demo.model.recipe.RecipeCategoryRepository;
 import com.dessertoasis.demo.model.recipe.RecipeDTO;
 import com.dessertoasis.demo.model.recipe.RecipeCarouselDTO;
 import com.dessertoasis.demo.model.recipe.RecipeRepository;
@@ -20,6 +24,12 @@ public class RecipeService {
 
 	@Autowired
 	private RecipeRepository recipeRepo;
+	
+	@Autowired
+	private MemberRepository memberRepo;
+	
+	@Autowired
+	private CategoryRepository cateRepo;
 
 	//利用id查詢
 	public RecipeDTO findById(Integer id) {
@@ -31,10 +41,17 @@ public class RecipeService {
 			rDto.setId(recipe.getId());
 			rDto.setRecipeAuthorId(recipe.getRecipeAuthor().getId());
 			rDto.setRecipeTitle(recipe.getRecipeTitle());
-			rDto.setRecipeCategories(recipe.getRecipeCategories());
+			List<RecipeCategory> recipeCategories = recipe.getRecipeCategories();
+			List<Integer> categoryIds = new ArrayList<>();
+			for (RecipeCategory rc : recipeCategories) {
+                categoryIds.add(rc.getCategory().getId());
+            }
+			rDto.setRecipeCategoryIds(categoryIds);
 			rDto.setPictureURL(recipe.getPictureURL());
 			rDto.setRecipeIntroduction(recipe.getRecipeIntroduction());
 			rDto.setCookingTime(recipe.getCookingTime());
+			rDto.setDifficulty(recipe.getDifficulty());
+			rDto.setRecipeStatus(recipe.getRecipeStatus());
 			
 		return rDto;
 		}
@@ -45,17 +62,6 @@ public class RecipeService {
 	public List<Recipes> findAllRecipes() {
 		List<Recipes> result = recipeRepo.findAll();
 		return result;
-	}
-
-	//刪除
-	public String deleteById(Integer id) {
-		Optional<Recipes> optional = recipeRepo.findById(id);
-
-		if (optional.isPresent()) {
-			recipeRepo.deleteById(id);
-			return "第" + id + "筆刪除成功";
-		}
-		return "查無此筆資料";
 	}
 
 	//新增
@@ -140,8 +146,82 @@ public class RecipeService {
 		}
 		return categoryRecipeDTO;
 	}
+	/*--------------------------------------------食譜建立頁使用service ------------------------------------------------*/
 
+	//新增食譜
+	public Recipes addRecipe(RecipeDTO rDto) {
+		Recipes recipe = new Recipes();
+		recipe.setRecipeTitle(rDto.getRecipeTitle());
+		recipe.setPictureURL(rDto.getPictureURL());
+		recipe.setRecipeIntroduction(rDto.getRecipeIntroduction());
+		recipe.setCookingTime(rDto.getCookingTime());
+		recipe.setDifficulty(rDto.getDifficulty());
+		recipe.setRecipeCreateDate(rDto.getRecipeCreateDate());
+		recipe.setRecipeStatus(rDto.getRecipeStatus());
+		if(rDto.getRecipeAuthorId() != null) {
+			Optional<Member> optional = memberRepo.findById(rDto.getRecipeAuthorId());
+			if(optional.isPresent()) {
+				Member author = optional.get();
+				recipe.setRecipeAuthor(author);
+			}
+		}
+		if(rDto.getRecipeCategoryIds() != null) {
+			ArrayList<RecipeCategory> categories = new ArrayList<>();
+			for (Integer categoryId : rDto.getRecipeCategoryIds()) {
+				Optional<Category> optional = cateRepo.findById(categoryId);
+				if(optional.isPresent()) {
+					Category category = optional.get();
+					RecipeCategory rc = new RecipeCategory();
+					rc.setCategory(category);
+					rc.setRecipe(recipe);
+					
+					categories.add(rc);
+				}
+			}
+			recipe.setRecipeCategories(categories);
+		}
+		recipe.setRecipeSteps(null);
+		return recipeRepo.save(recipe);
+	}
 	
+	//修改食譜
+	public String updateRecipe(Integer id) {
+		Optional<Recipes> optional = recipeRepo.findById(id);
+		
+		if(optional.isPresent()) {
+			Recipes recipe = optional.get();
+			RecipeDTO rDto = new RecipeDTO();
+			rDto.setId(recipe.getId());
+			rDto.setRecipeAuthorId(recipe.getRecipeAuthor().getId());
+			rDto.setRecipeTitle(recipe.getRecipeTitle());
+			List<RecipeCategory> recipeCategories = recipe.getRecipeCategories();
+			List<Integer> categoryIds = new ArrayList<>();
+			for (RecipeCategory rc : recipeCategories) {
+                categoryIds.add(rc.getCategory().getId());
+            }
+			rDto.setRecipeCategoryIds(categoryIds);
+			rDto.setPictureURL(recipe.getPictureURL());
+			rDto.setRecipeIntroduction(recipe.getRecipeIntroduction());
+			rDto.setCookingTime(recipe.getCookingTime());
+			rDto.setDifficulty(recipe.getDifficulty());
+			rDto.setRecipeStatus(recipe.getRecipeStatus());
+			
+			return "修改成功";
+		}
+		return"查無此筆資料";
+	}
+	
+	//刪除
+	public String deleteById(Integer recipeId) {
+		Optional<Recipes> optional = recipeRepo.findById(recipeId);
+
+		if (optional.isPresent()) {
+			recipeRepo.deleteById(recipeId);
+			return "第" + recipeId + "筆刪除成功";
+		}
+		return "查無此筆資料";
+	}
+
 	
 
 }

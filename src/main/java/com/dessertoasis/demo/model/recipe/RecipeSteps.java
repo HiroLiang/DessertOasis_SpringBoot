@@ -1,5 +1,7 @@
 package com.dessertoasis.demo.model.recipe;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -16,11 +18,13 @@ import lombok.Data;
 public class RecipeSteps {
 
 	//食譜步驟id
+	@JsonIgnore
 	@Id @Column(name = "id")
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
 	
 	//食譜id fk
+	@JsonIgnore
 	@ManyToOne
 	@JoinColumn(name = "recipeId",referencedColumnName = "id")
 	private Recipes recipe;

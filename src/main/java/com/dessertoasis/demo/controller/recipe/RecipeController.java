@@ -28,12 +28,12 @@ public class RecipeController {
 	@Autowired
 	private RecipeRepository recipeRepo;
 
-	@PostMapping("/recipe/add")
-	@ResponseBody
-	public String AddRecipe(@RequestBody Recipes recipe) {
-		recipeService.insert(recipe);
-		return "食譜新增成功";
-	}
+//	@PostMapping("/recipe/add")
+//	@ResponseBody
+//	public String AddRecipe(@RequestBody Recipes recipe) {
+//		recipeService.insert(recipe);
+//		return "食譜新增成功";
+//	}
 	
 	
 
@@ -67,12 +67,6 @@ public class RecipeController {
 		}
 		return null;
 	}
-	
-	//透過類別搜尋食譜
-//	@GetMapping("recipe/categoryID")
-//	public List<Recipes> findRecipeByCategoryID(@RequestParam("cid") String categoryID){
-//		return recipeRepo.findRecipeByCategoryID(categoryID);
-//	}
 	
 	//透過難易度搜尋食譜
 	@GetMapping("recipe/difficulty")
@@ -112,7 +106,15 @@ public class RecipeController {
 		return recipeService.find10RecipeByCategory(category);
 	}
 
-	
+	/*--------------------------------------------食譜建立頁使用controller ------------------------------------------------*/
+
+	//新增食譜
+	@PostMapping("/recipe/addrecipe")
+	@ResponseBody
+	public String AddRecipe(@RequestBody RecipeDTO recipe) {
+		recipeService.addRecipe(recipe);
+		return "食譜新增成功";
+	}
 	
 	
 
