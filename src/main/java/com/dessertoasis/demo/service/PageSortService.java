@@ -20,6 +20,7 @@ public class PageSortService {
 
 	@PersistenceContext
 	private EntityManager em;
+	
 
 	public String getPageJson(SortCondition sortCod) throws Exception {
 		CriteriaBuilder cb = em.getCriteriaBuilder();
