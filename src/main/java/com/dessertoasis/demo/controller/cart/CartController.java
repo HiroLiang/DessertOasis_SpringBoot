@@ -100,7 +100,6 @@ public class CartController {
 	// 加入購物車
 	@PostMapping("/cart/{memberId}")
 	public String addToCart(@PathVariable("memberId") Integer memberId, @RequestBody Cart cart) {
-		System.out.println(memberId);
 		Member member = memberService.findByMemberId(memberId);
 		if (member == null) {
 			return "加入購物車失敗，沒有此會員";
