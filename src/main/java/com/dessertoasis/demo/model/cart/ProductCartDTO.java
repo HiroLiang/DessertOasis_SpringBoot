@@ -19,6 +19,10 @@ public class ProductCartDTO {
 	private List<ProductPicture> pictures;
 	private Integer prodQuantity;
 	
+	public ProductCartDTO() {
+		
+	}
+	
 	public ProductCartDTO(Cart cart, Product product) {
 		this.cartId = cart.getId();
 		this.productId = product.getId();

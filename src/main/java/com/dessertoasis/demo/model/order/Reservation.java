@@ -2,6 +2,7 @@ package com.dessertoasis.demo.model.order;
 
 import java.time.LocalDate;
 
+import com.dessertoasis.demo.model.cart.ReservationCartDTO;
 import com.dessertoasis.demo.model.classroom.Classroom;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
@@ -47,5 +48,12 @@ public class Reservation {
 	public Reservation() {
 		
 	}
-
+	
+	public Reservation(ReservationCartDTO rsvDTO) {
+		this.reservationDate = rsvDTO.getReservationDate();
+		this.reservationTime = rsvDTO.getReservationTime();
+		this.detail = rsvDTO.getDetail();
+		this.price = rsvDTO.getPrice();
+		this.classroom = rsvDTO.getClassroom();
+	}
 }

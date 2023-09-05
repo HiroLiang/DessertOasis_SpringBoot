@@ -42,11 +42,11 @@ public class Order {
 	private String prodOrderMark;
 	
 	@OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
-	private List<Reservation> reservationList;
+	private List<Reservation> reservations;
 	
 	@OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
-	private List<ProdOrderItem> prodOrderItemList;
+	private List<ProdOrderItem> prodOrderItems;
 	
 	@OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
-	private List<CourseOrderItem> courseOrderItemList;
+	private List<CourseOrderItem> courseOrderItems;
 }

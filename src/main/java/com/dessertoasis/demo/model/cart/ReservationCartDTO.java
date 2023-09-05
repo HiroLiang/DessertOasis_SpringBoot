@@ -19,6 +19,10 @@ public class ReservationCartDTO {
 	private String detail;
 	private Integer price;
 	
+	public ReservationCartDTO() {
+		
+	}
+	
 	public ReservationCartDTO(Cart cart, ReservationCart rc) {
 		this.cartId = cart.getId();
 		this.reservationCartId = rc.getId();

@@ -19,6 +19,10 @@ public class CourseCartDTO {
 	private String coursePlace;
 	private	List<CoursePicture> pictures;
 	
+	public CourseCartDTO() {
+		
+	}
+	
 	public CourseCartDTO(Cart cart, Course course) {
 		this.cartId = cart.getId();
 		this.courseId = course.getId();
