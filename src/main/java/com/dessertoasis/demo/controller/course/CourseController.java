@@ -16,7 +16,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.dessertoasis.demo.model.course.Course;
+import com.dessertoasis.demo.model.course.CourseDTO;
 import com.dessertoasis.demo.model.course.CourseTeacherDTO;
+import com.dessertoasis.demo.model.product.Product;
 import com.dessertoasis.demo.service.CourseService;
 import com.dessertoasis.demo.service.TeacherService;
 
@@ -35,18 +37,65 @@ public class CourseController {
 	private TeacherService tService;
 	
 	//查詢單筆課程(用課程id)
-	@GetMapping("/{id}")
-	public Course findCourseById(@PathVariable Integer id) {
-		Course course = cService.findById(id);
-		return course;
-	}
+//	@GetMapping("/{id}")
+//	public Course findCourseById(@PathVariable Integer id) {
+//		Course course = cService.findById(id);
+//		return course;
+//	}
+//	
+	@GetMapping("/list")
+    public ResponseEntity<List<Course>> Courses() {
+        List<Course> courses = cService.findAll();
+        return ResponseEntity.ok(courses);
+    }
 	
 	//查詢所有課程
-	@GetMapping("/all")
-	public List<Course> findAllCourse(){
-		List<Course> courses = cService.findAll();
-		return courses;
-	} 
+//	@GetMapping("/all")
+//	public List<Course> findAllCourse(){
+//		List<Course> courses = cService.findAll();
+//		return courses;
+//	} 
+	
+	@GetMapping("/{courseId}")
+	public ResponseEntity<CourseDTO> getCourseDetails(@PathVariable Integer courseId) {
+	    // Logic to retrieve Course and related data
+	    Course course = cService.findById(courseId);
+//	    List<CourseCtag> courseCtags = courseCtagService.findByCourseId(courseId);
+//	    List<CoursePicture> coursePictures = coursePictureService.findByCourseId(courseId);
+
+	    if (course == null) {
+	        return ResponseEntity.notFound().build();
+	    }
+
+	    // Create a CourseDTO object and set its properties
+	    CourseDTO courseDTO = new CourseDTO();
+	    courseDTO.setCourseId(course.getId());
+	    courseDTO.setTeacherName(course.getTeacher().getTeacherName());
+	    courseDTO.setRecipeIntroduction(course.getRecipes().getRecipeIntroduction());
+	    courseDTO.setCategoryName(course.getCategory().getCategoryName());
+	    courseDTO.setCourseName(course.getCourseName());
+	    courseDTO.setCourseIntroduction(course.getCourseIntroduction());
+	    courseDTO.setCourseFeature(course.getCourseFeature());
+	    courseDTO.setCourseDestination(course.getCourseDestination());
+	    courseDTO.setServiceTarget(course.getServiceTarget());
+	    courseDTO.setCloseDate(course.getCloseDate());
+	    courseDTO.setUpdateDate(course.getUpdateDate());
+	    courseDTO.setCoursePlace(course.getCoursePlace());
+	    courseDTO.setCourseStatus(course.getCourseStatus());
+	    courseDTO.setRemainPlaces(course.getRemainPlaces());
+	    courseDTO.setCoursePrice(course.getCoursePrice());
+//	    courseDTO.setTag(course.)
+	    courseDTO.setCoursePictureList(course.getCoursePictureList());
+	    
+	    // Set other properties based on your data
+
+	    // Set the lists of related data
+//	    courseDTO.setCourseList(courseCtags);
+//	    courseDTO.setCoursePictureList(coursePictures);
+
+	    // Return ResponseEntity<CourseDTO> with HTTP status and CourseDTO object
+	    return ResponseEntity.ok(courseDTO);
+	}
 	
 	//新增單筆課程
 //	@PostMapping("/course/add")

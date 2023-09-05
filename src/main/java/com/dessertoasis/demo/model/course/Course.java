@@ -100,6 +100,7 @@ public class Course {
 	@Column(name="coursePrice",columnDefinition = "int")
 	private Integer coursePrice;
 	
+	@JsonIgnore
 	@OneToMany(mappedBy="course",cascade = CascadeType.ALL)
 	private List<CourseCtag> courseList;
 	
@@ -107,6 +108,7 @@ public class Course {
 //    @JoinTable(name="course_coursetag", joinColumns = {@JoinColumn(name="course_id")}, inverseJoinColumns = {@JoinColumn(name="coursetag_id")})
 //    private List<CourseCtag> courseTags;
 	
+	@JsonIgnore
 	@OneToMany(mappedBy = "course")
 	private List<CoursePicture> coursePictureList;
 	

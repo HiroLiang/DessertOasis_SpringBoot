@@ -64,6 +64,7 @@ public class Teacher {
 	private List<Course> courseList;
 	
 	//一個老師有多個專長
+	@JsonIgnore
 	@OneToMany(mappedBy="teacher", cascade = CascadeType.ALL)
 	private List<TeacherExpertise> expertiseList;
 
