@@ -3,6 +3,7 @@ package com.dessertoasis.demo.controller;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -14,6 +15,9 @@ import org.springframework.web.bind.annotation.RestController;
 import com.dessertoasis.demo.model.member.Member;
 import com.dessertoasis.demo.model.member.MemberState;
 import com.dessertoasis.demo.service.MemberService;
+
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 
 @RestController
 @RequestMapping("/member")
@@ -32,6 +36,27 @@ public class MemberController {
 	    }
 	}
 
+	
+	
+	 @GetMapping("/memberInfo")
+	    public ResponseEntity<Member> getMemberInfo(HttpServletRequest request) {
+	        // 假設你已經在登入時將會員資訊存儲在Session中，你可以通過Session獲取會員資訊
+	        HttpSession session = request.getSession();
+	        Member loggedInMember = (Member) session.getAttribute("loggedInMember");
+
+	        if (loggedInMember != null) {
+	            // 如果成功獲取到會員資訊，返回該會員的JSON數據
+	            return new ResponseEntity<>(loggedInMember, HttpStatus.OK);
+	        } else {
+	            // 如果未獲取到會員資訊，返回404 Not Found或其他適當的錯誤狀態碼
+	            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+	        }
+	    }
+	
+	 
+	 
+	 
+	
 	 @PutMapping("/changeStatus")
 	    public ResponseEntity<String> changeMemberStatus(@RequestBody Map<String, String> requestData) {
 	        try {
