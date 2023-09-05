@@ -49,11 +49,12 @@ public class Reservation {
 		
 	}
 	
-	public Reservation(ReservationCartDTO rsvDTO) {
+	public Reservation(ReservationCartDTO rsvDTO, Order order) {
 		this.reservationDate = rsvDTO.getReservationDate();
 		this.reservationTime = rsvDTO.getReservationTime();
 		this.detail = rsvDTO.getDetail();
 		this.price = rsvDTO.getPrice();
 		this.classroom = rsvDTO.getClassroom();
+		this.order = order;
 	}
 }
