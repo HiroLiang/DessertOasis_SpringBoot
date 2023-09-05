@@ -1,4 +1,4 @@
-package com.dessertoasis.demo.controller;
+package com.dessertoasis.demo.controller.course;
 
 import java.util.List;
 

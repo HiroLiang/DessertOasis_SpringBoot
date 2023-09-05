@@ -6,5 +6,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface TeacherRepository extends JpaRepository<Teacher, Integer>{
 
-//	Optional<Teacher> findById(Integer teacherId);
+	Optional<Teacher> findById(Integer teacherId);
 }

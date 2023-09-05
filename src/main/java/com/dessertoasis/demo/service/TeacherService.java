@@ -41,6 +41,13 @@ public class TeacherService {
 		Optional<Teacher> data = tRepo.findById(id);
 		return data;
 	}
+	
+	public Teacher getTeacherById(Integer teacherId) {
+         Optional<Teacher> teacherInfo = tRepo.findById(teacherId);
+          Teacher result = teacherInfo.get();
+          return result;
+        
+    }
 
 	//動態條件搜索
 	public List<TeacherDemo> getTeacherPage(SortCondition sortCod) {
