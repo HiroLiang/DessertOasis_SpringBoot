@@ -52,9 +52,10 @@ public class Teacher {
 	@Column(name = "memberId", nullable = false, insertable = false, updatable = false)
 	private Integer memberId;
 	
-	//一個老師有一個會員id
+	//一個老師有一個會員id，用JsonIgnore避免無窮迴圈
 	@OneToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "memberId")
+	@JsonIgnore
 	private Member member;
 
 	// 一個教師有多堂課(一對多)
