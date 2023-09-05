@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.dessertoasis.demo.model.member.Member;
+import com.dessertoasis.demo.model.member.MemberAccess;
 import com.dessertoasis.demo.model.member.MemberState;
 import com.dessertoasis.demo.service.MemberService;
 
@@ -35,7 +36,18 @@ public class MemberController {
 	        return ResponseEntity.notFound().build();
 	    }
 	}
-
+	
+	
+	@GetMapping("/details/{id}/access")
+	public ResponseEntity<MemberAccess> getMemberaccessById(@PathVariable Integer id) {
+	    Member member = mService.findByMemberId(id);
+	    if (member != null) {
+	    	MemberAccess access =member.getAccess();
+	        return ResponseEntity.ok(access);
+	    } else {
+	        return ResponseEntity.notFound().build();
+	    }
+	}
 	
 	
 	 @GetMapping("/memberInfo")
