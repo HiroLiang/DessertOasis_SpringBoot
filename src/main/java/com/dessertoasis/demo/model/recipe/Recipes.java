@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
+import com.dessertoasis.demo.model.course.Course;
 import com.dessertoasis.demo.model.member.Member;
 
 import jakarta.persistence.Column;
@@ -74,6 +75,9 @@ public class Recipes {
 	//食譜每月計數器(統計每月熱門食譜)
 	@Column(name = "recipeMonthlyVisitCount",nullable=false,columnDefinition = "int")
 	private Integer recipeMonthlyVisitCount;
+	
+	@OneToMany(mappedBy="recipes")
+	private List<Course> course;
 	
 	public Recipes() {
 	}

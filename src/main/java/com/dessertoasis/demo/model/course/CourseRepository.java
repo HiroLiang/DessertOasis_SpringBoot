@@ -1,9 +1,15 @@
 package com.dessertoasis.demo.model.course;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+
+import com.dessertoasis.demo.model.product.Product;
 
 public interface CourseRepository extends JpaRepository<Course, Integer> {
 
+	Page<Course> findAll(Pageable pageable);
+	
 //	public List<Course> findByTeacher(Teacher teacher);
 	
 //	@Query("SELECT NEW com.dessertoasis.demo.model.course.CourseTeacherDTO(c.courseName, t.teacherName) FROM Course c JOIN c.teacher t")

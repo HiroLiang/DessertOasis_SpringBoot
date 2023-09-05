@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -24,6 +25,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.transaction.Transactional;
 
 @RestController
+@RequestMapping("/course")
 public class CourseController {
 
 	@Autowired
@@ -33,14 +35,14 @@ public class CourseController {
 	private TeacherService tService;
 	
 	//查詢單筆課程(用課程id)
-	@GetMapping("/course/{id}")
+	@GetMapping("/{id}")
 	public Course findCourseById(@PathVariable Integer id) {
 		Course course = cService.findById(id);
 		return course;
 	}
 	
 	//查詢所有課程
-	@GetMapping("/course/all")
+	@GetMapping("/all")
 	public List<Course> findAllCourse(){
 		List<Course> courses = cService.findAll();
 		return courses;
@@ -86,7 +88,7 @@ public class CourseController {
 //	}
 	
 	//刪除單筆課程
-	@DeleteMapping("/course/{id}")
+	@DeleteMapping("/{id}")
 	public String deleteCourseById(@PathVariable Integer id) {
 		boolean isDeleted = cService.deleteById(id);
 		

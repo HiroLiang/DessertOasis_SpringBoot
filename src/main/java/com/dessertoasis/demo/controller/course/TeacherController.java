@@ -16,6 +16,7 @@ import com.dessertoasis.demo.model.course.Course;
 import com.dessertoasis.demo.model.course.Teacher;
 import com.dessertoasis.demo.model.course.TeacherDemo;
 import com.dessertoasis.demo.model.course.TeacherRepository;
+import com.dessertoasis.demo.model.member.Member;
 import com.dessertoasis.demo.model.sort.SortCondition;
 import com.dessertoasis.demo.service.TeacherService;
 import com.fasterxml.jackson.annotation.JsonRawValue;
@@ -23,6 +24,7 @@ import com.fasterxml.jackson.annotation.JsonRawValue;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 
 @RestController
 public class TeacherController {
@@ -41,9 +43,13 @@ public class TeacherController {
 	}
 	
 	//查詢老師個人資料by id
-	@GetMapping("/teacher/{id}")
-    public Teacher getTeacherById(@PathVariable Integer id) {
-		Teacher result = tService.getTeacherById(id);
+	@GetMapping("/teacher/{teacherId}")
+    public Teacher getTeacherById(@PathVariable Integer teacherId,HttpSession session) {
+		Member member = (Member)session.getAttribute("loggedInMember");
+		
+//		if(member.getAccess())
+		
+		Teacher result = tService.getTeacherById(teacherId);
 		return result;
 	}
 

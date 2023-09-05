@@ -41,7 +41,8 @@ public class Course {
 	private Teacher teacher;
 	
 	//食譜ID FK(連接食譜ID)
-	@OneToOne
+	@ManyToOne
+	@JoinColumn(name = "recipesId")
 	private Recipes recipes;
 	
 	//分類ID FK(連接分類ID)
