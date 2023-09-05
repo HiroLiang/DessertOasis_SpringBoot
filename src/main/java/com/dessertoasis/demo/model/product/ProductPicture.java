@@ -8,8 +8,9 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import lombok.Data;
 
-//@Data	
+@Data	
 @Entity 
 @Table(name = "prodPicture")
 
@@ -29,8 +30,8 @@ public class ProductPicture {
 	
 	
 	
-	public ProductPicture() {
-	}
+//	public ProductPicture() {
+//	}
 //	
 //	
 //
@@ -92,39 +93,39 @@ public class ProductPicture {
 
 
 
-	public Integer getId() {
-		return id;
-	}
-
-
-
-	public void setId(Integer id) {
-		this.id = id;
-	}
-
-
-
-	public Product getProduct() {
-		return product;
-	}
-
-
-
-	public void setProduct(Product product) {
-		this.product = product;
-	}
-
-
-
-	public String getPictureURL() {
-		return pictureURL;
-	}
-
-
-
-	public void setPictureURL(String pictureURL) {
-		this.pictureURL = pictureURL;
-	}
+//	public Integer getId() {
+//		return id;
+//	}
+//
+//
+//
+//	public void setId(Integer id) {
+//		this.id = id;
+//	}
+//
+//
+//
+//	public Product getProduct() {
+//		return product;
+//	}
+//
+//
+//
+//	public void setProduct(Product product) {
+//		this.product = product;
+//	}
+//
+//
+//
+//	public String getPictureURL() {
+//		return pictureURL;
+//	}
+//
+//
+//
+//	public void setPictureURL(String pictureURL) {
+//		this.pictureURL = pictureURL;
+//	}
 
 
 	

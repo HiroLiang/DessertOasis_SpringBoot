@@ -2,6 +2,7 @@ package com.dessertoasis.demo.model.order;
 
 import java.math.BigDecimal;
 
+import com.dessertoasis.demo.model.cart.ProductCartDTO;
 import com.dessertoasis.demo.model.product.Product;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
@@ -41,5 +42,12 @@ public class ProdOrderItem {
 	
 	public ProdOrderItem() {
 		
+	}
+	
+	public ProdOrderItem(ProductCartDTO cartItem, Product product, Order order) {
+		this.product = product;
+		this.price = cartItem.getProdPrice();
+		this.quantity = cartItem.getProdQuantity();
+		this.order = order;
 	}
 }
