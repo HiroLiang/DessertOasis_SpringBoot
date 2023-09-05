@@ -3,6 +3,7 @@ package com.dessertoasis.demo.controller.recipe;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.dessertoasis.demo.model.recipe.Recipes;
+import com.dessertoasis.demo.model.sort.SortCondition;
 import com.dessertoasis.demo.service.recipe.RecipeService;
 import com.dessertoasis.demo.model.category.Category;
 import com.dessertoasis.demo.model.recipe.RecipeCarouselDTO;
@@ -116,6 +118,21 @@ public class RecipeController {
 		return "食譜新增成功";
 	}
 	
+	@GetMapping("/recipe/search")
+	public ResponseEntity<List<Recipes>> searchRecipes(@RequestParam(required = false) String keyword,
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "10") int pageSize){
+		
+		SortCondition sortCondition = new SortCondition();
+		sortCondition.setSortBy(keyword);
+		sortCondition.setPage(page);
+		sortCondition.setPageSize(pageSize);
+		
+		List<Recipes> resultList = recipeService.getRecipePage(sortCondition);
+		
+		return ResponseEntity.ok(resultList);
+		
+	}
 	
 
 }

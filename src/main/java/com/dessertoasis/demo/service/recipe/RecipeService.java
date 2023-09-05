@@ -8,6 +8,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.dessertoasis.demo.model.recipe.Recipes;
+import com.dessertoasis.demo.model.sort.DateRules;
+import com.dessertoasis.demo.model.sort.SearchRules;
+import com.dessertoasis.demo.model.sort.SortCondition;
+
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.TypedQuery;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Join;
+import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Root;
+
 import com.dessertoasis.demo.model.category.Category;
 import com.dessertoasis.demo.model.category.CategoryRepository;
 import com.dessertoasis.demo.model.member.Member;
@@ -221,6 +234,33 @@ public class RecipeService {
 		}
 		return "查無此筆資料";
 	}
+	/*--------------------------------------------測試Criteria ------------------------------------------------*/
+	@PersistenceContext
+	private EntityManager em;
+	
+	//動態條件搜索
+	public List<Recipes> getRecipePage(SortCondition sortCod){
+		CriteriaBuilder cb = em.getCriteriaBuilder();
+		// 決定select table
+		CriteriaQuery<Recipes> cq = cb.createQuery(Recipes.class);
+		Root<Recipes> root = cq.from(Recipes.class);
+		Predicate[] predicates = new Predicate[20];
+		int counter = 0;
+		if(sortCod.getSortBy() != null) {
+			predicates[counter] = cb.like(root.get("recipeTitle"), "%" + sortCod.getSortBy() + "%");
+			counter++;
+		}
+		CriteriaQuery<Recipes> select = cq.select(root).where(predicates);
+		TypedQuery<Recipes> query = em.createQuery(select);
+		query.setFirstResult((sortCod.getPage()-1)*sortCod.getPageSize());
+		query.setMaxResults(sortCod.getPageSize());
+		List<Recipes> list = query.getResultList();
+		System.out.println(list);
+		
+		return list;
+
+	}
+	
 
 	
 
