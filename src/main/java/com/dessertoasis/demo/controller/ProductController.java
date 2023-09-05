@@ -35,6 +35,7 @@ public class ProductController {
         return ResponseEntity.ok(products);
     }
 
+
     @GetMapping("/details/{id}")
     public ResponseEntity<Product> productDetails(@PathVariable Integer id) {
         Product product = pService.findProductById(id);
@@ -70,7 +71,8 @@ public class ProductController {
     
     @GetMapping("/search")
     public ResponseEntity<Page<Product>> searchProducts(
-        @RequestBody ProdSearchDTO criteria,
+    		ProdSearchDTO criteria,
+        //@RequestBody ProdSearchDTO criteria,
         @PageableDefault(size = 20) Pageable pageable,
         @RequestParam(value = "sortBy", required = false) String sortBy,
         @RequestParam(value = "pageSize", required = false) Integer pageSize
@@ -89,10 +91,10 @@ public class ProductController {
                 }
             }
         }
-
+        int adjustedPage = pageable.getPageNumber() - 1;
         int effectivePageSize = pageSize != null ? pageSize : 20;
 
-        Page<Product> products = pService.searchProducts(criteria, PageRequest.of(pageable.getPageNumber(), effectivePageSize, sort));
+        Page<Product> products = pService.searchProducts(criteria, PageRequest.of(adjustedPage, effectivePageSize, sort));
         return ResponseEntity.ok(products);
     }
     

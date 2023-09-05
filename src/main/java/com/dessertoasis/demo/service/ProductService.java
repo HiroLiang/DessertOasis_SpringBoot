@@ -29,6 +29,7 @@ public class ProductService {
     public List<Product> findAllProduct() {
         return prodRepo.findAll();
     }
+    
 
     public void insert(Product product) {
     	prodRepo.save(product);

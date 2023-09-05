@@ -6,22 +6,24 @@ import java.util.List;
 import com.dessertoasis.demo.model.category.Category;
 import com.dessertoasis.demo.model.order.ProdOrderItem;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.MapsId;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import lombok.Data;
 
-//@Data	
+@Data	
 @Entity 
 @Table(name = "product")
 
@@ -35,11 +37,15 @@ public class Product {
 //	@Column(name = "categoryId")
 //	private Integer categoryId;
 	
-	@ManyToOne
-	@MapsId("id")
-    @JoinColumn(name = "categoryId")
+	@ManyToOne(fetch = FetchType.EAGER)
+	//@MapsId("id")
+    @JoinColumn(name = "categoryId", referencedColumnName = "id")
+	//@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
+	//@JsonProperty("categoryId")
 	@JsonIgnoreProperties({"products"})
+	
     private Category category;
+	//private Integer categoryId;
 	
 	
 	@Column(name = "prodName",columnDefinition = "nvarchar(100)")
@@ -83,8 +89,8 @@ public class Product {
 	 @OneToMany(mappedBy = "product")
 	 private List<ProdOrderItem> prodOrderItems;
 	
-	public Product() {
-	}
+//	public Product() {
+//	}
 //	
 //	
 //
@@ -145,14 +151,14 @@ public class Product {
 //	}
 
 
-	public Integer getId() {
-		return id;
-	}
-
-
-	public void setId(Integer id) {
-		this.id = id;
-	}
+//	public Integer getId() {
+//		return id;
+//	}
+//
+//
+//	public void setId(Integer id) {
+//		this.id = id;
+//	}
 
 
 //	public Integer getCategoryId() {
@@ -165,114 +171,137 @@ public class Product {
 //	}
 
 
-	public String getProdName() {
-		return prodName;
-	}
+//	public String getProdName() {
+//		return prodName;
+//	}
+//
+//
+//	public void setProdName(String prodName) {
+//		this.prodName = prodName;
+//	}
+//
+//
+//	public String getProdDescription() {
+//		return prodDescription;
+//	}
+//
+//
+//	public void setProdDescription(String prodDescription) {
+//		this.prodDescription = prodDescription;
+//	}
+//
+//
+//	public Integer getProdStock() {
+//		return prodStock;
+//	}
+//
+//
+//	public void setProdStock(Integer prodStock) {
+//		this.prodStock = prodStock;
+//	}
+//
+//
+//	public BigDecimal getProdPrice() {
+//		return prodPrice;
+//	}
+//
+//
+//	public void setProdPrice(BigDecimal prodPrice) {
+//		this.prodPrice = prodPrice;
+//	}
+//
+//
+//	public Integer getProdPurchase() {
+//		return prodPurchase;
+//	}
+//
+//
+//	public void setProdPurchase(Integer prodPurchase) {
+//		this.prodPurchase = prodPurchase;
+//	}
+//
+//
+//	public Timestamp getUpdateTime() {
+//		return updateTime;
+//	}
+//
+//
+//	public void setUpdateTime(Timestamp updateTime) {
+//		this.updateTime = updateTime;
+//	}
+//
+//
+//	public Integer getSaleAfterUpdate() {
+//		return saleAfterUpdate;
+//	}
+//
+//
+//	public void setSaleAfterUpdate(Integer saleAfterUpdate) {
+//		this.saleAfterUpdate = saleAfterUpdate;
+//	}
+//
+//
+//	public String getProductStatus() {
+//		return productStatus;
+//	}
+//
+//
+//	public void setProductStatus(String productStatus) {
+//		this.productStatus = productStatus;
+//	}
+//
+//
+//	public String getProdRemark() {
+//		return prodRemark;
+//	}
+//
+//
+//	public void setProdRemark(String prodRemark) {
+//		this.prodRemark = prodRemark;
+//	}
+//	
+//	public Category getCategory() {
+//		return category;
+//	}
+//
+//
+//	public void setCategory(Category category) {
+//		this.category = category;
+//	}
+//
+//
+//	
+////	public Integer getCategoryId() {
+////		return categoryId;
+////	}
+////
+////
+////	public void setCategoryId(Integer categoryId) {
+////		this.categoryId = categoryId;
+////	}
+//
+//	public List<ProductPicture> getPictures() {
+//		return pictures;
+//	}
+//
+//
+//	public void setPictures(List<ProductPicture> pictures) {
+//		this.pictures = pictures;
+//	}
+//
+//
+//	public List<ProdOrderItem> getProdOrderItems() {
+//		return prodOrderItems;
+//	}
+//
+//
+//	public void setProdOrderItems(List<ProdOrderItem> prodOrderItems) {
+//		this.prodOrderItems = prodOrderItems;
+//	}
 
 
-	public void setProdName(String prodName) {
-		this.prodName = prodName;
-	}
-
-
-	public String getProdDescription() {
-		return prodDescription;
-	}
-
-
-	public void setProdDescription(String prodDescription) {
-		this.prodDescription = prodDescription;
-	}
-
-
-	public Integer getProdStock() {
-		return prodStock;
-	}
-
-
-	public void setProdStock(Integer prodStock) {
-		this.prodStock = prodStock;
-	}
-
-
-	public BigDecimal getProdPrice() {
-		return prodPrice;
-	}
-
-
-	public void setProdPrice(BigDecimal prodPrice) {
-		this.prodPrice = prodPrice;
-	}
-
-
-	public Integer getProdPurchase() {
-		return prodPurchase;
-	}
-
-
-	public void setProdPurchase(Integer prodPurchase) {
-		this.prodPurchase = prodPurchase;
-	}
-
-
-	public Timestamp getUpdateTime() {
-		return updateTime;
-	}
-
-
-	public void setUpdateTime(Timestamp updateTime) {
-		this.updateTime = updateTime;
-	}
-
-
-	public Integer getSaleAfterUpdate() {
-		return saleAfterUpdate;
-	}
-
-
-	public void setSaleAfterUpdate(Integer saleAfterUpdate) {
-		this.saleAfterUpdate = saleAfterUpdate;
-	}
-
-
-	public String getProductStatus() {
-		return productStatus;
-	}
-
-
-	public void setProductStatus(String productStatus) {
-		this.productStatus = productStatus;
-	}
-
-
-	public String getProdRemark() {
-		return prodRemark;
-	}
-
-
-	public void setProdRemark(String prodRemark) {
-		this.prodRemark = prodRemark;
-	}
-
-
-	public List<ProductPicture> getPictures() {
-		return pictures;
-	}
-
-
-	public void setPictures(List<ProductPicture> pictures) {
-		this.pictures = pictures;
-	}
-
-
-	public List<ProdOrderItem> getProdOrderItems() {
-		return prodOrderItems;
-	}
-
-
-	public void setProdOrderItems(List<ProdOrderItem> prodOrderItems) {
-		this.prodOrderItems = prodOrderItems;
-	}
+	
+	
 
 	
 
