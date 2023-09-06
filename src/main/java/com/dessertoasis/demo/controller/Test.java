@@ -20,6 +20,7 @@ public class Test {
 		String name = (String) session.getAttribute("name");
 		System.out.println(name);
 		ImageUploadUtil util = new ImageUploadUtil();
+
 		return new ResponseEntity<>("Hello world", HttpStatus.CREATED);
 	}
 }

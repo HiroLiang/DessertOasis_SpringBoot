@@ -1,4 +1,4 @@
-package com.dessertoasis.demo.service;
+package com.dessertoasis.demo.service.course;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -91,11 +91,5 @@ public class CourseService {
 //        return cRepo.findByTeacher(teacher);
 //    }
 	
-//	public List<CourseTeacherDTO> getAllCoursesWithTeacherNames() {
-//        return cRepo.findAllCoursesWithTeacherNames();
-//    }
-	
-//	public List<CourseTeacherDTO> getAllCoursesWithTeacherInfo() {
-//        return cRepo.findAllCoursesWithTeacherInfo();
-//    }
+
 }

@@ -1,4 +1,4 @@
-package com.dessertoasis.demo.service;
+package com.dessertoasis.demo.service.course;
 
 import java.beans.BeanInfo;
 import java.beans.IntrospectionException;
@@ -19,6 +19,7 @@ import com.dessertoasis.demo.model.sort.DateRules;
 import com.dessertoasis.demo.model.sort.SearchRules;
 import com.dessertoasis.demo.model.sort.SortCondition;
 import com.dessertoasis.demo.model.sort.SortCondition.SortWay;
+import com.dessertoasis.demo.service.MemberService;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
