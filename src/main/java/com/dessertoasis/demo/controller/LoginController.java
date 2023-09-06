@@ -51,6 +51,8 @@ public class LoginController {
 		             cookie.setSecure(false);
 		             cookie.setDomain("localhost");
 		             response.addCookie(cookie);
+		         }else if(access.equals(MemberAccess.TEACHER)) {
+		        	 
 		         }
 		    	 
 		        return "Y";
@@ -74,14 +76,7 @@ public class LoginController {
 		}else {
 			return "未登入管理員";
 		}
-		
-		
-		
 	}
-	
-	
-	
-	
 }
 
 
