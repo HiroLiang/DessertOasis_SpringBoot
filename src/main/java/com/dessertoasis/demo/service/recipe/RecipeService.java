@@ -166,29 +166,10 @@ public class RecipeService {
 	/*--------------------------------------------食譜建立頁使用service ------------------------------------------------*/
 
 	//新增食譜
-	public Boolean addRecipe(MultipartFile mainImg,List<MultipartFile> stepImgs,Integer id, Recipes recipe) {
+	public Boolean addRecipe(Integer id, Recipes recipe) {
 		Optional<Member> optional = memberRepo.findById(id);
 		if(optional.isPresent()) {
-			Member member = optional.get();
-			recipe.setRecipeAuthor(member);
-			if(mainImg != null && !mainImg.isEmpty()) {
-				ImageUploadUtil util = new ImageUploadUtil();
-				String mainPic = util.savePicture(mainImg, id, "recipe",(recipe.getId()+"_"+recipe.getRecipeTitle()));
-				recipe.setPictureURL(mainPic);
-			}
-			List<RecipeSteps> recipeSteps = new ArrayList<>();
-			if(stepImgs != null && !stepImgs.isEmpty()) {
-				for(int i = 0 ; i<recipeSteps.size();i++) {
-					MultipartFile stepImg = stepImgs.get(i);
-					ImageUploadUtil util = new ImageUploadUtil();
-//					String stepPic = util.savePicture(stepImg, id, "recipe",recipe.getId());
-
-
-				}
-			}
-			
-			
-			
+						
 			recipeRepo.save(recipe);
 			return true;
 		}

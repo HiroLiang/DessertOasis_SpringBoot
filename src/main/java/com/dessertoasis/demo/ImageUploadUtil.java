@@ -3,10 +3,8 @@ package com.dessertoasis.demo;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Properties;
 
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
@@ -15,7 +13,8 @@ import org.springframework.web.multipart.MultipartFile;
 @Component
 public class ImageUploadUtil {
 	//請將上傳圖檔路徑請改為自己裝置上的路徑, 由於用方法封裝起來tomcat會塞入預設字串導致抓不到正確路徑,別人的路徑先註解掉複製改為自己的
-	private static final String userRoot = "C:\\Users\\iSpan\\Documents\\dessertoasis-vue\\public\\images";
+//	private static final String userRoot = "C:\\Users\\iSpan\\Documents\\dessertoasis-vue\\public\\images";
+	private static final String userRoot ="D:/dessertoasis-vue/public/images";
 	
 	public String savePicture(MultipartFile file, Integer memberId, String folderName,String projectName) {
 		if(!file.isEmpty()) {
