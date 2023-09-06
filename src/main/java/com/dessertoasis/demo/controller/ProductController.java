@@ -68,8 +68,14 @@ public class ProductController {
         pService.deleteProductById(id);
         return ResponseEntity.noContent().build();
     }
+  
+//    @PostMapping("/criteria")
+//    public sendSort(@RequestBody ProdSearchDTO pDTO) {
+//    	pDTO.getProdName();
+//    }
     
     @GetMapping("/search")
+    
     public ResponseEntity<Page<Product>> searchProducts(
             ProdSearchDTO criteria,
             @PageableDefault(size = 20) Pageable pageable,
