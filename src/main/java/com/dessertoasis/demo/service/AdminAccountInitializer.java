@@ -43,11 +43,25 @@ public class AdminAccountInitializer {
     		 Member existingAdmin = mRepo.findByAccount("admin");
     		 Member existingTeacher = mRepo.findByAccount("teacher");
     		 Member existingInactive = mRepo.findByAccount("inact");
+    		 Member existingBanned = mRepo.findByAccount("banned");
+    		 
+	    		// 如果不存在，創建一個註銷帳號
+	 		 	if(existingBanned==null) {
+	 		 		Member banned = new Member();
+	 		 		banned.setFullName("註銷帳號");
+	 		 		banned.setAccount("banned");
+	 		 		banned.setMemberStatus(MemberState.BANDED);
+	 		 		banned.setAccess(MemberAccess.USER);
+	 		 		String password = "banned";
+	 		 		banned.setPasswords(passwordEncoder.encode(password));
+	 		 		banned.setSignDate(new Date());
+	 		 		mRepo.save(banned);
+	 		 	}
     		 
     		 	// 如果不存在，創建一個不活耀帳戶帳號
     		 	if(existingInactive==null) {
 	 		 		Member inactive = new Member();
-	 		 		inactive.setFullName("不活耀帳戶");
+	 		 		inactive.setFullName("未啟用帳號");
 	 		 		inactive.setAccount("inact");
 	 		 		inactive.setMemberStatus(MemberState.INACTIVE);
 	 		 		inactive.setAccess(MemberAccess.USER);
