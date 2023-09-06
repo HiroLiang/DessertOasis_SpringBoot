@@ -10,7 +10,9 @@ import org.springframework.data.repository.query.Param;
 public interface ReservationRepository extends JpaRepository<Reservation, Integer> {
 	
 	@Query("from Reservation where classroom.id = :roomId and reservationDate between :startDate and :endDate order by reservationTime")
-	public List<Reservation> find(@Param("roomId") Integer roomId, @Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate);
+	public List<Reservation> findBetweenDates(@Param("roomId") Integer roomId,
+			                                  @Param("startDate") LocalDate startDate,
+			                                  @Param("endDate") LocalDate endDate);
 	
 	@Query("from Reservation where classroom.id = :roomId and reservationDate = :reservationDate and reservationTime = :reservationTime")
 	public Reservation findByDateAndTime(@Param("roomId") Integer roomId,

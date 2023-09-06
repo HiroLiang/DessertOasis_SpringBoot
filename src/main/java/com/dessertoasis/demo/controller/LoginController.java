@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.dessertoasis.demo.model.member.Member;
 import com.dessertoasis.demo.model.member.MemberAccess;
+import com.dessertoasis.demo.model.member.MemberState;
 import com.dessertoasis.demo.service.MemberService;
 
 import jakarta.servlet.http.Cookie;
@@ -31,6 +32,7 @@ public class LoginController {
 
 		    if (memberLogin != null) {
 		    	session.setAttribute("loggedInMember", memberLogin);
+		    	MemberState state = memberLogin.getMemberStatus();
 		    	MemberAccess access = memberLogin.getAccess();
 		    	
 		    		    	
@@ -38,23 +40,39 @@ public class LoginController {
 				    	// isLogin=1，管理員
 				    	// isLogin=2，一般使用者
 				    	// isLogin=3，老師
-		    	 if (access == MemberAccess.ADMIN) {
-		             Cookie cookie = new Cookie("isLogin", "1");
+		    	 if (access == MemberAccess.ADMIN ) {
+		             Cookie cookie = new Cookie("isLogin", "10");
 		             cookie.setMaxAge(3600); //cookie存1小時
 		             cookie.setPath("/");
 		             response.addCookie(cookie);
 		             
-		         } else if (access == MemberAccess.USER) {
-		             Cookie cookie = new Cookie("isLogin", "2");
+		             
+		         } else if (access == MemberAccess.USER && state ==MemberState.ACTIVE) {
+		             Cookie cookie = new Cookie("isLogin", "20");
 		             cookie.setMaxAge(3600); 
 		             cookie.setPath("/");
 		             response.addCookie(cookie);
+		             
+		             if(state == MemberState.INACTIVE) {
+		            	 Cookie cookieInact = new Cookie("isLogin", "21");
+		            	 cookieInact.setMaxAge(3600); 
+		            	 cookieInact.setPath("/");
+			             response.addCookie(cookieInact);
+			             
+		             }else if(state == MemberState.BANDED) {
+		            	 Cookie cookieBan = new Cookie("isLogin", "22");
+		            	 cookieBan.setMaxAge(3600); 
+		            	 cookieBan.setPath("/");
+			             response.addCookie(cookieBan);
+		             }
+		             
 		         } else if (access == MemberAccess.TEACHER) {
-		        	 Cookie cookie = new Cookie("isLogin", "3");
+		        	 Cookie cookie = new Cookie("isLogin", "30");
 		             cookie.setMaxAge(3600); 
 		             cookie.setPath("/");
 		             response.addCookie(cookie);
-		         }
+		             
+		         } 
 		    	 
 		        return "Y";
 		    }
@@ -75,6 +93,7 @@ public class LoginController {
 	    return "redirect:/"; // 
 	}
 
+
 //	@GetMapping("/getcookie")
 //	public String getCookieValue(@CookieValue(name = "adminLogin", defaultValue = "") String adminLoginCookie) {
 //		if("1".equals(adminLoginCookie)) {
@@ -87,12 +106,6 @@ public class LoginController {
 		
 		
 	}
-	
-	
-	
-	
-
-
 
 
 //↓↓↓↓↓↓↓↓↓↓↓↓↓跳轉頁面使用session取出member資料↓↓↓↓↓↓↓↓↓↓↓↓↓
