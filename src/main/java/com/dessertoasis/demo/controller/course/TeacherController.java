@@ -38,9 +38,6 @@ public class TeacherController {
 	
 	@Autowired
 	private MemberService mService;
-	
-//	@Autowired
-//	private TeacherRepository tRepo;
 
 	@PostMapping("/getTeacherPage")
 	public List<TeacherDemo> getTeacherDatas(@RequestBody SortCondition sortCod) {

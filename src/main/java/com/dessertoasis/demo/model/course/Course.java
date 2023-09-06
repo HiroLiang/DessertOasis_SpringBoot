@@ -108,8 +108,9 @@ public class Course {
 //    @JoinTable(name="course_coursetag", joinColumns = {@JoinColumn(name="course_id")}, inverseJoinColumns = {@JoinColumn(name="coursetag_id")})
 //    private List<CourseCtag> courseTags;
 	
-	@JsonIgnore
+	
 	@OneToMany(mappedBy = "course")
+	@JsonIgnore
 	private List<CoursePicture> coursePictureList;
 	
 	@JsonIgnore
