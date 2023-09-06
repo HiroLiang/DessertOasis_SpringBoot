@@ -36,8 +36,9 @@ public class RegisterController {
 		newMember.setMemberStatus(MemberState.INACTIVE); 
 		
 		member.getAccess();//創立新帳號為一般會員
-		newMember.setAccess(MemberAccess.NORMAL);
-        newMember.setSignDate(new Date());
+		newMember.setAccess(MemberAccess.USER);
+		
+        newMember.setSignDate(new Date());//創立帳號日期是系統當下時間
         
         newMember = mService.addMember(newMember);
         
