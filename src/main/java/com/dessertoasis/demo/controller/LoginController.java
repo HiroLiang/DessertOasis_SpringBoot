@@ -38,7 +38,7 @@ public class LoginController {
 				    	// isLogin=1，管理員
 				    	// isLogin=2，一般使用者
 				    	// isLogin=3，老師
-		    	 if (access == MemberAccess.ADMI) {
+		    	 if (access == MemberAccess.ADMIN) {
 		             Cookie cookie = new Cookie("isLogin", "1");
 		             cookie.setMaxAge(3600); //cookie存1小時
 		             cookie.setPath("/");
@@ -53,6 +53,7 @@ public class LoginController {
 		        	 Cookie cookie = new Cookie("isLogin", "3");
 		             cookie.setMaxAge(3600); 
 		             cookie.setPath("/");
+		             response.addCookie(cookie);
 		         }
 		    	 
 		        return "Y";
