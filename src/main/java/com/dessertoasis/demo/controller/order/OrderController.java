@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -15,6 +14,7 @@ import com.dessertoasis.demo.model.cart.CourseCartDTO;
 import com.dessertoasis.demo.model.cart.ProductCartDTO;
 import com.dessertoasis.demo.model.cart.ReservationCartDTO;
 import com.dessertoasis.demo.model.course.Course;
+import com.dessertoasis.demo.model.member.Member;
 import com.dessertoasis.demo.model.order.CourseOrderItem;
 import com.dessertoasis.demo.model.order.Order;
 import com.dessertoasis.demo.model.order.ProdOrderItem;
@@ -27,6 +27,8 @@ import com.dessertoasis.demo.service.classroom.ReservationService;
 import com.dessertoasis.demo.service.order.OrderService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+
+import jakarta.servlet.http.HttpSession;
 
 @RestController
 public class OrderController {
@@ -47,10 +49,14 @@ public class OrderController {
 	private ReservationService reservationService;
 	
 	// 新增訂單
-	@PostMapping("/order/{memberId}")
-	public String insertOrder(@PathVariable("memberId") Integer memberId, @RequestBody Map<String, List<Map<String, Object>>> cartList) {
+	@PostMapping("/order")
+	public String insertOrder(@RequestBody Map<String, List<Map<String, Object>>> cartList, HttpSession session) {		
+		Member member = (Member) session.getAttribute("loggedInMember");
+		if (member == null) return "沒有會員";
+		member = memberService.findByMemberId(member.getId());
+		
 		Order order = new Order();
-		order.setMember(memberService.findByMemberId(memberId));
+		order.setMember(member);
 		
 		List<Map<String, Object>> productCart = cartList.get("product");
 		List<Map<String, Object>> courseCart = cartList.get("course");

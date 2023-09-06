@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -16,7 +17,11 @@ import org.springframework.web.bind.annotation.RestController;
 import com.dessertoasis.demo.model.recipe.Recipes;
 import com.dessertoasis.demo.model.sort.SortCondition;
 import com.dessertoasis.demo.service.recipe.RecipeService;
+
+import jakarta.servlet.http.HttpSession;
+
 import com.dessertoasis.demo.model.category.Category;
+import com.dessertoasis.demo.model.member.Member;
 import com.dessertoasis.demo.model.recipe.RecipeCarouselDTO;
 import com.dessertoasis.demo.model.recipe.RecipeDTO;
 import com.dessertoasis.demo.model.recipe.RecipeRepository;
@@ -52,11 +57,11 @@ public class RecipeController {
 		return recipe;
 	}
 	
-	@DeleteMapping("/recipe/delete")
-	public String deleteRecipeById(@RequestParam("id") Integer id) {
-		String deleteRecipe = recipeService.deleteById(id);
-		return deleteRecipe;
-	}
+//	@DeleteMapping("/recipe/delete")
+//	public String deleteRecipeById(@RequestParam("id") Integer id) {
+//		String deleteRecipe = recipeService.deleteById(id);
+//		return deleteRecipe;
+//	}
 	
 	//透過食譜名稱模糊搜尋食譜
 	@GetMapping("recipe/recipeTitle")
@@ -113,9 +118,45 @@ public class RecipeController {
 	//新增食譜
 	@PostMapping("/recipe/addrecipe")
 	@ResponseBody
-	public String AddRecipe(@RequestBody RecipeDTO recipe) {
-		recipeService.addRecipe(recipe);
-		return "食譜新增成功";
+	public String addRecipe(@RequestBody Recipes recipe,HttpSession session) {
+		Member member = (Member) session.getAttribute("loggedInMember");
+		if(member != null) {
+			
+			Boolean add = recipeService.addRecipe(member.getId(), recipe);
+			if(add) {
+				return "Y";
+			}
+			return "F";
+		}
+		return"N";
+	}
+	
+	//更新食譜
+	@PutMapping("recipe/updaterecipe")
+	public String updateRecipe(@RequestBody Recipes recipe,HttpSession session) {
+		Member member = (Member) session.getAttribute("loggedInMember");
+		if(member != null) {
+			Boolean update = recipeService.updateRecipe(member.getId(), recipe);
+			if(update) {
+				return "Y";
+			}
+			return "F";
+		}
+		return "N";
+	}
+	
+	//刪除食譜
+	@DeleteMapping()
+	public String deleteRecipe(@RequestParam("id") Integer id, HttpSession session) {
+		Member member = (Member) session.getAttribute("loggedInMember");
+		if(member != null) {
+			Boolean delete = recipeService.deleteById(id, member.getId());
+			if(delete) {
+				return "Y";
+			}
+			return "F";
+		}
+		return "N";
 	}
 	
 	@GetMapping("/recipe/search")
