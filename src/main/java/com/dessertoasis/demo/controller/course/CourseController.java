@@ -1,5 +1,6 @@
 package com.dessertoasis.demo.controller.course;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,11 +44,25 @@ public class CourseController {
 //		return course;
 //	}
 //	
-	@GetMapping("/list")
-    public ResponseEntity<List<Course>> Courses() {
-        List<Course> courses = cService.findAll();
-        return ResponseEntity.ok(courses);
-    }
+//	@GetMapping("/list")
+//    public ResponseEntity<List<CourseDTO>> Courses() {
+//        List<CourseDTO> courses = cService.findAll();
+//        return ResponseEntity.ok(courses);
+//    }
+	
+	//列出所有課程
+	@GetMapping("/all")
+	public List<CourseDTO> findAllCoursesAsDTO(){
+		List<Course> courseList = cService.findAll();
+		List<CourseDTO> courseDTOList = new ArrayList<>();
+		for(Course course: courseList) {
+			CourseDTO courseDTOItem = new CourseDTO(course);
+			courseDTOList.add(courseDTOItem);
+		}
+		return courseDTOList;
+	}
+	
+	
 	
 	//查詢所有課程
 //	@GetMapping("/all")
