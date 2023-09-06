@@ -45,6 +45,27 @@ public class CourseDTO {
 	public CourseDTO() {
 		// TODO Auto-generated constructor stub
 	}
+
+	public CourseDTO(Course course) {
+		super();
+		this.courseId = course.getId();
+		this.teacherName = course.getTeacher().getTeacherName();
+		this.recipeIntroduction = course.getRecipes().getRecipeIntroduction();
+		this.categoryName = course.getCategory().getCategoryName();
+		this.courseName = course.getCourseName();
+		this.courseIntroduction = course.getCourseIntroduction();
+		this.courseFeature = course.getCourseFeature();
+		this.courseDestination = course.getCourseDestination();
+		this.serviceTarget = course.getServiceTarget();
+		this.closeDate = course.getCloseDate();
+		this.updateDate = course.getUpdateDate();
+		this.coursePlace = course.getCoursePlace();
+		this.courseStatus = course.getCourseStatus();
+		this.remainPlaces = course.getRemainPlaces();
+		this.coursePrice = course.getCoursePrice();
+//		this.tag = course.getCourseList().get(0);
+		this.coursePictureList = course.getCoursePictureList();
+	}
 	
 	
 
