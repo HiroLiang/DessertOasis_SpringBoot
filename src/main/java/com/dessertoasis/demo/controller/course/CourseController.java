@@ -83,24 +83,24 @@ public class CourseController {
 	    }
 
 	    // Create a CourseDTO object and set its properties
-	    CourseDTO courseDTO = new CourseDTO();
-	    courseDTO.setCourseId(course.getId());
-	    courseDTO.setTeacherName(course.getTeacher().getTeacherName());
-	    courseDTO.setRecipeIntroduction(course.getRecipes().getRecipeIntroduction());
-	    courseDTO.setCategoryName(course.getCategory().getCategoryName());
-	    courseDTO.setCourseName(course.getCourseName());
-	    courseDTO.setCourseIntroduction(course.getCourseIntroduction());
-	    courseDTO.setCourseFeature(course.getCourseFeature());
-	    courseDTO.setCourseDestination(course.getCourseDestination());
-	    courseDTO.setServiceTarget(course.getServiceTarget());
-	    courseDTO.setCloseDate(course.getCloseDate());
-	    courseDTO.setUpdateDate(course.getUpdateDate());
-	    courseDTO.setCoursePlace(course.getCoursePlace());
-	    courseDTO.setCourseStatus(course.getCourseStatus());
-	    courseDTO.setRemainPlaces(course.getRemainPlaces());
-	    courseDTO.setCoursePrice(course.getCoursePrice());
-//	    courseDTO.setTag(course.)
-	    courseDTO.setCoursePictureList(course.getCoursePictureList());
+	    CourseDTO courseDTO = new CourseDTO(course);
+//	    courseDTO.setCourseId(course.getId());
+//	    courseDTO.setTeacherName(course.getTeacher().getTeacherName());
+//	    courseDTO.setRecipeIntroduction(course.getRecipes().getRecipeIntroduction());
+//	    courseDTO.setCategoryName(course.getCategory().getCategoryName());
+//	    courseDTO.setCourseName(course.getCourseName());
+//	    courseDTO.setCourseIntroduction(course.getCourseIntroduction());
+//	    courseDTO.setCourseFeature(course.getCourseFeature());
+//	    courseDTO.setCourseDestination(course.getCourseDestination());
+//	    courseDTO.setServiceTarget(course.getServiceTarget());
+//	    courseDTO.setCloseDate(course.getCloseDate());
+//	    courseDTO.setUpdateDate(course.getUpdateDate());
+//	    courseDTO.setCoursePlace(course.getCoursePlace());
+//	    courseDTO.setCourseStatus(course.getCourseStatus());
+//	    courseDTO.setRemainPlaces(course.getRemainPlaces());
+//	    courseDTO.setCoursePrice(course.getCoursePrice());
+////	    courseDTO.setTag(course.)
+//	    courseDTO.setCoursePictureList(course.getCoursePictureList());
 	    
 	    // Set other properties based on your data
 

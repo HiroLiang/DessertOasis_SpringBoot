@@ -43,7 +43,6 @@ public class CourseDTO {
 	private List<CoursePicture> coursePictureList;
 	
 	public CourseDTO() {
-		// TODO Auto-generated constructor stub
 	}
 
 	public CourseDTO(Course course) {

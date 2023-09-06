@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.dessertoasis.demo.model.course.Course;
@@ -18,6 +20,7 @@ import com.dessertoasis.demo.model.course.TeacherDemo;
 import com.dessertoasis.demo.model.course.TeacherRepository;
 import com.dessertoasis.demo.model.member.Member;
 import com.dessertoasis.demo.model.sort.SortCondition;
+import com.dessertoasis.demo.service.MemberService;
 import com.dessertoasis.demo.service.TeacherService;
 import com.fasterxml.jackson.annotation.JsonRawValue;
 
@@ -27,10 +30,14 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
 @RestController
+@RequestMapping("/teacher")
 public class TeacherController {
 
 	@Autowired
 	private TeacherService tService;
+	
+	@Autowired
+	private MemberService mService;
 	
 //	@Autowired
 //	private TeacherRepository tRepo;
@@ -42,8 +49,33 @@ public class TeacherController {
 		return teacherPage;
 	}
 	
+	
+	//新增教師
+	@PostMapping("/becomeTeacher")
+    public ResponseEntity<String> becomeTeacher(@RequestBody Teacher teacher, @RequestParam("memberId") Integer memberId) {
+        try {
+        	// 創建一個新的 Teacher 實例，設定 memberId 和 teacherAccountStatus
+            Teacher newTeacher = tService.becomeTeacher(memberId);
+            
+         // 設定其他 Teacher 相關屬性
+            newTeacher.setTeacherName(teacher.getTeacherName());
+            newTeacher.setTeacherProfilePic(teacher.getTeacherProfilePic());
+            newTeacher.setTeacherAccountStatus("已啟用");
+            newTeacher.setTeacherContract("YES");
+            newTeacher.setTeacherProfile(teacher.getTeacherProfile());
+            newTeacher.setTeacherMail(teacher.getTeacherMail());
+            newTeacher.setTeacherTel(teacher.getTeacherTel());
+        	
+        	 tService.addTeacher(newTeacher);
+
+            return ResponseEntity.ok("教師資料已成功新增");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("新增教師資料時發生錯誤：" + e.getMessage());
+        }
+    }
+	
 	//查詢老師個人資料by id
-	@GetMapping("/teacher/{teacherId}")
+	@GetMapping("/{teacherId}")
     public Teacher getTeacherById(@PathVariable Integer teacherId,HttpSession session) {
 		Member member = (Member)session.getAttribute("loggedInMember");
 		
