@@ -6,6 +6,7 @@ import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.dessertoasis.demo.model.recipe.Recipes;
 import com.dessertoasis.demo.model.sort.DateRules;
@@ -21,6 +22,7 @@ import jakarta.persistence.criteria.Join;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
 
+import com.dessertoasis.demo.ImageUploadUtil;
 import com.dessertoasis.demo.model.category.Category;
 import com.dessertoasis.demo.model.category.CategoryRepository;
 import com.dessertoasis.demo.model.member.Member;
@@ -31,6 +33,7 @@ import com.dessertoasis.demo.model.recipe.RecipeCreateDTO;
 import com.dessertoasis.demo.model.recipe.RecipeDTO;
 import com.dessertoasis.demo.model.recipe.RecipeCarouselDTO;
 import com.dessertoasis.demo.model.recipe.RecipeRepository;
+import com.dessertoasis.demo.model.recipe.RecipeSteps;
 
 
 @Service
@@ -163,11 +166,29 @@ public class RecipeService {
 	/*--------------------------------------------食譜建立頁使用service ------------------------------------------------*/
 
 	//新增食譜
-	public Boolean addRecipe(Integer id, Recipes recipe) {
+	public Boolean addRecipe(MultipartFile mainImg,List<MultipartFile> stepImgs,Integer id, Recipes recipe) {
 		Optional<Member> optional = memberRepo.findById(id);
 		if(optional.isPresent()) {
 			Member member = optional.get();
 			recipe.setRecipeAuthor(member);
+			if(mainImg != null && !mainImg.isEmpty()) {
+				ImageUploadUtil util = new ImageUploadUtil();
+				String mainPic = util.savePicture(mainImg, id, "recipe",(recipe.getId()+"_"+recipe.getRecipeTitle()));
+				recipe.setPictureURL(mainPic);
+			}
+			List<RecipeSteps> recipeSteps = new ArrayList<>();
+			if(stepImgs != null && !stepImgs.isEmpty()) {
+				for(int i = 0 ; i<recipeSteps.size();i++) {
+					MultipartFile stepImg = stepImgs.get(i);
+					ImageUploadUtil util = new ImageUploadUtil();
+//					String stepPic = util.savePicture(stepImg, id, "recipe",recipe.getId());
+
+
+				}
+			}
+			
+			
+			
 			recipeRepo.save(recipe);
 			return true;
 		}

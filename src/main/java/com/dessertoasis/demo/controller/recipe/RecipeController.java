@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.dessertoasis.demo.model.recipe.Recipes;
 import com.dessertoasis.demo.model.sort.SortCondition;
@@ -20,6 +21,7 @@ import com.dessertoasis.demo.service.recipe.RecipeService;
 
 import jakarta.servlet.http.HttpSession;
 
+import com.dessertoasis.demo.ImageUploadUtil;
 import com.dessertoasis.demo.model.category.Category;
 import com.dessertoasis.demo.model.member.Member;
 import com.dessertoasis.demo.model.recipe.RecipeCarouselDTO;
@@ -47,7 +49,9 @@ public class RecipeController {
 	@GetMapping("/recipe/all")
 	public List<Recipes> findAllRecipes() {
 		List<Recipes> recipes = recipeService.findAllRecipes();
+	
 		return recipes;
+		
 	}
 	
 	@GetMapping("/recipe/{id}")
@@ -116,19 +120,30 @@ public class RecipeController {
 	/*--------------------------------------------食譜建立頁使用controller ------------------------------------------------*/
 
 	//新增食譜
-	@PostMapping("/recipe/addrecipe")
-	@ResponseBody
-	public String addRecipe(@RequestBody Recipes recipe,HttpSession session) {
-		Member member = (Member) session.getAttribute("loggedInMember");
-		if(member != null) {
-			
-			Boolean add = recipeService.addRecipe(member.getId(), recipe);
-			if(add) {
-				return "Y";
-			}
-			return "F";
-		}
-		return"N";
+//	@PostMapping("/recipe/addrecipe")
+//	@ResponseBody
+//	public String addRecipe(@RequestBody Recipes recipe,HttpSession session) {
+//		Member member = (Member) session.getAttribute("loggedInMember");
+//		if(member != null) {
+//			
+//			Boolean add = recipeService.addRecipe(member.getId(), recipe);
+//			if(add) {
+//				return "Y";
+//			}
+//			return "F";
+//		}
+//		return"N";
+//	}
+//	
+	
+	@PostMapping("test/uploadimg")
+	public void sendPic(@RequestBody MultipartFile file) {
+		ImageUploadUtil util = new ImageUploadUtil();
+		System.out.println(file.getOriginalFilename());
+		util.savePicture(file, 1, "recipe", "test");
+		
+		System.out.println(file);
+		
 	}
 	
 	//更新食譜
