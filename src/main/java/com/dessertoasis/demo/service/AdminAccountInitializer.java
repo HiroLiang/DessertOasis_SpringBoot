@@ -37,11 +37,11 @@
 //        if (existingAdmin == null) {
 //            // 如果不存在，創建一個管理者帳號
 //            Member admin = new Member();
-//            admin.setFullName("管理人員");
-//            admin.setAccount("test");
+//            admin.setFullName("TEACHER");
+//            admin.setAccount("TEA");
 //            admin.setMemberStatus(MemberState.ACTIVE);
-//            admin.setAccess(MemberAccess.ADMI);
-//            String plainPassword = "test";
+//            admin.setAccess(MemberAccess.TEACHER);
+//            String plainPassword = "TEA";
 //            admin.setPasswords(passwordEncoder.encode(plainPassword));
 //            admin.setSignDate(new Date());
 //
