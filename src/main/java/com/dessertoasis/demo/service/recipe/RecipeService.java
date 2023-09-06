@@ -6,17 +6,34 @@ import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.dessertoasis.demo.model.recipe.Recipes;
+import com.dessertoasis.demo.model.sort.DateRules;
+import com.dessertoasis.demo.model.sort.SearchRules;
+import com.dessertoasis.demo.model.sort.SortCondition;
+
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.TypedQuery;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Join;
+import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Root;
+
+import com.dessertoasis.demo.ImageUploadUtil;
 import com.dessertoasis.demo.model.category.Category;
 import com.dessertoasis.demo.model.category.CategoryRepository;
 import com.dessertoasis.demo.model.member.Member;
 import com.dessertoasis.demo.model.member.MemberRepository;
 import com.dessertoasis.demo.model.recipe.RecipeCategory;
 import com.dessertoasis.demo.model.recipe.RecipeCategoryRepository;
+import com.dessertoasis.demo.model.recipe.RecipeCreateDTO;
 import com.dessertoasis.demo.model.recipe.RecipeDTO;
 import com.dessertoasis.demo.model.recipe.RecipeCarouselDTO;
 import com.dessertoasis.demo.model.recipe.RecipeRepository;
+import com.dessertoasis.demo.model.recipe.RecipeSteps;
 
 
 @Service
@@ -149,78 +166,109 @@ public class RecipeService {
 	/*--------------------------------------------食譜建立頁使用service ------------------------------------------------*/
 
 	//新增食譜
-	public Recipes addRecipe(RecipeDTO rDto) {
-		Recipes recipe = new Recipes();
-		recipe.setRecipeTitle(rDto.getRecipeTitle());
-		recipe.setPictureURL(rDto.getPictureURL());
-		recipe.setRecipeIntroduction(rDto.getRecipeIntroduction());
-		recipe.setCookingTime(rDto.getCookingTime());
-		recipe.setDifficulty(rDto.getDifficulty());
-		recipe.setRecipeCreateDate(rDto.getRecipeCreateDate());
-		recipe.setRecipeStatus(rDto.getRecipeStatus());
-		if(rDto.getRecipeAuthorId() != null) {
-			Optional<Member> optional = memberRepo.findById(rDto.getRecipeAuthorId());
-			if(optional.isPresent()) {
-				Member author = optional.get();
-				recipe.setRecipeAuthor(author);
+	public Boolean addRecipe(MultipartFile mainImg,List<MultipartFile> stepImgs,Integer id, Recipes recipe) {
+		Optional<Member> optional = memberRepo.findById(id);
+		if(optional.isPresent()) {
+			Member member = optional.get();
+			recipe.setRecipeAuthor(member);
+			if(mainImg != null && !mainImg.isEmpty()) {
+				ImageUploadUtil util = new ImageUploadUtil();
+				String mainPic = util.savePicture(mainImg, id, "recipe",(recipe.getId()+"_"+recipe.getRecipeTitle()));
+				recipe.setPictureURL(mainPic);
 			}
-		}
-		if(rDto.getRecipeCategoryIds() != null) {
-			ArrayList<RecipeCategory> categories = new ArrayList<>();
-			for (Integer categoryId : rDto.getRecipeCategoryIds()) {
-				Optional<Category> optional = cateRepo.findById(categoryId);
-				if(optional.isPresent()) {
-					Category category = optional.get();
-					RecipeCategory rc = new RecipeCategory();
-					rc.setCategory(category);
-					rc.setRecipe(recipe);
-					
-					categories.add(rc);
+			List<RecipeSteps> recipeSteps = new ArrayList<>();
+			if(stepImgs != null && !stepImgs.isEmpty()) {
+				for(int i = 0 ; i<recipeSteps.size();i++) {
+					MultipartFile stepImg = stepImgs.get(i);
+					ImageUploadUtil util = new ImageUploadUtil();
+//					String stepPic = util.savePicture(stepImg, id, "recipe",recipe.getId());
+
+
 				}
 			}
-			recipe.setRecipeCategories(categories);
+			
+			
+			
+			recipeRepo.save(recipe);
+			return true;
 		}
-		recipe.setRecipeSteps(null);
-		return recipeRepo.save(recipe);
+		return false;
 	}
 	
 	//修改食譜
-	public String updateRecipe(Integer id) {
-		Optional<Recipes> optional = recipeRepo.findById(id);
+	public Boolean updateRecipe(Integer id,Recipes recipe) {
+		Optional<Member> member = memberRepo.findById(id);
+		Optional<Recipes> optional = recipeRepo.findById(recipe.getId());
 		
 		if(optional.isPresent()) {
-			Recipes recipe = optional.get();
-			RecipeDTO rDto = new RecipeDTO();
-			rDto.setId(recipe.getId());
-			rDto.setRecipeAuthorId(recipe.getRecipeAuthor().getId());
-			rDto.setRecipeTitle(recipe.getRecipeTitle());
-			List<RecipeCategory> recipeCategories = recipe.getRecipeCategories();
-			List<Integer> categoryIds = new ArrayList<>();
-			for (RecipeCategory rc : recipeCategories) {
-                categoryIds.add(rc.getCategory().getId());
-            }
-			rDto.setRecipeCategoryIds(categoryIds);
-			rDto.setPictureURL(recipe.getPictureURL());
-			rDto.setRecipeIntroduction(recipe.getRecipeIntroduction());
-			rDto.setCookingTime(recipe.getCookingTime());
-			rDto.setDifficulty(recipe.getDifficulty());
-			rDto.setRecipeStatus(recipe.getRecipeStatus());
+			Recipes recipeData = optional.get();
+			if(recipeData.getRecipeAuthor().getId().equals(member.get().getId())) {
+				recipeRepo.save(recipe);
+			}
 			
-			return "修改成功";
+			
+//			RecipeDTO rDto = new RecipeDTO();
+//			rDto.setId(recipe.getId());
+//			rDto.setRecipeAuthorId(recipe.getRecipeAuthor().getId());
+//			rDto.setRecipeTitle(recipe.getRecipeTitle());
+//			List<RecipeCategory> recipeCategories = recipe.getRecipeCategories();
+//			List<Integer> categoryIds = new ArrayList<>();
+//			for (RecipeCategory rc : recipeCategories) {
+//                categoryIds.add(rc.getCategory().getId());
+//            }
+//			rDto.setRecipeCategoryIds(categoryIds);
+//			rDto.setPictureURL(recipe.getPictureURL());
+//			rDto.setRecipeIntroduction(recipe.getRecipeIntroduction());
+//			rDto.setCookingTime(recipe.getCookingTime());
+//			rDto.setDifficulty(recipe.getDifficulty());
+//			rDto.setRecipeStatus(recipe.getRecipeStatus());
+//			
+			return true;
 		}
-		return"查無此筆資料";
+		return false;
 	}
 	
-	//刪除
-	public String deleteById(Integer recipeId) {
-		Optional<Recipes> optional = recipeRepo.findById(recipeId);
+	//以id刪除食譜
+	public Boolean deleteById(Integer recipeId, Integer memberId) {
+		Optional<Member> member = memberRepo.findById(memberId);
+		Optional<Recipes> recipe = recipeRepo.findById(recipeId);
 
-		if (optional.isPresent()) {
-			recipeRepo.deleteById(recipeId);
-			return "第" + recipeId + "筆刪除成功";
+		if (recipe.isPresent()) {
+			Recipes recipeData = recipe.get();
+			if(recipeData.getRecipeAuthor().getId().equals(member.get().getId())) {
+				recipeRepo.deleteById(recipeId);
+				return true;
+			}
 		}
-		return "查無此筆資料";
+		return false;
 	}
+	/*--------------------------------------------測試Criteria ------------------------------------------------*/
+	@PersistenceContext
+	private EntityManager em;
+	
+	//動態條件搜索
+	public List<Recipes> getRecipePage(SortCondition sortCod){
+		CriteriaBuilder cb = em.getCriteriaBuilder();
+		// 決定select table
+		CriteriaQuery<Recipes> cq = cb.createQuery(Recipes.class);
+		Root<Recipes> root = cq.from(Recipes.class);
+		Predicate[] predicates = new Predicate[20];
+		int counter = 0;
+		if(sortCod.getSortBy() != null) {
+			predicates[counter] = cb.like(root.get("recipeTitle"), "%" + sortCod.getSortBy() + "%");
+			counter++;
+		}
+		CriteriaQuery<Recipes> select = cq.select(root).where(predicates);
+		TypedQuery<Recipes> query = em.createQuery(select);
+		query.setFirstResult((sortCod.getPage()-1)*sortCod.getPageSize());
+		query.setMaxResults(sortCod.getPageSize());
+		List<Recipes> list = query.getResultList();
+		System.out.println(list);
+		
+		return list;
+
+	}
+	
 
 	
 

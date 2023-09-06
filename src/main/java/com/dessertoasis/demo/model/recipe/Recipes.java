@@ -7,6 +7,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 
 import com.dessertoasis.demo.model.course.Course;
 import com.dessertoasis.demo.model.member.Member;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -76,11 +77,29 @@ public class Recipes {
 	@Column(name = "recipeMonthlyVisitCount",nullable=false,columnDefinition = "int")
 	private Integer recipeMonthlyVisitCount;
 	
+	@JsonIgnore
 	@OneToMany(mappedBy="recipes")
 	private List<Course> course;
 	
 	public Recipes() {
 	}
+
+	public Recipes(Member recipeAuthor, List<RecipeCategory> recipeCategories, List<RecipeSteps> recipeSteps,
+			String recipeTitle, String pictureURL, String recipeIntroduction, Integer cookingTime,
+			Date recipeCreateDate, Integer recipeStatus) {
+		super();
+		this.recipeAuthor = recipeAuthor;
+		this.recipeCategories = recipeCategories;
+		this.recipeSteps = recipeSteps;
+		this.recipeTitle = recipeTitle;
+		this.pictureURL = pictureURL;
+		this.recipeIntroduction = recipeIntroduction;
+		this.cookingTime = cookingTime;
+		this.recipeCreateDate = recipeCreateDate;
+		this.recipeStatus = recipeStatus;
+	}
+	
+	
 }
 
 	

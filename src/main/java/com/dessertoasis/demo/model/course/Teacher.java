@@ -45,7 +45,7 @@ public class Teacher {
 	@Column(name = "teacherProfile", columnDefinition = "nvarchar(max)")
 	private String teacherProfile;
 
-	@Column(name = "teacherAccountStatus", columnDefinition = "nvarchar(100)")
+	@Column(name = "teacherAccountStatus", columnDefinition = "nvarchar(100) default '未啟用'")
 	private String teacherAccountStatus;
 
 	//會員ID (FK)，要有對方的物件當屬性
@@ -64,6 +64,7 @@ public class Teacher {
 	private List<Course> courseList;
 	
 	//一個老師有多個專長
+	@JsonIgnore
 	@OneToMany(mappedBy="teacher", cascade = CascadeType.ALL)
 	private List<TeacherExpertise> expertiseList;
 

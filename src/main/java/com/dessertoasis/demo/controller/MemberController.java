@@ -1,5 +1,6 @@
 package com.dessertoasis.demo.controller;
 
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.dessertoasis.demo.model.member.Member;
 import com.dessertoasis.demo.model.member.MemberAccess;
 import com.dessertoasis.demo.model.member.MemberState;
+import com.dessertoasis.demo.model.product.Product;
 import com.dessertoasis.demo.service.MemberService;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -27,7 +29,16 @@ public class MemberController {
 	@Autowired
 	private MemberService mService;
 	
-	@GetMapping("/details/{id}")
+	
+	//多筆
+	@GetMapping("/all")
+    public ResponseEntity<List<Member>> listProducts() {
+        List<Member> products = mService.findAllMember();
+        return ResponseEntity.ok(products);
+    }
+	
+	
+	@GetMapping("/{id}")
 	public ResponseEntity<Member> getMemberById(@PathVariable Integer id) {
 	    Member member = mService.findByMemberId(id);
 	    if (member != null) {
@@ -38,7 +49,7 @@ public class MemberController {
 	}
 	
 	
-	@GetMapping("/details/{id}/access")
+	@GetMapping("/{id}/access")
 	public ResponseEntity<MemberAccess> getMemberaccessById(@PathVariable Integer id) {
 	    Member member = mService.findByMemberId(id);
 	    if (member != null) {
@@ -50,20 +61,6 @@ public class MemberController {
 	}
 	
 	
-	 @GetMapping("/memberInfo")
-	    public ResponseEntity<Member> getMemberInfo(HttpServletRequest request) {
-	        // 假設你已經在登入時將會員資訊存儲在Session中，你可以通過Session獲取會員資訊
-	        HttpSession session = request.getSession();
-	        Member loggedInMember = (Member) session.getAttribute("loggedInMember");
-
-	        if (loggedInMember != null) {
-	            // 如果成功獲取到會員資訊，返回該會員的JSON數據
-	            return new ResponseEntity<>(loggedInMember, HttpStatus.OK);
-	        } else {
-	            // 如果未獲取到會員資訊，返回404 Not Found或其他適當的錯誤狀態碼
-	            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-	        }
-	    }
 	
 	 
 	 

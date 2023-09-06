@@ -1,5 +1,6 @@
 package com.dessertoasis.demo.model.order;
 
+import com.dessertoasis.demo.model.cart.CourseCartDTO;
 import com.dessertoasis.demo.model.course.Course;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
@@ -33,4 +34,14 @@ public class CourseOrderItem {
 	
 	@Column
 	private Integer price;
+	
+	public CourseOrderItem() {
+		
+	}
+	
+	public CourseOrderItem(CourseCartDTO cartItem, Course course, Order order) {
+		this.course = course;
+		this.price = cartItem.getCoursePrice();
+		this.order = order;
+	}
 }

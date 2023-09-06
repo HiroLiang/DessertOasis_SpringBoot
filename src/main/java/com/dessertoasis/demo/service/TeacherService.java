@@ -14,6 +14,7 @@ import com.dessertoasis.demo.model.course.Teacher;
 import com.dessertoasis.demo.model.course.TeacherDemo;
 import com.dessertoasis.demo.model.course.TeacherRepository;
 import com.dessertoasis.demo.model.member.Member;
+import com.dessertoasis.demo.model.member.MemberRepository;
 import com.dessertoasis.demo.model.sort.DateRules;
 import com.dessertoasis.demo.model.sort.SearchRules;
 import com.dessertoasis.demo.model.sort.SortCondition;
@@ -33,6 +34,9 @@ public class TeacherService {
 
 	@Autowired
 	private TeacherRepository tRepo;
+	
+	@Autowired
+	private MemberService mService;
 
 	@PersistenceContext
 	private EntityManager em;
@@ -48,6 +52,52 @@ public class TeacherService {
           return result;
         
     }
+
+	
+	//成為教師
+	public Teacher becomeTeacher(Integer memberId) {
+		// 根據memberId查詢是否已經存在關聯的Teacher
+        Teacher existingTeacher = tRepo.findByMemberId(memberId);	
+
+        if (existingTeacher == null) {
+            // 不存在關聯的Teacher，可以執行新增操作
+            Member existingMember = mService.findByMemberId(memberId);
+
+            if (existingMember != null) {
+                // 創建一個新的Teacher實體
+                Teacher newTeacher = new Teacher();
+                newTeacher.setMember(existingMember); // 設定member屬性
+
+                // 保存新創建的Teacher實體
+                  Teacher result = tRepo.save(newTeacher);
+                  System.out.println("新增成功");
+                  return result;
+                
+            } else {
+                // 處理Member不存在的情況
+                // 可以拋出異常或執行其他操作
+            	System.out.println("member不存在");
+            	return null;
+            }
+        } else {
+            // 已經存在關聯的Teacher，不執行新增操作
+            // 可以拋出異常或執行其他操作
+        	System.out.println("已經存在關聯的Teacher，不執行新增操作");
+        	return null;
+        }
+    }
+    
+	
+	
+	//新增老師資訊
+	public Teacher addTeacher(Teacher teacher) {
+        // 在此可以进行一些数据验证或逻辑处理
+        // 例如，确保传入的teacher对象的各项数据都合法
+        // 如果需要，还可以关联Member等其他对象
+
+        // 调用Repository保存老师数据
+        return tRepo.save(teacher);
+    }	
 
 	//動態條件搜索
 	public List<TeacherDemo> getTeacherPage(SortCondition sortCod) {

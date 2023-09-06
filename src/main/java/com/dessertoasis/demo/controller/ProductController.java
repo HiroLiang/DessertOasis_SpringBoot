@@ -68,40 +68,38 @@ public class ProductController {
         pService.deleteProductById(id);
         return ResponseEntity.noContent().build();
     }
+  
+//    @PostMapping("/criteria")
+//    public sendSort(@RequestBody ProdSearchDTO pDTO) {
+//    	pDTO.getProdName();
+//    }
     
     @GetMapping("/search")
+    
     public ResponseEntity<Page<Product>> searchProducts(
-    		ProdSearchDTO criteria,
-        //@RequestBody ProdSearchDTO criteria,
-        @PageableDefault(size = 20) Pageable pageable,
-        @RequestParam(value = "sortBy", required = false) String sortBy,
-        @RequestParam(value = "pageSize", required = false) Integer pageSize
-    		) {
+            ProdSearchDTO criteria,
+            @PageableDefault(size = 20) Pageable pageable,
+            @RequestParam(value = "sortBy", required = false) String sortBy,
+            @RequestParam(value = "pageSize", required = false) Integer pageSize
+    ) {
         Sort sort = Sort.unsorted();
 
-        if (sortBy != null) {
-            String[] sortParams = sortBy.split(",");
+        if (sortBy != null && !sortBy.isEmpty()) {
+            String[] sortParams = sortBy.split("&");
             for (String param : sortParams) {
-                String[] sortField = param.split(":");
+                String[] sortField = param.split(",");
                 if (sortField.length == 2) {
                     String field = sortField[0];
-                    String direction = sortField[1];
-                    Sort.Order order = "asc".equalsIgnoreCase(direction) ? Sort.Order.asc(field) : Sort.Order.desc(field);
+                    String direction = sortField[1].toUpperCase(); // Ensure direction is uppercase
+                    Sort.Order order = "ASC".equals(direction) ? Sort.Order.asc(field) : Sort.Order.desc(field);
                     sort = sort.and(Sort.by(order));
                 }
             }
         }
+
         int adjustedPage = pageable.getPageNumber() - 1;
         int effectivePageSize = pageSize != null ? pageSize : 20;
 
         Page<Product> products = pService.searchProducts(criteria, PageRequest.of(adjustedPage, effectivePageSize, sort));
         return ResponseEntity.ok(products);
-    }
-    
-
-
-
-
-
-
-}
+    }}

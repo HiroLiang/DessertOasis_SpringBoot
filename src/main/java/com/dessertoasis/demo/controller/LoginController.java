@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.dessertoasis.demo.model.member.Member;
 import com.dessertoasis.demo.model.member.MemberAccess;
+import com.dessertoasis.demo.model.member.MemberState;
 import com.dessertoasis.demo.service.MemberService;
 
 import jakarta.servlet.http.Cookie;
@@ -31,29 +32,47 @@ public class LoginController {
 
 		    if (memberLogin != null) {
 		    	session.setAttribute("loggedInMember", memberLogin);
+		    	MemberState state = memberLogin.getMemberStatus();
 		    	MemberAccess access = memberLogin.getAccess();
 		    	
-		    	
-		    	 if (access == MemberAccess.ADMI) {
-		             Cookie cookie = new Cookie("adminLogin", "1");
-		             cookie.setMaxAge(36000); // 
-		             cookie.setPath("/"); 
-		             cookie.setHttpOnly(false);
-		             cookie.setSecure(false);
-		             cookie.setDomain("localhost");
+		    		    	
+				    	//登入後判斷會員權限設定不同cookies，
+				    	// isLogin=1，管理員
+				    	// isLogin=2，一般使用者
+				    	// isLogin=3，老師
+		    	 if (access == MemberAccess.ADMIN ) {
+		             Cookie cookie = new Cookie("isLogin", "10");
+		             cookie.setMaxAge(3600); //cookie存1小時
+		             cookie.setPath("/");
 		             response.addCookie(cookie);
 		             
-		         } else if (access == MemberAccess.NORMAL) {
-		             Cookie cookie = new Cookie("userLogin", "1");
-		             cookie.setMaxAge(36000); 
-		             cookie.setPath("/"); 
-		             cookie.setHttpOnly(false);
-		             cookie.setSecure(false);
-		             cookie.setDomain("localhost");
+		             
+		         } else if (access == MemberAccess.USER && state ==MemberState.ACTIVE) {
+		             Cookie cookie = new Cookie("isLogin", "20");
+		             cookie.setMaxAge(3600); 
+		             cookie.setPath("/");
 		             response.addCookie(cookie);
-		         }else if(access.equals(MemberAccess.TEACHER)) {
-		        	 
-		         }
+		             
+		             if(state == MemberState.INACTIVE) {
+		            	 Cookie cookieInact = new Cookie("isLogin", "21");
+		            	 cookieInact.setMaxAge(3600); 
+		            	 cookieInact.setPath("/");
+			             response.addCookie(cookieInact);
+			             
+		             }else if(state == MemberState.BANDED) {
+		            	 Cookie cookieBan = new Cookie("isLogin", "22");
+		            	 cookieBan.setMaxAge(3600); 
+		            	 cookieBan.setPath("/");
+			             response.addCookie(cookieBan);
+		             }
+		             
+		         } else if (access == MemberAccess.TEACHER) {
+		        	 Cookie cookie = new Cookie("isLogin", "30");
+		             cookie.setMaxAge(3600); 
+		             cookie.setPath("/");
+		             response.addCookie(cookie);
+		             
+		         } 
 		    	 
 		        return "Y";
 		    }
@@ -63,22 +82,30 @@ public class LoginController {
 	
 	//登出
 	@RequestMapping("/memberLogout")
-	public String logout(HttpSession session) {
-	    session.invalidate(); // 
+	public String logout(HttpSession session, HttpServletResponse response) {
+		
+		Cookie cookie = new Cookie("isLogin", null); //刪除cookies
+		cookie.setMaxAge(0);
+		response.addCookie(cookie);
+		
+	    session.invalidate(); // 刪除session
+	    
 	    return "redirect:/"; // 
 	}
 
-	@GetMapping("/getcookie")
-	public String getCookieValue(@CookieValue(name = "adminLogin", defaultValue = "") String adminLoginCookie) {
-		if("1".equals(adminLoginCookie)) {
-			return "已登入管理員";
-			
-		}else {
-			return "未登入管理員";
-		}
-	}
-}
 
+//	@GetMapping("/getcookie")
+//	public String getCookieValue(@CookieValue(name = "adminLogin", defaultValue = "") String adminLoginCookie) {
+//		if("1".equals(adminLoginCookie)) {
+//			return "已登入管理員";
+//			
+//		}else {
+//			return "未登入管理員";
+//		}
+		
+		
+		
+	}
 
 
 //↓↓↓↓↓↓↓↓↓↓↓↓↓跳轉頁面使用session取出member資料↓↓↓↓↓↓↓↓↓↓↓↓↓
