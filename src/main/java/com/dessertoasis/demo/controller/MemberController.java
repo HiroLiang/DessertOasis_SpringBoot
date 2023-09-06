@@ -1,26 +1,19 @@
 package com.dessertoasis.demo.controller;
 
 import java.util.List;
-import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.dessertoasis.demo.model.member.Member;
 import com.dessertoasis.demo.model.member.MemberAccess;
-import com.dessertoasis.demo.model.member.MemberState;
-import com.dessertoasis.demo.model.product.Product;
+import com.dessertoasis.demo.model.member.MemberDetail;
+import com.dessertoasis.demo.service.MemberDetailService;
 import com.dessertoasis.demo.service.MemberService;
-
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpSession;
 
 @RestController
 @RequestMapping("/member")
@@ -29,12 +22,17 @@ public class MemberController {
 	@Autowired
 	private MemberService mService;
 	
+	@Autowired
+	private MemberDetailService mdService;
 	
 	//多筆
 	@GetMapping("/all")
-    public ResponseEntity<List<Member>> listProducts() {
-        List<Member> products = mService.findAllMember();
-        return ResponseEntity.ok(products);
+	 public ResponseEntity<List<Member>> getAllMembers() {
+        List<Member> members = mService.findAllMember();
+        if (members.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(members);
     }
 	
 	
@@ -48,6 +46,20 @@ public class MemberController {
 	    }
 	}
 	
+	@GetMapping("/{id}/details")
+	public MemberDetail getMemberDetail(@PathVariable Integer id) {
+	    // 根據 memberId 查詢相關聯的 MemberDetail
+	    MemberDetail memberDetail = mdService.getMemberDetailByMemberId(id);
+
+	    if (memberDetail != null) {
+	        return memberDetail; // 找到會員詳細資訊，返回該資訊
+	    } else {
+	        // 如果找不到會員詳細資訊，可以返回一個特殊的 "未找到" 或空的 MemberDetail 物件
+	        return new MemberDetail(); // 或者返回 null，視情況而定
+	    }
+	}
+
+    
 	
 	@GetMapping("/{id}/access")
 	public ResponseEntity<MemberAccess> getMemberaccessById(@PathVariable Integer id) {
@@ -66,29 +78,7 @@ public class MemberController {
 	 
 	 
 	
-	 @PutMapping("/changeStatus")
-	    public ResponseEntity<String> changeMemberStatus(@RequestBody Map<String, String> requestData) {
-	        try {
-	            Integer memberId = Integer.parseInt(requestData.get("memberId"));
-	            String newStatus = requestData.get("newStatus");
-
-	            System.out.println("Received memberId: " + memberId);
-	            System.out.println("Received newStatus: " + newStatus);
-	            
-	            Member member = mService.findByMemberId(memberId);
-	            if (member != null) {
-	                // 執行狀態更改
-	                member.setMemberStatus(MemberState.valueOf(newStatus));
-	                mService.updateMember(member); // 更新會員狀態
-
-	                return ResponseEntity.ok("success");
-	            } else {
-	                return ResponseEntity.notFound().build();
-	            }
-	        } catch (NumberFormatException e) {
-	            return ResponseEntity.badRequest().body("Invalid memberId");
-	        }
-	    }
+	 
 	}
 	
 
