@@ -23,8 +23,9 @@ import com.dessertoasis.demo.model.product.Product;
 import com.dessertoasis.demo.service.CourseService;
 import com.dessertoasis.demo.service.MemberService;
 import com.dessertoasis.demo.service.ProductService;
-import com.dessertoasis.demo.service.classroom.ReservationService;
+import com.dessertoasis.demo.service.cart.CartService;
 import com.dessertoasis.demo.service.order.OrderService;
+import com.dessertoasis.demo.service.order.ReservationService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
@@ -47,6 +48,9 @@ public class OrderController {
 	
 	@Autowired
 	private ReservationService reservationService;
+	
+	@Autowired
+	private CartService cartService;
 	
 	// 新增訂單
 	@PostMapping("/order")
@@ -92,7 +96,7 @@ public class OrderController {
 				ReservationCartDTO cartItem = objectMapper.convertValue(cartItemMap, ReservationCartDTO.class);
 				
 				// 查此教室某天某時段是否已經預約
-				Reservation rsv = reservationService.getByRoomId(
+				Reservation rsv = reservationService.getByRoomIdWithDateAndTime(
 						cartItem.getClassroom().getId(), cartItem.getReservationDate(), cartItem.getReservationTime());
 				if (rsv != null) {
 					String room = rsv.getClassroom().getRoomName();
@@ -112,6 +116,8 @@ public class OrderController {
 		order.setOrdStatus("訂單成立");
 		
 		orderService.insert(order);
+		
+		
 
 		return "訂單新增成功";
 	}

@@ -1,4 +1,4 @@
-package com.dessertoasis.demo.controller.classroom;
+package com.dessertoasis.demo.controller.order;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.dessertoasis.demo.model.order.Reservation;
-import com.dessertoasis.demo.service.classroom.ReservationService;
+import com.dessertoasis.demo.service.order.ReservationService;
 
 @RestController
 public class ReservationController {
@@ -28,6 +28,6 @@ public class ReservationController {
 		LocalDate startDate = LocalDate.parse(startStr, DateTimeFormatter.ISO_DATE);
 		LocalDate endDate = LocalDate.parse(endStr, DateTimeFormatter.ISO_DATE);
 		
-		return rService.getByRoomId(roomId, startDate, endDate);
+		return rService.getByRoomIdBetweenDates(roomId, startDate, endDate);
 	}
 }
