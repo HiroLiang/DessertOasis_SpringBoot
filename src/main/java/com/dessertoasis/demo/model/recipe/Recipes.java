@@ -83,6 +83,23 @@ public class Recipes {
 	
 	public Recipes() {
 	}
+
+	public Recipes(Member recipeAuthor, List<RecipeCategory> recipeCategories, List<RecipeSteps> recipeSteps,
+			String recipeTitle, String pictureURL, String recipeIntroduction, Integer cookingTime,
+			Date recipeCreateDate, Integer recipeStatus) {
+		super();
+		this.recipeAuthor = recipeAuthor;
+		this.recipeCategories = recipeCategories;
+		this.recipeSteps = recipeSteps;
+		this.recipeTitle = recipeTitle;
+		this.pictureURL = pictureURL;
+		this.recipeIntroduction = recipeIntroduction;
+		this.cookingTime = cookingTime;
+		this.recipeCreateDate = recipeCreateDate;
+		this.recipeStatus = recipeStatus;
+	}
+	
+	
 }
 
 	
