@@ -14,7 +14,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 @Component
 public class ImageUploadUtil {
-	//請將上傳圖檔路徑請改為自己裝置上的路徑
+	//請將上傳圖檔路徑請改為自己裝置上的路徑, 由於用方法封裝起來tomcat會塞入預設字串導致抓不到正確路徑,別人的路徑先註解掉複製改為自己的
 	private static final String userRoot = "C:\\Users\\iSpan\\Documents\\dessertoasis-vue\\public\\images";
 	
 	public String savePicture(MultipartFile file, Integer memberId, String folderName,String projectName) {
@@ -46,17 +46,17 @@ public class ImageUploadUtil {
 		
 	}
 	
-	public static String getPath() {
-		InputStream is = ClassLoader.getSystemClassLoader().getResourceAsStream("ImgSavePath");
-		Properties properties = new Properties();
-		try {
-			properties.load(is);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		String property = properties.getProperty("savePath");
-		return property;
-	}
+//	public static String getPath() {
+//		InputStream is = ClassLoader.getSystemClassLoader().getResourceAsStream("ImgSavePath");
+//		Properties properties = new Properties();
+//		try {
+//			properties.load(is);
+//		} catch (IOException e) {
+//			e.printStackTrace();
+//		}
+//		String property = properties.getProperty("savePath");
+//		return property;
+//	}
 	 private String generateUniqueFileName(String originalFilename) {
 		 String fileName = originalFilename.substring(0,originalFilename.lastIndexOf("."));
 	        String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmssSSS"));
