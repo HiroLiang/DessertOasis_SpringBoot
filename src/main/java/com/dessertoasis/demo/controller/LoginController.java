@@ -93,6 +93,7 @@ public class LoginController {
 	    return "redirect:/"; // 
 	}
 
+
 //	@GetMapping("/getcookie")
 //	public String getCookieValue(@CookieValue(name = "adminLogin", defaultValue = "") String adminLoginCookie) {
 //		if("1".equals(adminLoginCookie)) {
@@ -105,12 +106,6 @@ public class LoginController {
 		
 		
 	}
-	
-	
-	
-	
-
-
 
 
 //↓↓↓↓↓↓↓↓↓↓↓↓↓跳轉頁面使用session取出member資料↓↓↓↓↓↓↓↓↓↓↓↓↓
