@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.dessertoasis.demo.model.cart.Cart;
+import com.dessertoasis.demo.model.cart.CartDTO;
 import com.dessertoasis.demo.model.cart.CourseCartDTO;
 import com.dessertoasis.demo.model.cart.ProductCartDTO;
 import com.dessertoasis.demo.model.cart.ReservationCart;
@@ -27,6 +28,8 @@ import com.dessertoasis.demo.service.cart.CartService;
 import com.dessertoasis.demo.service.cart.ReservationCartService;
 import com.dessertoasis.demo.service.classroom.ClassroomService;
 
+import jakarta.servlet.http.HttpSession;
+
 @RestController
 public class CartController {
 	
@@ -35,10 +38,10 @@ public class CartController {
 	private Integer reservationCategoryId = 4;
 	
 	@Autowired
-	private CartService cartService;
+	private MemberService memberService;
 	
 	@Autowired
-	private MemberService memberService;
+	private CartService cartService;
 	
 	@Autowired
 	private ProductService productService;
@@ -47,15 +50,16 @@ public class CartController {
 	private CourseService courseService;
 	
 	@Autowired
-	private ReservationCartService rcService;
+	private ReservationCartService rsvCartService;
 	
 	@Autowired
 	private ClassroomService roomService;
 	
 	// 取出會員之購物車的所有商品
-	@GetMapping("/cart/product/{memberId}")
-	public List<ProductCartDTO> getProductCart(@PathVariable("memberId") Integer memberId) {
-		List<Cart> cartList = cartService.findByMemberId(memberId);
+	@GetMapping("/cart/product")
+	public List<ProductCartDTO> getProductCart(HttpSession session) {
+		Member member = (Member) session.getAttribute("loggedInMember");
+		List<Cart> cartList = cartService.findByMemberId(member.getId());
 		List<ProductCartDTO> productCart = new ArrayList<>();
 		for (Cart cart : cartList) {
 			if (cart.getCategoryId() == productCategoryId) {
@@ -68,9 +72,10 @@ public class CartController {
 	}
 	
 	// 取出會員之購物車的所有課程
-	@GetMapping("/cart/course/{memberId}")
-	public List<CourseCartDTO> getCourseCart(@PathVariable("memberId") Integer memberId) {
-		List<Cart> cartList = cartService.findByMemberId(memberId);
+	@GetMapping("/cart/course")
+	public List<CourseCartDTO> getCourseCart(HttpSession session) {
+		Member member = (Member) session.getAttribute("loggedInMember");
+		List<Cart> cartList = cartService.findByMemberId(member.getId());
 		List<CourseCartDTO> courseCart = new ArrayList<>();
 		for (Cart cart : cartList) {
 			if (cart.getCategoryId() == courseCategoryId) {
@@ -83,13 +88,14 @@ public class CartController {
 	}
 	
 	// 取出會員之購物車的所有教室預約
-	@GetMapping("/cart/reservation/{memberId}")
-	public List<ReservationCartDTO> getReservationCart(@PathVariable("memberId") Integer memberId) {
-		List<Cart> cartList = cartService.findByMemberId(memberId);
+	@GetMapping("/cart/reservation")
+	public List<ReservationCartDTO> getReservationCart(HttpSession session) {
+		Member member = (Member) session.getAttribute("loggedInMember");
+		List<Cart> cartList = cartService.findByMemberId(member.getId());
 		List<ReservationCartDTO> rsvCart = new ArrayList<>();
 		for (Cart cart : cartList) {
 			if (cart.getCategoryId() == reservationCategoryId) {
-				ReservationCart rc = rcService.findById(cart.getInterestedId());
+				ReservationCart rc = rsvCartService.findById(cart.getInterestedId());
 				ReservationCartDTO rsvCartItem = new ReservationCartDTO(cart, rc);
 				rsvCart.add(rsvCartItem);
 			}
@@ -98,26 +104,26 @@ public class CartController {
 	}
 	
 	// 加入購物車
-	@PostMapping("/cart/{memberId}")
-	public String addToCart(@PathVariable("memberId") Integer memberId, @RequestBody Cart cart) {
-		Member member = memberService.findByMemberId(memberId);
+	@PostMapping("/cart")
+	public String addToCart(@RequestBody CartDTO cartDTO, HttpSession session) {
+		Member member = (Member) session.getAttribute("loggedInMember");
 		if (member == null) {
 			return "加入購物車失敗，沒有此會員";
 		}
-		cart.setMember(member);
-		cartService.insert(cart);
-		return "加入購物車成功";
-	}
-	
-	// 加入預約教室購物車
-	@PostMapping("/reservationCart/room/{roomId}")
-	public ReservationCart addToReservationCart(@PathVariable("roomId")Integer roomId, @RequestBody ReservationCart rc) {
-		Classroom room = roomService.findById(roomId);
-		if (room == null) {
-			return null;
+		member = memberService.findByMemberId(member.getId());
+		
+		// 加入預約教室購物車
+		if (cartDTO.getCategoryId() == reservationCategoryId) {
+			Classroom room = roomService.findById(cartDTO.getRoomId());
+			ReservationCart rsvCart = new ReservationCart(cartDTO, room);
+			rsvCart = rsvCartService.insert(rsvCart);
+			cartDTO.setInterestedId(rsvCart.getId());
 		}
-		rc.setClassroom(room);
-		return rcService.insert(rc);
+		
+		Cart cart = new Cart(cartDTO, member);		
+		cartService.insert(cart);
+		
+		return "加入購物車成功";
 	}
 	
 	// 刪除購物車項目
@@ -125,7 +131,7 @@ public class CartController {
 	public void deleteCart(@PathVariable("cartId") Integer cartId) {
 		Cart cart = cartService.findByCartId(cartId);
 		if (cart != null && cart.getCategoryId() == reservationCategoryId) {
-			rcService.deleteById(cart.getInterestedId());
+			rsvCartService.deleteById(cart.getInterestedId());
 		}
 		cartService.deleteById(cartId);
 	}

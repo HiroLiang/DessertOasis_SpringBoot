@@ -35,5 +35,16 @@ public class ReservationCart {
 	
 	@Column(columnDefinition = "nvarchar(50)")
 	private String detail;
+	
+	public ReservationCart() {
+		
+	}
+	
+	public ReservationCart(CartDTO cartDTO, Classroom room) {
+		this.classroom = room;
+		this.reservationDate = cartDTO.getReservationDate();
+		this.reservationTime = cartDTO.getReservationTime();
+		this.detail = cartDTO.getDetail();
+	}
 
 }
