@@ -94,20 +94,17 @@ public class LoginController {
 	    return "redirect:/"; // 
 	}
 	
+	//從session 拿出member資料
 	  @GetMapping("/memberSession")
-	    public ResponseEntity<Member> getSessionMember(HttpServletRequest request) {
+	    public Member getSessionMember(HttpServletRequest request) {
 	        
 	        HttpSession session = request.getSession();
 	        Member loggedInMember = (Member) session.getAttribute("loggedInMember");
-
-	        if (loggedInMember != null) {
-	            Member response = new Member();
-	            System.out.println("session:"+session);
-	            return ResponseEntity.ok(response);
-	        } else {
-	            return ResponseEntity.notFound().build();
-	        }
+	        
+	        return loggedInMember;
 	    }
+	  
+	  //更新密碼
 
 //	@GetMapping("/getcookie")
 //	public String getCookieValue(@CookieValue(name = "adminLogin", defaultValue = "") String adminLoginCookie) {
