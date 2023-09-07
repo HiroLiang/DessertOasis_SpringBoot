@@ -29,7 +29,8 @@ public class CourseService {
 		Optional<Course> optional = cRepo.findById(id);
 		
 		if(optional.isPresent()) {
-			return optional.get();
+			Course course = optional.get();
+			return course;
 		}
 		return null;
 	}
@@ -54,10 +55,10 @@ public class CourseService {
 			result.setId(id);
 			result.setCourseName(course.getCourseName());
 			result.setCourseStatus(course.getCourseStatus());
-//			result.setCourseDate(course.getCourseDate());
-//			result.setRegDeadline(course.getRegDeadline());
-//			result.setCourseDescription(course.getCourseDescription());
-//			result.setCourseLocation(course.getCourseLocation());
+			result.setCourseDate(course.getCourseDate());
+			result.setCloseDate(course.getCloseDate());
+			result.setCourseIntroduction(course.getCourseIntroduction());
+			result.setCoursePlace(course.getCoursePlace());
 		}
 		return null;
 	}
@@ -67,16 +68,13 @@ public class CourseService {
 		Optional<Course> optional = cRepo.findById(id);
 		
 		if(optional.isPresent()) {
-			cRepo.deleteById(id);
+			 cRepo.deleteById(id);
 			return true;
 		}
 		return false;
 	}
 	
-//	public List<Course> getCoursesByTeacher(Teacher teacher) {
-//        return cRepo.findByTeacher(teacher);
-//    }
-	
+	//列出該老師所有課程
 	public List<CourseDTO> getCoursesByTeacherId(Integer teacherId){
 		List<Course> courses = cRepo.findByTeacherId(teacherId);
 		List<CourseDTO> cDTOs = new ArrayList<>();

@@ -143,30 +143,17 @@ public class CourseController {
 	}
 	
 	//刪除單筆課程
-	@DeleteMapping("/{id}")
-	public String deleteCourseById(@PathVariable Integer id) {
-		boolean isDeleted = cService.deleteById(id);
+	@DeleteMapping("/{courseId}")
+	public String deleteCourseById(@PathVariable Integer courseId) {
+		boolean isDeleted = cService.deleteById(courseId);
 		
 		if(isDeleted) {
 			return "刪除成功";
 		}
 		return "刪除失敗";
 	}
-//	
-//	@GetMapping("/teacher/{teacherId}")
-//    public ResponseEntity<List<CourseTeacherDTO>> getCoursesByTeacherId(@PathVariable Integer teacherId,HttpSession session) {
-////		Member member = (Member) session.getAttribute("loggedInMember");
-//		// 调用 CourseService 来获取特定教师的课程列表
-////        List<CourseTeacherDTO> courses = cService.getCoursesByTeacherId(member.getId());
-//        List<CourseTeacherDTO> courses = cService.getCoursesByTeacherId(teacherId);
-//
-//        if (courses.isEmpty()) {
-//            return ResponseEntity.noContent().build(); // 如果没有课程，返回204 No Content
-//        } else {
-//            return ResponseEntity.ok(courses); // 返回课程列表
-//        }
-//	}
 	
+	//依照老師id列出該教師所有課程
 	@GetMapping("/teacher/{teacherId}")
 	public ResponseEntity <List<CourseDTO>> getCourseByTeacherId(@PathVariable Integer teacherId){
 //		Member member = (Member) session.getAttribute("loggedInMember");
