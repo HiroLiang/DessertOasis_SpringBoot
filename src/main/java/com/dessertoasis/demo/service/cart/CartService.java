@@ -104,6 +104,16 @@ public class CartService {
 		}
 		cartDTO.setCategoryId(category.getId());
 		
+		// 若購物車內已經有此商品，更新商品 quantity
+		if (cartDTO.getCategoryId() == productCategoryId &&
+				cartRepo.findByInterestedId(cartDTO.getInterestedId()) != null) {
+			
+			Integer prodQuantity = cartDTO.getProdQuantity();
+			Cart prodCart = cartRepo.findByInterestedId(cartDTO.getInterestedId());
+			prodQuantity += prodCart.getProdQuantity();
+			return this.updateProdQuantity(prodCart, prodQuantity);
+		}
+		
 		// 加入預約教室購物車
 		if (cartDTO.getCategoryId() == reservationCategoryId) {
 			Classroom room = roomRepo.findById(cartDTO.getRoomId()).get();
@@ -118,12 +128,41 @@ public class CartService {
 		return cartRepo.save(cart);
 	}	
 	
+	public Cart updateProdQuantity(Cart cart, Integer prodQuantity) {
+		if (cart.getCategoryId() != productCategoryId)
+			return null;
+		cart.setProdQuantity(prodQuantity);
+		cart = cartRepo.save(cart);
+		return cart;
+	}
+	
 	public void deleteCart(Integer cartId) {
 		Cart cart = cartRepo.findById(cartId).get();
 		if (cart.getCategoryId() == reservationCategoryId) {
-			rsvCartRepo.deleteById(cart.getInterestedId());;
+			rsvCartRepo.deleteById(cart.getInterestedId());
 		}
 		
 		cartRepo.deleteById(cartId);
+	}
+	
+	public void deleteCarts(List<ProductCartDTO> productCartDTOs, List<CourseCartDTO> courseCartDTOs, List<ReservationCartDTO> reservationCartDTOs) {
+		List<Integer> cartIds = new ArrayList<>();
+		if (productCartDTOs != null) {
+			for (ProductCartDTO productCartDTO : productCartDTOs) {
+				cartIds.add(productCartDTO.getCartId());
+			}
+		}
+		if (courseCartDTOs != null) {
+			for (CourseCartDTO courseCartDTO : courseCartDTOs) {
+				cartIds.add(courseCartDTO.getCartId());
+			}
+		}
+		if (reservationCartDTOs != null) {
+			for (ReservationCartDTO reservationCartDTO : reservationCartDTOs) {
+				rsvCartRepo.deleteById(reservationCartDTO.getReservationCartId());
+				cartIds.add(reservationCartDTO.getCartId());
+			}
+		}
+		cartRepo.deleteAllById(cartIds);
 	}
 }
