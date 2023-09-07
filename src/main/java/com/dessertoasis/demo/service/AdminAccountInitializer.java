@@ -107,6 +107,7 @@ public class AdminAccountInitializer {
     		 		
     		 		user.setFullName("一般使用者");
     		 		user.setAccount("user");
+    		 		user.setMemberName("一般");
     		 		user.setEmail("123@google.com");
     		 		user.setMemberStatus(MemberState.ACTIVE);
     		 		user.setAccess(MemberAccess.USER);
