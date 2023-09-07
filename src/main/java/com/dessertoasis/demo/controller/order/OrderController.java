@@ -3,6 +3,10 @@ package com.dessertoasis.demo.controller.order;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -27,11 +31,17 @@ public class OrderController {
 	@Autowired
 	private CartService cartService;
 	
+	// 取得單一訂單
+	@GetMapping("/order/{ordId}")
+	public Order getOrderById(@PathVariable("ordId") Integer ordId) {
+		return orderService.getByOrdId(ordId);
+	}
+	
 	// 新增訂單
 	@PostMapping("/order")
-	public String insertOrder(@RequestBody CartListDTO cartList, HttpSession session) {		
+	public ResponseEntity<?> insertOrder(@RequestBody CartListDTO cartList, HttpSession session) {		
 		Member member = (Member) session.getAttribute("loggedInMember");
-		if (member == null) return "沒有會員";
+		if (member == null) return ResponseEntity.ok("沒有會員");;
 				
 		List<ProductCartDTO> productCartDTOs = cartList.getProductCartDTOs();
 		List<CourseCartDTO> courseCartDTOs = cartList.getCourseCartDTOs();
@@ -40,7 +50,7 @@ public class OrderController {
 		// 檢查教室是否已被預約
 		String rsvCheckResult = orderService.checkReservation(rsvCartDTOs);
 		if (rsvCheckResult != null) {
-			return rsvCheckResult;
+			return ResponseEntity.ok(rsvCheckResult);
 		}
 		
 		Order order = new Order();
@@ -51,12 +61,12 @@ public class OrderController {
 		order = orderService.placeReservation(order, rsvCartDTOs);
 		
 		// 新增訂單
-		orderService.insert(order, member.getId());
+		order = orderService.insert(order, member.getId());
 		
 		// 清掉購物車
 		cartService.deleteCarts(productCartDTOs, courseCartDTOs, rsvCartDTOs);
 		
-		return "訂單新增成功";
+		return ResponseEntity.ok(order);
 	}
 
 	

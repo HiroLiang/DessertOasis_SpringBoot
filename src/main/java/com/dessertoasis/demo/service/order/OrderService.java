@@ -5,6 +5,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import com.dessertoasis.demo.model.cart.CourseCartDTO;
@@ -12,6 +15,7 @@ import com.dessertoasis.demo.model.cart.ProductCartDTO;
 import com.dessertoasis.demo.model.cart.ReservationCartDTO;
 import com.dessertoasis.demo.model.course.Course;
 import com.dessertoasis.demo.model.course.CourseRepository;
+import com.dessertoasis.demo.model.member.Member;
 import com.dessertoasis.demo.model.member.MemberRepository;
 import com.dessertoasis.demo.model.order.CourseOrderItem;
 import com.dessertoasis.demo.model.order.Order;
@@ -42,6 +46,23 @@ public class OrderService {
 	
 	@Autowired
 	private ReservationService rsvService;
+	
+	public Order getByOrdId(Integer ordId) {
+		return orderRepo.findById(ordId).orElse(null);
+	}
+	
+	public Page<Order> getPage(Integer pageNum, Integer pageSize, Sort.Direction sort, String prop) {
+		PageRequest pageRequest = PageRequest.of(pageNum, pageSize, sort, prop);
+		Page<Order> page= orderRepo.findAll(pageRequest);
+		return page;
+	}
+	
+	public Page<Order> getPageByMemberId(Integer memberId, Integer pageNum, Integer pageSize, Sort.Direction sort, String prop) {
+		Member member = memberRepo.findById(memberId).get();
+		PageRequest pageRequest = PageRequest.of(pageNum, pageSize, sort, prop);
+		Page<Order> page = orderRepo.findByMember(member, pageRequest);
+		return page;
+	}
 	
 	// 新增訂單
 	public Order insert(Order order, Integer memberId) {
