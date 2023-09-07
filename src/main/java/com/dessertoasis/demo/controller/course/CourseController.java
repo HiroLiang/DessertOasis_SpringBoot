@@ -23,6 +23,7 @@ import com.dessertoasis.demo.model.course.Course;
 import com.dessertoasis.demo.model.course.CourseDTO;
 import com.dessertoasis.demo.model.course.CourseTeacherDTO;
 import com.dessertoasis.demo.model.course.Teacher;
+import com.dessertoasis.demo.model.member.Member;
 import com.dessertoasis.demo.model.product.Product;
 import com.dessertoasis.demo.model.recipe.RecipeDTO;
 import com.dessertoasis.demo.model.recipe.RecipeRepository;
@@ -33,6 +34,7 @@ import com.dessertoasis.demo.service.recipe.RecipeService;
 
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import jakarta.transaction.Transactional;
 
 @RestController
@@ -75,7 +77,6 @@ public class CourseController {
 	
 	@GetMapping("/{id}")
 	public ResponseEntity<CourseDTO> getCourseDetails(@PathVariable Integer id) {
-	    // Logic to retrieve Course and related data
 	    Course course = cService.findById(id);
 //	    List<CourseCtag> courseCtags = courseCtagService.findByCourseId(courseId);
 //	    List<CoursePicture> coursePictures = coursePictureService.findByCourseId(courseId);
@@ -84,16 +85,11 @@ public class CourseController {
 	        return ResponseEntity.notFound().build();
 	    }
 
-	    // Create a CourseDTO object and set its properties
 	    CourseDTO courseDTO = new CourseDTO(course);
 
 ////	    courseDTO.setTag(course.)
 //	    courseDTO.setCoursePictureList(course.getCoursePictureList());
 	    
-	    // Set other properties based on your data
-
-
-	    // Return ResponseEntity<CourseDTO> with HTTP status and CourseDTO object
 	    return ResponseEntity.ok(courseDTO);
 	}
 	
@@ -156,7 +152,29 @@ public class CourseController {
 		}
 		return "刪除失敗";
 	}
+//	
+//	@GetMapping("/teacher/{teacherId}")
+//    public ResponseEntity<List<CourseTeacherDTO>> getCoursesByTeacherId(@PathVariable Integer teacherId,HttpSession session) {
+////		Member member = (Member) session.getAttribute("loggedInMember");
+//		// 调用 CourseService 来获取特定教师的课程列表
+////        List<CourseTeacherDTO> courses = cService.getCoursesByTeacherId(member.getId());
+//        List<CourseTeacherDTO> courses = cService.getCoursesByTeacherId(teacherId);
+//
+//        if (courses.isEmpty()) {
+//            return ResponseEntity.noContent().build(); // 如果没有课程，返回204 No Content
+//        } else {
+//            return ResponseEntity.ok(courses); // 返回课程列表
+//        }
+//	}
 	
-	
-
+	@GetMapping("/teacher/{teacherId}")
+	public ResponseEntity <List<CourseDTO>> getCourseByTeacherId(@PathVariable Integer teacherId){
+//		Member member = (Member) session.getAttribute("loggedInMember");
+		List <CourseDTO> courseDTOs = cService.getCoursesByTeacherId(teacherId);
+		if(courseDTOs.isEmpty()) {
+			return ResponseEntity.noContent().build();
+		}else {
+			return ResponseEntity.ok(courseDTOs);
+		}
+	}
 }

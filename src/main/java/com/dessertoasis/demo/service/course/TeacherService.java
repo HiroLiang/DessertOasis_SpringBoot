@@ -54,6 +54,10 @@ public class TeacherService {
         
     }
 
+	public List<Teacher> getAllTeachers(){
+		return tRepo.findAll();
+	}
+	
 	
 	//成為教師
 	public Teacher becomeTeacher(Integer memberId) {
@@ -88,12 +92,13 @@ public class TeacherService {
         }
     }
     
-//	public Teacher findById(Integer id) {
-//		Optional<Teacher> teacher = tRepo.findById(id);
-//		if(result != null) {
-//			Teacher res = result.get();
-//		}
-//	}
+	public Teacher findById(Integer id) {
+		Optional<Teacher> result = tRepo.findById(id);
+		if(result != null) {
+			Teacher teacher = result.get();
+			return teacher;
+		}return null;
+	}
 	
 	
 	

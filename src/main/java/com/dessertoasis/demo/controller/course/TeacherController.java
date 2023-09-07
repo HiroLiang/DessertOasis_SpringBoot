@@ -1,5 +1,6 @@
 package com.dessertoasis.demo.controller.course;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -21,6 +22,7 @@ import com.dessertoasis.demo.model.course.TeacherRepository;
 import com.dessertoasis.demo.model.member.Member;
 import com.dessertoasis.demo.model.sort.SortCondition;
 import com.dessertoasis.demo.service.MemberService;
+import com.dessertoasis.demo.service.course.CourseService;
 import com.dessertoasis.demo.service.course.TeacherService;
 import com.fasterxml.jackson.annotation.JsonRawValue;
 
@@ -38,6 +40,9 @@ public class TeacherController {
 	
 	@Autowired
 	private MemberService mService;
+	
+	@Autowired
+	private CourseService cService;
 
 	@PostMapping("/getTeacherPage")
 	public List<TeacherDemo> getTeacherDatas(@RequestBody SortCondition sortCod) {
@@ -83,9 +88,9 @@ public class TeacherController {
 	}
 
 	// 依照老師編號列出該教師所有課程
-//	@GetMapping("/teacher/{teacherId}/courses")
+//	@GetMapping("/{teacherId}/courses")
 //    public List<Course> getTeacherCourses(@PathVariable Integer teacherId) {
-//		Teacher teacher = tRepo.findById(teacherId);
+//		Teacher teacher = tService.findById(teacherId);
 //		if (teacher != null) {
 //            return cService.getCoursesByTeacher(teacher);
 //        }
