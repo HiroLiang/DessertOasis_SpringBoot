@@ -22,7 +22,6 @@ import com.dessertoasis.demo.model.course.Course;
 import com.dessertoasis.demo.model.course.CourseRepository;
 import com.dessertoasis.demo.model.member.Member;
 import com.dessertoasis.demo.model.member.MemberRepository;
-import com.dessertoasis.demo.model.order.Reservation;
 import com.dessertoasis.demo.model.product.Product;
 import com.dessertoasis.demo.model.product.ProductRepository;
 
