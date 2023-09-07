@@ -16,6 +16,7 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -70,7 +71,7 @@ public class Member { //與會員帳號相關
 	private Date signDate;
 
 	@JsonIgnore
-	@OneToMany(mappedBy = "recipeAuthor",cascade = CascadeType.ALL)
+	@OneToMany(mappedBy = "recipeAuthor",cascade = CascadeType.ALL,fetch = FetchType.EAGER)
 	private List<Recipes> recipes;
 	
 	public Member() {

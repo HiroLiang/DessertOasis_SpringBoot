@@ -1,6 +1,9 @@
 package com.dessertoasis.demo.controller.recipe;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -24,9 +27,12 @@ import jakarta.servlet.http.HttpSession;
 import com.dessertoasis.demo.ImageUploadUtil;
 import com.dessertoasis.demo.model.category.Category;
 import com.dessertoasis.demo.model.member.Member;
+import com.dessertoasis.demo.model.recipe.Ingredient;
+import com.dessertoasis.demo.model.recipe.IngredientList;
 import com.dessertoasis.demo.model.recipe.RecipeCarouselDTO;
 import com.dessertoasis.demo.model.recipe.RecipeDTO;
 import com.dessertoasis.demo.model.recipe.RecipeRepository;
+import com.dessertoasis.demo.model.recipe.RecipeSteps;
 
 @RestController
 public class RecipeController {
@@ -36,6 +42,9 @@ public class RecipeController {
 	
 	@Autowired
 	private RecipeRepository recipeRepo;
+	
+	@Autowired
+	private ImageUploadUtil imgUtil;
 
 //	@PostMapping("/recipe/add")
 //	@ResponseBody
@@ -120,21 +129,69 @@ public class RecipeController {
 	/*--------------------------------------------食譜建立頁使用controller ------------------------------------------------*/
 
 	//新增食譜
-//	@PostMapping("/recipe/addrecipe")
-//	@ResponseBody
-//	public String addRecipe(@RequestBody Recipes recipe,HttpSession session) {
-//		Member member = (Member) session.getAttribute("loggedInMember");
-//		if(member != null) {
-//			
-//			Boolean add = recipeService.addRecipe(member.getId(), recipe);
-//			if(add) {
-//				return "Y";
-//			}
-//			return "F";
-//		}
-//		return"N";
-//	}
-//	
+	@PostMapping("/recipe/addrecipe")
+	@ResponseBody
+	public String addRecipe(@RequestParam("recipeTitle") String recipeTitle,@RequestParam("recipeIntroduction") String recipeIntroduction,
+			@RequestParam("pictureURL") MultipartFile pictureURL,@RequestParam("cookingTime") Integer cookingTime,
+			@RequestParam Map<String, String> ingredients,@RequestParam Map<String, MultipartFile> steps,@RequestParam Map<String, String> stepDescriptions,
+			HttpSession session) {
+		Member member = (Member) session.getAttribute("loggedInMember");
+		if(member != null) {
+			Recipes recipe = new Recipes();
+			recipe.setRecipeTitle(recipeTitle);
+			recipe.setRecipeAuthor(member);
+			recipe.setCookingTime(cookingTime);
+			recipe.setRecipeCreateDate(LocalDateTime.now());
+			recipe.setRecipeIntroduction(recipeIntroduction);
+			recipe.setRecipeStatus(1);
+			
+			String mainPicUrl = imgUtil.savePicture(pictureURL, 1, "recipe", recipeTitle);
+			recipe.setPictureURL(mainPicUrl);
+
+			IngredientList ingredientList = new IngredientList();
+			Ingredient ingredient = new Ingredient();
+	    	int ingredientsIndex = ingredients.size()/2;
+	    	for(int i = 1 ; i <= ingredientsIndex ; i++) {
+	    		String ingredientNameKey = "ingredientName"+i;
+	    		String ingredientQtyKey ="ingredientQuantity"+i;
+	    		String ingredientName = ingredients.get(ingredientNameKey);
+	    		String ingredientQty= ingredients.get(ingredientQtyKey);
+	    		if (ingredientQty != null && !ingredientQty.isEmpty()) {
+	    		    try {
+	    		        ingredientList.setIngredientQuantity(Integer.parseInt(ingredientQty));
+	    		    } catch (NumberFormatException e) {
+	    		        // 处理无法解析为整数的情况
+	    		    }
+	    		}
+//	    		ingredientList.setIngredientQuantity(Integer.parseInt(ingredientQty));
+	    		ingredient.setIngredientName(ingredientName);
+	    	}
+	    	RecipeSteps recipeSteps = new RecipeSteps();
+	    	recipeSteps.setRecipe(recipe);
+	    	int stepsIndex = steps.size()/2;
+	    	for(int i= 1 ; i <= stepsIndex ; i++) {
+	    		recipeSteps.setStepNumber(i);
+	    		String stepImgKey = "recipeStep"+i;
+	    		MultipartFile stepImg = steps.get(stepImgKey);
+	    		String picUrl = imgUtil.savePicture(stepImg, 1, "recipe", recipeTitle);
+	    		recipeSteps.setStepPicture(picUrl);
+	    	}
+	    	int stepIntroIndex = stepDescriptions.size()/2;
+	    	for(int i= 1 ; i <= stepIntroIndex ; i++) {
+	    		String stepIntroIndexKey = "recipeIntroduction"+i;
+	    		String stepIntro = stepDescriptions.get(stepIntroIndexKey);
+	    		recipeSteps.setStepContext(stepIntro);
+	    	}
+	    	
+			Boolean add = recipeService.addRecipe(1, recipe);
+			if(add) {
+				return "Y";
+			}
+			return "F";
+		}
+		return"N";
+	}
+	
 	
 	@PostMapping("test/uploadimg")
 	public void sendPic(@RequestBody MultipartFile file) {
