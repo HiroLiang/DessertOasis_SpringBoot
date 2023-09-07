@@ -45,7 +45,8 @@ public class Teacher {
 	@Column(name = "teacherProfile", columnDefinition = "nvarchar(max)")
 	private String teacherProfile;
 
-	@Column(name = "teacherAccountStatus", columnDefinition = "nvarchar(100) ")
+	@Column(name = "teacherAccountStatus", columnDefinition = "nvarchar(100)")
+
 	private String teacherAccountStatus;
 
 	//會員ID (FK)，要有對方的物件當屬性

@@ -69,10 +69,15 @@ public class ProductController {
         return ResponseEntity.noContent().build();
     }
   
-//    @PostMapping("/criteria")
-//    public sendSort(@RequestBody ProdSearchDTO pDTO) {
-//    	pDTO.getProdName();
-//    }
+    @PostMapping("/criteria")
+    public ResponseEntity<Page<Product>> searchProducts(
+            @RequestBody ProdSearchDTO criteria,
+            Pageable pageable) {
+    	
+        Page<Product> products = pService.searchProducts(criteria, pageable);
+        return ResponseEntity.ok(products);
+    }
+
     
     @GetMapping("/search")
     

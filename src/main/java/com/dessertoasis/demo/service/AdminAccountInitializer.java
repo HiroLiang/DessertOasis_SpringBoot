@@ -126,22 +126,35 @@ public class AdminAccountInitializer {
     		 	// 如果不存在，創建一個管理者帳號
     	        if (existingAdmin == null) {
     	            Member admin = new Member();
+    	            MemberDetail adminDetail = new MemberDetail();
+    	            adminDetail.setIdNumber("B123132132");
+    	            adminDetail.setDeliveryAddress("北京");
+    		 		
+    		 		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+    		 		Date date = dateFormat.parse("1989-06-05");
+    		 		adminDetail.setBirthday(date);
+    		 		
     	            admin.setFullName("管理人員");
     	            admin.setAccount("admin");
+    	            admin.setMemberName("管理");
+    	            admin.setEmail("3345678@google.com");
     	            admin.setMemberStatus(MemberState.ACTIVE);
     	            admin.setAccess(MemberAccess.ADMIN);
     	            String password = "admin";
     	            admin.setPasswords(passwordEncoder.encode(password));
     	            admin.setSignDate(new Date());
 
-    	            mRepo.save(admin);
+    	            admin.setMemberDetail(adminDetail);
+    	            adminDetail.setMember(admin);
+//    		 		
+    		 		mRepo.save(admin);
 
     	    
-    	            adminInitializationEnabled = false;
     	            
     	        }else {
     	        	         
     	        }
+    	        adminInitializationEnabled = false;
     	}catch (LazyInitializationException e) {
     		
 			

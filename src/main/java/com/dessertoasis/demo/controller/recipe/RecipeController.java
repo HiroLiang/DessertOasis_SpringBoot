@@ -1,7 +1,9 @@
 package com.dessertoasis.demo.controller.recipe;
 
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 import java.util.Map;
 
@@ -18,23 +20,25 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.dessertoasis.demo.model.recipe.Recipes;
-import com.dessertoasis.demo.model.sort.SortCondition;
-import com.dessertoasis.demo.service.recipe.RecipeService;
-
-import jakarta.servlet.http.HttpSession;
-
 import com.dessertoasis.demo.ImageUploadUtil;
 import com.dessertoasis.demo.model.category.Category;
 import com.dessertoasis.demo.model.member.Member;
 import com.dessertoasis.demo.model.recipe.Ingredient;
 import com.dessertoasis.demo.model.recipe.IngredientList;
+import com.dessertoasis.demo.model.recipe.PicturesDTO;
 import com.dessertoasis.demo.model.recipe.RecipeCarouselDTO;
 import com.dessertoasis.demo.model.recipe.RecipeDTO;
 import com.dessertoasis.demo.model.recipe.RecipeRepository;
 import com.dessertoasis.demo.model.recipe.RecipeSteps;
+import com.dessertoasis.demo.model.recipe.Recipes;
+import com.dessertoasis.demo.model.sort.SortCondition;
+import com.dessertoasis.demo.service.recipe.RecipeService;
+
+import jakarta.servlet.annotation.MultipartConfig;
+import jakarta.servlet.http.HttpSession;
 
 @RestController
+@MultipartConfig
 public class RecipeController {
 
 	@Autowired
@@ -193,14 +197,18 @@ public class RecipeController {
 	}
 	
 	
-	@PostMapping("test/uploadimg")
-	public void sendPic(@RequestBody MultipartFile file) {
-		ImageUploadUtil util = new ImageUploadUtil();
-		System.out.println(file.getOriginalFilename());
-		util.savePicture(file, 1, "recipe", "test");
+	@SuppressWarnings("resource")
+	@PostMapping(path = "test/uploadimg")
+	public void sendPic(@RequestBody  List<PicturesDTO> pictures,@RequestParam String recipe ) throws IOException {
 		
-		System.out.println(file);
+		String base64 = pictures.get(0).getBase64Content();
+		String path = "C:\\Users\\iSpan\\"+pictures.get(0).getFileName();
 		
+		byte[] decode = Base64.getDecoder().decode(base64);
+		FileOutputStream fileOutputStream = new FileOutputStream(path);
+		fileOutputStream.write(decode);
+		
+		fileOutputStream.close();
 	}
 	
 	//更新食譜
