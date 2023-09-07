@@ -22,4 +22,5 @@ public class Test {
 		ImageUploadUtil util = new ImageUploadUtil();
 		return new ResponseEntity<>("Hello world", HttpStatus.CREATED);
 	}
+	
 }
