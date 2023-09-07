@@ -107,9 +107,8 @@ public class OrderController {
 		order.setOrdStatus("訂單成立");
 		
 		orderService.insert(order);
+		cartService.deleteCarts(productCartDTOs, courseCartDTOs, rsvCartDTOs);
 		
-		
-
 		return "訂單新增成功";
 	}
 

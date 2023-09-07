@@ -22,6 +22,7 @@ import com.dessertoasis.demo.model.course.Course;
 import com.dessertoasis.demo.model.course.CourseRepository;
 import com.dessertoasis.demo.model.member.Member;
 import com.dessertoasis.demo.model.member.MemberRepository;
+import com.dessertoasis.demo.model.order.Reservation;
 import com.dessertoasis.demo.model.product.Product;
 import com.dessertoasis.demo.model.product.ProductRepository;
 
@@ -121,9 +122,30 @@ public class CartService {
 	public void deleteCart(Integer cartId) {
 		Cart cart = cartRepo.findById(cartId).get();
 		if (cart.getCategoryId() == reservationCategoryId) {
-			rsvCartRepo.deleteById(cart.getInterestedId());;
+			rsvCartRepo.deleteById(cart.getInterestedId());
 		}
 		
 		cartRepo.deleteById(cartId);
+	}
+	
+	public void deleteCarts(List<ProductCartDTO> productCartDTOs, List<CourseCartDTO> courseCartDTOs, List<ReservationCartDTO> reservationCartDTOs) {
+		List<Integer> cartIds = new ArrayList<>();
+		if (productCartDTOs != null) {
+			for (ProductCartDTO productCartDTO : productCartDTOs) {
+				cartIds.add(productCartDTO.getCartId());
+			}
+		}
+		if (courseCartDTOs != null) {
+			for (CourseCartDTO courseCartDTO : courseCartDTOs) {
+				cartIds.add(courseCartDTO.getCartId());
+			}
+		}
+		if (reservationCartDTOs != null) {
+			for (ReservationCartDTO reservationCartDTO : reservationCartDTOs) {
+				rsvCartRepo.deleteById(reservationCartDTO.getReservationCartId());
+				cartIds.add(reservationCartDTO.getCartId());
+			}
+		}
+		cartRepo.deleteAllById(cartIds);
 	}
 }
