@@ -39,8 +39,8 @@ public class CourseService {
 	
 	
 	//新增單筆課程
-	public void insert(Course course) {
-		cRepo.save(course);
+	public Course insert(Course course) {
+		return cRepo.save(course);
 	}
 	
 	//修改單筆課程
