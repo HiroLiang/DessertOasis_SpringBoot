@@ -69,10 +69,21 @@ public class ProductController {
         return ResponseEntity.noContent().build();
     }
   
-//    @PostMapping("/criteria")
-//    public sendSort(@RequestBody ProdSearchDTO pDTO) {
-//    	pDTO.getProdName();
-//    }
+    @PostMapping("/criteria")
+    public ResponseEntity<Page<Product>> searchProducts(
+            @RequestBody ProdSearchDTO criteria,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int pageSize,
+            @RequestParam(defaultValue = "productName") String sortBy,
+            @RequestParam(defaultValue = "asc") String sortOrder) {
+
+        Sort.Direction direction = sortOrder.equalsIgnoreCase("desc") ? Sort.Direction.DESC : Sort.Direction.ASC;
+        Pageable pageable = PageRequest.of(page, pageSize, Sort.by(direction, sortBy));
+
+        Page<Product> products = pService.searchProducts(criteria, pageable);
+        return ResponseEntity.ok(products);
+    }
+    	    
     
     @GetMapping("/search")
     
