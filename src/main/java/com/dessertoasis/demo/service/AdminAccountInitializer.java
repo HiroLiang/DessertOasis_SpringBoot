@@ -114,9 +114,10 @@ public class AdminAccountInitializer {
     		 		user.setPasswords(passwordEncoder.encode(password));
     		 		user.setSignDate(new Date());
     		 		
+    		 		//保持one to one關係
     		 		user.setMemberDetail(userDetail);
     		 	    userDetail.setMember(user);
-    		 		
+//    		 		
     		 		mRepo.save(user);
 //    		 		mdRepo.save(userDetail);
     		 	}
