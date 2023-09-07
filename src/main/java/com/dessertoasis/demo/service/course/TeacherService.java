@@ -88,6 +88,13 @@ public class TeacherService {
         }
     }
     
+//	public Teacher findById(Integer id) {
+//		Optional<Teacher> teacher = tRepo.findById(id);
+//		if(result != null) {
+//			Teacher res = result.get();
+//		}
+//	}
+	
 	
 	
 	//新增老師資訊
