@@ -1,5 +1,7 @@
 package com.dessertoasis.demo.service;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import org.hibernate.LazyInitializationException;
@@ -10,10 +12,13 @@ import org.springframework.stereotype.Component;
 
 import com.dessertoasis.demo.model.member.Member;
 import com.dessertoasis.demo.model.member.MemberAccess;
+import com.dessertoasis.demo.model.member.MemberDetail;
+import com.dessertoasis.demo.model.member.MemberDetailRepository;
 import com.dessertoasis.demo.model.member.MemberRepository;
 import com.dessertoasis.demo.model.member.MemberState;
 
 import jakarta.annotation.PostConstruct;
+import jakarta.transaction.Transactional;
 
 
 @Component
@@ -21,6 +26,9 @@ public class AdminAccountInitializer {
 
     @Autowired
     private MemberRepository mRepo;
+    
+    @Autowired
+    private MemberDetailRepository mdRepo;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -33,10 +41,11 @@ public class AdminAccountInitializer {
     // user: 一般使用者
     // admin: 管理者
     // teacher: 教師
-    // inactive: 不活躍帳戶
-    
+    // inactive: 不活躍
+
+    @Transactional
     @PostConstruct
-    public void initializeAdminAccount()  {
+    public void initializeAdminAccount() throws ParseException  {
        
     	try {
     		 Member existingUser = mRepo.findByAccount("user");
@@ -87,35 +96,65 @@ public class AdminAccountInitializer {
 	    		// 如果不存在，創建一個一般使用者帳號
     		 	if(existingUser==null) {
     		 		Member user = new Member();
+    		 		MemberDetail userDetail = new MemberDetail();
+    		 		userDetail.setIdNumber("A123456789");
+    		 		userDetail.setDeliveryAddress("台灣省");
+    		 		
+    		 		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+    		 		Date date = dateFormat.parse("1989-06-04");
+    		 		userDetail.setBirthday(date);
+    		 		
+    		 		
     		 		user.setFullName("一般使用者");
     		 		user.setAccount("user");
+    		 		user.setMemberName("一般");
+    		 		user.setEmail("123@google.com");
     		 		user.setMemberStatus(MemberState.ACTIVE);
     		 		user.setAccess(MemberAccess.USER);
     		 		String password = "user";
     		 		user.setPasswords(passwordEncoder.encode(password));
     		 		user.setSignDate(new Date());
+    		 		
+    		 		//保持one to one關係
+    		 		user.setMemberDetail(userDetail);
+    		 	    userDetail.setMember(user);
+//    		 		
     		 		mRepo.save(user);
+//    		 		mdRepo.save(userDetail);
     		 	}
     	       
     		 	// 如果不存在，創建一個管理者帳號
     	        if (existingAdmin == null) {
     	            Member admin = new Member();
+    	            MemberDetail adminDetail = new MemberDetail();
+    	            adminDetail.setIdNumber("B123132132");
+    	            adminDetail.setDeliveryAddress("北京");
+    		 		
+    		 		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+    		 		Date date = dateFormat.parse("1989-06-05");
+    		 		adminDetail.setBirthday(date);
+    		 		
     	            admin.setFullName("管理人員");
     	            admin.setAccount("admin");
+    	            admin.setMemberName("管理");
+    	            admin.setEmail("3345678@google.com");
     	            admin.setMemberStatus(MemberState.ACTIVE);
     	            admin.setAccess(MemberAccess.ADMIN);
     	            String password = "admin";
     	            admin.setPasswords(passwordEncoder.encode(password));
     	            admin.setSignDate(new Date());
 
-    	            mRepo.save(admin);
+    	            admin.setMemberDetail(adminDetail);
+    	            adminDetail.setMember(admin);
+//    		 		
+    		 		mRepo.save(admin);
 
     	    
-    	            adminInitializationEnabled = false;
     	            
     	        }else {
     	        	         
     	        }
+    	        adminInitializationEnabled = false;
     	}catch (LazyInitializationException e) {
     		
 			

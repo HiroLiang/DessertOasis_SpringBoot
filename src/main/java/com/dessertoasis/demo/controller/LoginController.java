@@ -1,7 +1,7 @@
 package com.dessertoasis.demo.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.CookieValue;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -14,6 +14,7 @@ import com.dessertoasis.demo.model.member.MemberState;
 import com.dessertoasis.demo.service.MemberService;
 
 import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
@@ -92,7 +93,18 @@ public class LoginController {
 	    
 	    return "redirect:/"; // 
 	}
-
+	
+	//從session 拿出member資料
+	  @GetMapping("/memberSession")
+	    public Member getSessionMember(HttpServletRequest request) {
+	        
+	        HttpSession session = request.getSession();
+	        Member loggedInMember = (Member) session.getAttribute("loggedInMember");
+	        
+	        return loggedInMember;
+	    }
+	  
+	  //更新密碼
 
 //	@GetMapping("/getcookie")
 //	public String getCookieValue(@CookieValue(name = "adminLogin", defaultValue = "") String adminLoginCookie) {

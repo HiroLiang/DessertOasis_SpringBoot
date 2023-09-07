@@ -82,6 +82,12 @@ public class Course {
 	@Column(name="updateDate")
 	private Date updateDate;
 	
+	//開課日期
+	@DateTimeFormat(pattern = "yyyy-MM-dd")  // 在資料進 Java 環境時，做格式化
+	@Temporal(TemporalType.DATE)
+	@Column(name="courseDate")
+	private Date courseDate;
+	
 	//上課地點
 	@Column(name="coursePlace",columnDefinition = "nvarchar(150)")
 	private String coursePlace;
@@ -108,8 +114,9 @@ public class Course {
 //    @JoinTable(name="course_coursetag", joinColumns = {@JoinColumn(name="course_id")}, inverseJoinColumns = {@JoinColumn(name="coursetag_id")})
 //    private List<CourseCtag> courseTags;
 	
-	@JsonIgnore
+	
 	@OneToMany(mappedBy = "course")
+	@JsonIgnore
 	private List<CoursePicture> coursePictureList;
 	
 	@JsonIgnore
@@ -121,7 +128,7 @@ public class Course {
 
 	public Course(Integer id, Teacher teacher, Recipes recipes, Category category, String courseName,
 			String courseIntroduction, String courseFeature, String courseDestination, String serviceTarget,
-			Date closeDate, Date updateDate, String coursePlace, String courseStatus, Integer remainPlaces,
+			Date closeDate, Date updateDate,Date courseDate, String coursePlace, String courseStatus, Integer remainPlaces,
 			Integer coursePrice) {
 		super();
 		this.id = id;
@@ -135,6 +142,7 @@ public class Course {
 		this.serviceTarget = serviceTarget;
 		this.closeDate = closeDate;
 		this.updateDate = updateDate;
+		this.courseDate = courseDate;
 		this.coursePlace = coursePlace;
 		this.courseStatus = courseStatus;
 		this.remainPlaces = remainPlaces;

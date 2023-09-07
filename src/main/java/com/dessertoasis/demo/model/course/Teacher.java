@@ -33,7 +33,7 @@ public class Teacher {
 	@Column(name = "teacherProfilePic", columnDefinition = "nvarchar(max)")
 	private String teacherProfilePic;
 
-	@Column(name = "teacherContract", columnDefinition = "nvarchar(max)")
+	@Column(name = "teacherContract", columnDefinition = "nvarchar(max) ")
 	private String teacherContract;
 
 	@Column(name = "teacherTel",columnDefinition = "int")
@@ -46,6 +46,7 @@ public class Teacher {
 	private String teacherProfile;
 
 	@Column(name = "teacherAccountStatus", columnDefinition = "nvarchar(100)")
+
 	private String teacherAccountStatus;
 
 	//會員ID (FK)，要有對方的物件當屬性

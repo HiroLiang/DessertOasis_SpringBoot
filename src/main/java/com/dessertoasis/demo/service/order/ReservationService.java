@@ -1,4 +1,4 @@
-package com.dessertoasis.demo.service.classroom;
+package com.dessertoasis.demo.service.order;
 
 import java.time.LocalDate;
 import java.util.HashMap;
@@ -17,12 +17,12 @@ public class ReservationService {
 	@Autowired
 	private ReservationRepository rRepo;
 	
-	public List<Reservation> getByRoomId(Integer roomId, LocalDate startDate, LocalDate endDate) {
-		return rRepo.find(roomId, startDate, endDate);
+	public List<Reservation> getByRoomIdBetweenDates(Integer roomId, LocalDate startDate, LocalDate endDate) {
+		return rRepo.findBetweenDates(roomId, startDate, endDate);
 	}
 	
 	//查詢指定教室某天某時段的預約
-	public Reservation getByRoomId(Integer roomId, LocalDate date, String time) {
+	public Reservation getByRoomIdWithDateAndTime(Integer roomId, LocalDate date, String time) {
 		return rRepo.findByDateAndTime(roomId, date, time);
 	}
 	

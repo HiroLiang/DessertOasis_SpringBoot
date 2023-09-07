@@ -1,4 +1,4 @@
-package com.dessertoasis.demo.service;
+package com.dessertoasis.demo.service.course;
 
 import java.beans.BeanInfo;
 import java.beans.IntrospectionException;
@@ -19,6 +19,7 @@ import com.dessertoasis.demo.model.sort.DateRules;
 import com.dessertoasis.demo.model.sort.SearchRules;
 import com.dessertoasis.demo.model.sort.SortCondition;
 import com.dessertoasis.demo.model.sort.SortCondition.SortWay;
+import com.dessertoasis.demo.service.MemberService;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
@@ -53,6 +54,10 @@ public class TeacherService {
         
     }
 
+	public List<Teacher> getAllTeachers(){
+		return tRepo.findAll();
+	}
+	
 	
 	//成為教師
 	public Teacher becomeTeacher(Integer memberId) {
@@ -87,6 +92,14 @@ public class TeacherService {
         }
     }
     
+	public Teacher findById(Integer id) {
+		Optional<Teacher> result = tRepo.findById(id);
+		if(result != null) {
+			Teacher teacher = result.get();
+			return teacher;
+		}return null;
+	}
+	
 	
 	
 	//新增老師資訊

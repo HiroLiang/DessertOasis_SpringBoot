@@ -2,6 +2,7 @@ package com.dessertoasis.demo.controller.course;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -16,15 +17,24 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.dessertoasis.demo.model.category.Category;
+import com.dessertoasis.demo.model.category.CategoryRepository;
 import com.dessertoasis.demo.model.course.Course;
 import com.dessertoasis.demo.model.course.CourseDTO;
 import com.dessertoasis.demo.model.course.CourseTeacherDTO;
+import com.dessertoasis.demo.model.course.Teacher;
+import com.dessertoasis.demo.model.member.Member;
 import com.dessertoasis.demo.model.product.Product;
-import com.dessertoasis.demo.service.CourseService;
-import com.dessertoasis.demo.service.TeacherService;
+import com.dessertoasis.demo.model.recipe.RecipeDTO;
+import com.dessertoasis.demo.model.recipe.RecipeRepository;
+import com.dessertoasis.demo.model.recipe.Recipes;
+import com.dessertoasis.demo.service.course.CourseService;
+import com.dessertoasis.demo.service.course.TeacherService;
+import com.dessertoasis.demo.service.recipe.RecipeService;
 
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import jakarta.transaction.Transactional;
 
 @RestController
@@ -37,6 +47,12 @@ public class CourseController {
 	@Autowired
 	private TeacherService tService;
 	
+	@Autowired
+	private RecipeRepository rRepo;
+	
+	@Autowired
+	private CategoryRepository cRepo;
+	
 	//查詢單筆課程(用課程id)
 //	@GetMapping("/{id}")
 //	public Course findCourseById(@PathVariable Integer id) {
@@ -44,37 +60,24 @@ public class CourseController {
 //		return course;
 //	}
 //	
-//	@GetMapping("/list")
-//    public ResponseEntity<List<CourseDTO>> Courses() {
-//        List<CourseDTO> courses = cService.findAll();
-//        return ResponseEntity.ok(courses);
-//    }
+
 	
 	//列出所有課程
 	@GetMapping("/all")
-	public List<CourseDTO> findAllCoursesAsDTO(){
+	public ResponseEntity<List<CourseDTO>> findAllCoursesAsDTO(){
 		List<Course> courseList = cService.findAll();
 		List<CourseDTO> courseDTOList = new ArrayList<>();
 		for(Course course: courseList) {
 			CourseDTO courseDTOItem = new CourseDTO(course);
 			courseDTOList.add(courseDTOItem);
 		}
-		return courseDTOList;
+		return ResponseEntity.ok(courseDTOList);
+//		return courseDTOList;
 	}
 	
-	
-	
-	//查詢所有課程
-//	@GetMapping("/all")
-//	public List<Course> findAllCourse(){
-//		List<Course> courses = cService.findAll();
-//		return courses;
-//	} 
-	
-	@GetMapping("/{courseId}")
-	public ResponseEntity<CourseDTO> getCourseDetails(@PathVariable Integer courseId) {
-	    // Logic to retrieve Course and related data
-	    Course course = cService.findById(courseId);
+	@GetMapping("/{id}")
+	public ResponseEntity<CourseDTO> getCourseDetails(@PathVariable Integer id) {
+	    Course course = cService.findById(id);
 //	    List<CourseCtag> courseCtags = courseCtagService.findByCourseId(courseId);
 //	    List<CoursePicture> coursePictures = coursePictureService.findByCourseId(courseId);
 
@@ -82,44 +85,16 @@ public class CourseController {
 	        return ResponseEntity.notFound().build();
 	    }
 
-	    // Create a CourseDTO object and set its properties
 	    CourseDTO courseDTO = new CourseDTO(course);
-//	    courseDTO.setCourseId(course.getId());
-//	    courseDTO.setTeacherName(course.getTeacher().getTeacherName());
-//	    courseDTO.setRecipeIntroduction(course.getRecipes().getRecipeIntroduction());
-//	    courseDTO.setCategoryName(course.getCategory().getCategoryName());
-//	    courseDTO.setCourseName(course.getCourseName());
-//	    courseDTO.setCourseIntroduction(course.getCourseIntroduction());
-//	    courseDTO.setCourseFeature(course.getCourseFeature());
-//	    courseDTO.setCourseDestination(course.getCourseDestination());
-//	    courseDTO.setServiceTarget(course.getServiceTarget());
-//	    courseDTO.setCloseDate(course.getCloseDate());
-//	    courseDTO.setUpdateDate(course.getUpdateDate());
-//	    courseDTO.setCoursePlace(course.getCoursePlace());
-//	    courseDTO.setCourseStatus(course.getCourseStatus());
-//	    courseDTO.setRemainPlaces(course.getRemainPlaces());
-//	    courseDTO.setCoursePrice(course.getCoursePrice());
+
 ////	    courseDTO.setTag(course.)
 //	    courseDTO.setCoursePictureList(course.getCoursePictureList());
 	    
-	    // Set other properties based on your data
-
-	    // Set the lists of related data
-//	    courseDTO.setCourseList(courseCtags);
-//	    courseDTO.setCoursePictureList(coursePictures);
-
-	    // Return ResponseEntity<CourseDTO> with HTTP status and CourseDTO object
 	    return ResponseEntity.ok(courseDTO);
 	}
 	
 	//新增單筆課程
-//	@PostMapping("/course/add")
-//	public String addCourse(@RequestBody Course course) {
-//		cService.insert(course);
-//		return "新增課程成功";
-//	}
-	
-	@PostMapping("/add-course")
+	@PostMapping("/add")
     public ResponseEntity<String> addCourse(@RequestBody Course course, HttpServletRequest request) {
         // 從請求的Cookie中獲得user 是老師的身分
         Cookie[] cookies = request.getCookies();
@@ -127,10 +102,26 @@ public class CourseController {
             for (Cookie cookie : cookies) {
             	// 老師身分，允許添加課程
                 if ("userType".equals(cookie.getName()) && "teacher".equals(cookie.getValue())) {
-                    // 將課程資料存到資料庫
-                	cService.insert(course);
+                	// 假设你使用Spring Data JPA进行数据访问
+                	Teacher teacher = tService.getTeacherById(2); // 获取ID为3的教师
+                	 Optional<Recipes> recipes = rRepo.findById(1);
+                	  Recipes recipe = recipes.get();
+                	  Optional<Category> categorys = cRepo.findById(2);
+                	  Category category = categorys.get();
+
+                	if (teacher != null) {
+                	    
+                	    course.setTeacher(teacher); // 将教师关联到课程中
+                	    course.setRecipes(recipe);
+                	    course.setCategory(category);
+                	
+                	// 將課程資料存到資料庫
+                	    Course savedCourse = cService.insert(course);
                 	System.out.println("新增課程成功");
-                    return ResponseEntity.ok("課程已添加");
+                    return ResponseEntity.ok("課程已添加");}
+                	else {
+                		// 处理教师不存在的情况	
+                	}
                 }
             }
         }
@@ -141,15 +132,15 @@ public class CourseController {
 
 	
 	//修改單筆課程
-//	@Transactional
-//	@PutMapping("/course/update/{id}")
-//	public String updateCourse(@PathVariable Integer id, @RequestBody Course course) {
-//		 Course result = cService.updateById(id, course);
-//		 if(result == null) {
-//			 return "修改課程失敗";
-//		 }
-//		return "修改課程成功";
-//	}
+	@Transactional
+	@PutMapping("/update/{id}")
+	public String updateCourse(@PathVariable Integer id, @RequestBody Course course) {
+		 Course result = cService.updateById(id, course);
+		 if(result == null) {
+			 return "修改課程失敗";
+		 }
+		return "修改課程成功";
+	}
 	
 	//刪除單筆課程
 	@DeleteMapping("/{id}")
@@ -161,51 +152,29 @@ public class CourseController {
 		}
 		return "刪除失敗";
 	}
-	
-//	@PostMapping("/checkTeacher")
-//    @ResponseBody
-//	public String checkTeacher(HttpServletRequest request,@RequestBody Course course) {
-//		// 獲取請求中的所有Cookie
-//        Cookie[] cookies = request.getCookies();
-//        
-//        if (cookies != null) {
-//            for (Cookie cookie : cookies) {
-//            	System.out.println(cookie.getName());
-//            	if(cookie.getName().equals("login1")&& cookie.getValue().equals("true")) {
-//            		System.out.println(course.getTeacherId());
-//            		if(course.getTeacherId()== 2) {
-////            			System.out.println(course.getTeacherId());
-//            			return "這是 Teacher id";
-//            		}
-//            		return "這不是 Teacher id";
-//            	}
-//                // 检查Cookie的名称是否为"teacher"，这里假设教师信息存储在名为"teacher"的Cookie中
-//                if ("teacherId".equals(cookie.getName())) {
-//                    // 如果找到名为"teacher"的Cookie，編寫逻辑判断教师信息是否存在于Cookie中
-//                    // 比如，檢查Cookie的值是否符合教師的條件
-//                    String teacherInfo = cookie.getValue();
-//                    if (isTeacherId(teacherInfo)) {
-//                        return "这是一个教师Cookie";
-//                    }
-//                }
-//            }
-//        }return "這不是一个教師Cookie";
+//	
+//	@GetMapping("/teacher/{teacherId}")
+//    public ResponseEntity<List<CourseTeacherDTO>> getCoursesByTeacherId(@PathVariable Integer teacherId,HttpSession session) {
+////		Member member = (Member) session.getAttribute("loggedInMember");
+//		// 调用 CourseService 来获取特定教师的课程列表
+////        List<CourseTeacherDTO> courses = cService.getCoursesByTeacherId(member.getId());
+//        List<CourseTeacherDTO> courses = cService.getCoursesByTeacherId(teacherId);
+//
+//        if (courses.isEmpty()) {
+//            return ResponseEntity.noContent().build(); // 如果没有课程，返回204 No Content
+//        } else {
+//            return ResponseEntity.ok(courses); // 返回课程列表
+//        }
 //	}
 	
-//	private boolean isTeacherId(String cookieValue) {
-//        // 编写逻辑来判断Cookie中的值是否表示教师
-//        // 您可以根据您的需求定义教师信息的格式和判断条件
-//        // 这里只是一个示例，您可能需要根据实际情况进行修改
-//        return cookieValue != null && cookieValue.contains("teacherId");
-//    }
-	
-//	@GetMapping("/course/withTrName")
-//	public List<CourseTeacherDTO> getAllCoursesWithTeacherNames() {
-//        return cService.getAllCoursesWithTeacherNames();
-//    }
-	
-//	@GetMapping("/course/withTName")
-//	public List<CourseTeacherDTO> getAllCoursesWithTeacherInfo() {
-//        return cService.getAllCoursesWithTeacherInfo();
-//    }
+	@GetMapping("/teacher/{teacherId}")
+	public ResponseEntity <List<CourseDTO>> getCourseByTeacherId(@PathVariable Integer teacherId){
+//		Member member = (Member) session.getAttribute("loggedInMember");
+		List <CourseDTO> courseDTOs = cService.getCoursesByTeacherId(teacherId);
+		if(courseDTOs.isEmpty()) {
+			return ResponseEntity.noContent().build();
+		}else {
+			return ResponseEntity.ok(courseDTOs);
+		}
+	}
 }

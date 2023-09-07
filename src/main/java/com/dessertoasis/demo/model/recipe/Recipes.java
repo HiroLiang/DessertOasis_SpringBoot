@@ -1,5 +1,6 @@
 package com.dessertoasis.demo.model.recipe;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 
@@ -43,6 +44,9 @@ public class Recipes {
 	@OneToMany(mappedBy = "recipe")
 	private List<RecipeSteps> recipeSteps;
 	
+	@OneToMany()
+	private List<IngredientList> ingredientList;
+	
 	//食譜名稱
 	@Column(name = "recipeTitle", nullable=false,columnDefinition = "nvarchar(100)")
 	private String recipeTitle;
@@ -67,14 +71,14 @@ public class Recipes {
 	@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss:SSS")  // 在資料進 Java 環境時，做格式化
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "recipeCreateDate",nullable=false,columnDefinition = "datetime2")
-	private Date recipeCreateDate;
+	private LocalDateTime  recipeCreateDate;
 	
 	//食譜狀態
 	@Column(name = "recipeStatus",nullable=false,columnDefinition = "int")
 	private Integer recipeStatus;
 	
 	//食譜每月計數器(統計每月熱門食譜)
-	@Column(name = "recipeMonthlyVisitCount",nullable=false,columnDefinition = "int")
+	@Column(name = "recipeMonthlyVisitCount",nullable=true,columnDefinition = "int")
 	private Integer recipeMonthlyVisitCount;
 	
 	@JsonIgnore
@@ -86,7 +90,7 @@ public class Recipes {
 
 	public Recipes(Member recipeAuthor, List<RecipeCategory> recipeCategories, List<RecipeSteps> recipeSteps,
 			String recipeTitle, String pictureURL, String recipeIntroduction, Integer cookingTime,
-			Date recipeCreateDate, Integer recipeStatus) {
+			LocalDateTime recipeCreateDate, Integer recipeStatus) {
 		super();
 		this.recipeAuthor = recipeAuthor;
 		this.recipeCategories = recipeCategories;
