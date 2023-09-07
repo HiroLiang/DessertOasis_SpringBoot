@@ -30,6 +30,8 @@ public class CourseDTO {
 	
 	private Date updateDate;
 	
+	private Date courseDate;
+	
 	private String coursePlace;
 	
 	private String courseStatus;
@@ -58,6 +60,7 @@ public class CourseDTO {
 		this.serviceTarget = course.getServiceTarget();
 		this.closeDate = course.getCloseDate();
 		this.updateDate = course.getUpdateDate();
+		this.courseDate = course.getCourseDate();
 		this.coursePlace = course.getCoursePlace();
 		this.courseStatus = course.getCourseStatus();
 		this.remainPlaces = course.getRemainPlaces();
