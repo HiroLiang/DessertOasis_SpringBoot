@@ -1,10 +1,7 @@
 package com.dessertoasis.demo.model.favorite;
 
 import com.dessertoasis.demo.model.category.Category;
-import com.dessertoasis.demo.model.course.Course;
 import com.dessertoasis.demo.model.member.Member;
-import com.dessertoasis.demo.model.product.Product;
-import com.dessertoasis.demo.model.recipe.Recipes;
 
 import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Entity;
@@ -25,5 +22,22 @@ public class FavoriteList {
 	@ManyToOne
 	@JoinColumn(name="categoryId", referencedColumnName = "id",insertable = false,updatable = false)
 	private Category category;
+
+	public FavoriteList() {
+		super();
+	}
+
+	public FavoriteList(FavoriteKey favoriteKey) {
+		super();
+		this.favoriteKey = favoriteKey;
+	}
+
+	public FavoriteList(FavoriteKey favoriteKey, Member member, Category category) {
+		super();
+		this.favoriteKey = favoriteKey;
+		this.member = member;
+		this.category = category;
+	}
+	
 	
 }
