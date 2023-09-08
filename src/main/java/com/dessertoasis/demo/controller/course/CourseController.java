@@ -143,9 +143,26 @@ public class CourseController {
 	}
 	
 	//刪除單筆課程
+//	@DeleteMapping("/{courseId}")
+//	public String deleteCourseById(@PathVariable Integer courseId,HttpSession session) {
+//		System.out.println("session" + session.getAttribute("loggedMamber"));
+//		Member member = (Member)session.getAttribute("loggedMember");
+//		System.out.println("memberId" +member.getId());
+//		if(member != null) {
+//		Boolean isDeleted = cService.deleteById(courseId,member.getId());
+//		System.out.println(member.getId());
+//		if(isDeleted) {
+//			return "刪除成功";
+//		}
+//		return "刪除失敗";}
+//		return "不是會員，請登入";
+//	}
+	
 	@DeleteMapping("/{courseId}")
 	public String deleteCourseById(@PathVariable Integer courseId) {
-		boolean isDeleted = cService.deleteById(courseId);
+		
+		
+		Boolean isDeleted = cService.deleteById(courseId);
 		
 		if(isDeleted) {
 			return "刪除成功";

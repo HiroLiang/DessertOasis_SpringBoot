@@ -14,6 +14,7 @@ import com.dessertoasis.demo.model.course.CourseTeacherDTO;
 import com.dessertoasis.demo.model.course.Teacher;
 import com.dessertoasis.demo.model.course.TeacherRepository;
 import com.dessertoasis.demo.model.member.Member;
+import com.dessertoasis.demo.model.member.MemberRepository;
 
 @Service
 public class CourseService {
@@ -23,6 +24,9 @@ public class CourseService {
 	
 	@Autowired
 	private TeacherRepository tRepo;
+	
+	@Autowired
+	private MemberRepository mRepo;
 	
 	//利用 id 查詢課程
 	public Course findById(Integer id) {
@@ -64,11 +68,25 @@ public class CourseService {
 	}
 
 	//刪除單筆課程
-	public boolean deleteById(Integer id) {
-		Optional<Course> optional = cRepo.findById(id);
-		
+//	public Boolean deleteById(Integer courseId,Integer memberId) {
+//		Optional<Member> member = mRepo.findById(memberId);
+//		Optional<Course> course = cRepo.findById(courseId);
+//		
+//		if(course.isPresent()) {
+//			 Course courseData = course.get();
+//			 if(courseData.getTeacher().getMember().getId().equals(member.get().getId())) {
+//			 cRepo.deleteById(courseId);
+//			return true;
+//			}
+//			 
+//		}
+//		return false;
+//	}
+	
+	public Boolean deleteById(Integer courseId) {
+		Optional<Course> optional = cRepo.findById(courseId);
 		if(optional.isPresent()) {
-			 cRepo.deleteById(id);
+			cRepo.deleteById(courseId);
 			return true;
 		}
 		return false;
