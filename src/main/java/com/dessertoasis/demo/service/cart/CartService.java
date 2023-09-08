@@ -136,6 +136,15 @@ public class CartService {
 		return cart;
 	}
 	
+	public Cart updateProdQuantity(Integer cartId, Integer prodQuantity) {
+		Cart cart = cartRepo.findById(cartId).orElse(null);
+		if (cart == null || cart.getCategoryId() != productCategoryId) {
+			return null;
+		}
+		cart.setProdQuantity(prodQuantity);
+		return cartRepo.save(cart);
+	}
+	
 	public void deleteCart(Integer cartId) {
 		Cart cart = cartRepo.findById(cartId).get();
 		if (cart.getCategoryId() == reservationCategoryId) {

@@ -60,29 +60,29 @@ public class ProductService {
                 predicates.add(builder.like(root.get("category"), "%" + criteria.getCategory() + "%"));
             }
             
-            if (criteria.getProdPrice() != null) {
-                predicates.add(builder.like(root.get("prodPrice"), "%" + criteria.getProdPrice() + "%"));
-            }
-            
-            if (criteria.getProdPurchase() != null) {
-                predicates.add(builder.like(root.get("prodPurchase"), "%" + criteria.getProdPurchase() + "%"));
-            }
-            
-            if (criteria.getProdStock() != null) {
-                predicates.add(builder.like(root.get("prodStock"), "%" + criteria.getProdStock() + "%"));
-            }
+//            if (criteria.getProdPrice() != null) {
+//                predicates.add(builder.like(root.get("prodPrice"), "%" + criteria.getProdPrice() + "%"));
+//            }
+//            
+//            if (criteria.getProdPurchase() != null) {
+//                predicates.add(builder.like(root.get("prodPurchase"), "%" + criteria.getProdPurchase() + "%"));
+//            }
+//            
+//            if (criteria.getProdStock() != null) {
+//                predicates.add(builder.like(root.get("prodStock"), "%" + criteria.getProdStock() + "%"));
+//            }
             
             if (criteria.getProductStatus() != null) {
                 predicates.add(builder.like(root.get("productStatus"), "%" + criteria.getProductStatus() + "%"));
             }
             
-            if (criteria.getUpdateTime() != null) {
-                predicates.add(builder.like(root.get("updateTime"), "%" + criteria.getUpdateTime() + "%"));
-            }
-            
-            if (criteria.getSaleAfterUpdate() != null) {
-                predicates.add(builder.like(root.get("saleAfterUpdate"), "%" + criteria.getSaleAfterUpdate() + "%"));
-            }
+//            if (criteria.getUpdateTime() != null) {
+//                predicates.add(builder.like(root.get("updateTime"), "%" + criteria.getUpdateTime() + "%"));
+//            }
+//            
+//            if (criteria.getSaleAfterUpdate() != null) {
+//                predicates.add(builder.like(root.get("saleAfterUpdate"), "%" + criteria.getSaleAfterUpdate() + "%"));
+//            }
             
             if (criteria.getProdRemark() != null) {
                 predicates.add(builder.like(root.get("prodRemark"), "%" + criteria.getProdRemark() + "%"));
@@ -95,6 +95,31 @@ public class ProductService {
 
             if (criteria.getMaxprodPrice() != null) {
                 predicates.add(builder.lessThanOrEqualTo(root.get("prodPrice"), criteria.getMaxprodPrice()));
+            }
+            
+
+            if (criteria.getMinprodPurchase() != null) {
+                predicates.add(builder.greaterThanOrEqualTo(root.get("prodPurchase"), criteria.getMinprodPurchase()));
+            }
+
+            if (criteria.getMaxprodPurchase() != null) {
+                predicates.add(builder.lessThanOrEqualTo(root.get("prodPurchase"), criteria.getMaxprodPurchase()));
+            }
+            
+            if (criteria.getMinprodStock() != null) {
+                predicates.add(builder.greaterThanOrEqualTo(root.get("prodStock"), criteria.getMinprodStock()));
+            }
+
+            if (criteria.getMaxprodStock() != null) {
+                predicates.add(builder.lessThanOrEqualTo(root.get("prodStock"), criteria.getMaxprodStock()));
+            }
+            
+            if (criteria.getMinsaleAfterUpdate() != null) {
+                predicates.add(builder.greaterThanOrEqualTo(root.get("saleAfterUpdate"), criteria.getMinsaleAfterUpdate()));
+            }
+
+            if (criteria.getMaxsaleAfterUpdate() != null) {
+                predicates.add(builder.lessThanOrEqualTo(root.get("saleAfterUpdate"), criteria.getMaxsaleAfterUpdate()));
             }
 
             
