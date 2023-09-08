@@ -78,7 +78,31 @@ public class ProductController {
         return ResponseEntity.ok(products);
     }
 
-    
+//    @PostMapping("/criter")
+//    public ResponseEntity<Page<Product>> searchProducts(
+//            @RequestBody ProdSearchDTO criteria,
+//            @PageableDefault(size = 20) Pageable pageable,
+//            @RequestParam(value = "sort", required = false) String sortParam
+//    ) {
+//        Sort sort = Sort.unsorted();
+//        Integer pageSize = pageable.getPageSize();
+//
+//        if (sortParam != null && !sortParam.isEmpty()) {
+//            String[] sortFields = sortParam.split(",");
+//            if (sortFields.length == 2) {
+//                String field = sortFields[0];
+//                String direction = sortFields[1].toUpperCase();
+//                Sort.Order order = "ASC".equals(direction) ? Sort.Order.asc(field) : Sort.Order.desc(field);
+//                sort = Sort.by(order);
+//            }
+//        }
+//
+//        Pageable customPageable = PageRequest.of(pageable.getPageNumber()-1, pageSize, sort);
+//
+//        Page<Product> products = pService.searchProducts(criteria, customPageable);
+//        return ResponseEntity.ok(products);
+//    }
+
     @GetMapping("/search")
     
     public ResponseEntity<Page<Product>> searchProducts(
