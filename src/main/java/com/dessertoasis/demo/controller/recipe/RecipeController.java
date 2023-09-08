@@ -6,6 +6,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
 import java.util.Map;
@@ -144,78 +145,77 @@ public class RecipeController {
 	// 新增食譜
 	@PostMapping("/recipe/addrecipe")
 	@ResponseBody
-	public String addRecipe(@RequestParam("recipeTitle") String recipeTitle,
-			@RequestParam("recipeIntroduction") String recipeIntroduction,
-			@RequestParam("pictureURL") MultipartFile pictureURL, @RequestParam("cookingTime") Integer cookingTime,
-			@RequestParam Map<String, String> ingredients, @RequestParam Map<String, MultipartFile> steps,
-			@RequestParam Map<String, String> stepDescriptions, HttpSession session) {
+	public String addRecipe(HttpSession session) {
 		Member member = (Member) session.getAttribute("loggedInMember");
 		if (member != null) {
-			Recipes recipe = new Recipes();
-			recipe.setRecipeTitle(recipeTitle);
-			recipe.setRecipeAuthor(member);
-			recipe.setCookingTime(cookingTime);
-			recipe.setRecipeCreateDate(LocalDateTime.now());
-			recipe.setRecipeIntroduction(recipeIntroduction);
-			recipe.setRecipeStatus(1);
-
-			String mainPicUrl = imgUtil.savePicture(pictureURL, 1, "recipe", recipeTitle);
-			recipe.setPictureURL(mainPicUrl);
-
-			IngredientList ingredientList = new IngredientList();
-			Ingredient ingredient = new Ingredient();
-			int ingredientsIndex = ingredients.size() / 2;
-			for (int i = 1; i <= ingredientsIndex; i++) {
-				String ingredientNameKey = "ingredientName" + i;
-				String ingredientQtyKey = "ingredientQuantity" + i;
-				String ingredientName = ingredients.get(ingredientNameKey);
-				String ingredientQty = ingredients.get(ingredientQtyKey);
-				if (ingredientQty != null && !ingredientQty.isEmpty()) {
-					try {
-						ingredientList.setIngredientQuantity(Integer.parseInt(ingredientQty));
-					} catch (NumberFormatException e) {
-						// 处理无法解析为整数的情况
-					}
-				}
-//	    		ingredientList.setIngredientQuantity(Integer.parseInt(ingredientQty));
-				ingredient.setIngredientName(ingredientName);
-			}
-			RecipeSteps recipeSteps = new RecipeSteps();
-			recipeSteps.setRecipe(recipe);
-			int stepsIndex = steps.size() / 2;
-			for (int i = 1; i <= stepsIndex; i++) {
-				recipeSteps.setStepNumber(i);
-				String stepImgKey = "recipeStep" + i;
-				MultipartFile stepImg = steps.get(stepImgKey);
-				String picUrl = imgUtil.savePicture(stepImg, 1, "recipe", recipeTitle);
-				recipeSteps.setStepPicture(picUrl);
-			}
-			int stepIntroIndex = stepDescriptions.size() / 2;
-			for (int i = 1; i <= stepIntroIndex; i++) {
-				String stepIntroIndexKey = "recipeIntroduction" + i;
-				String stepIntro = stepDescriptions.get(stepIntroIndexKey);
-				recipeSteps.setStepContext(stepIntro);
-			}
-
-			Boolean add = recipeService.addRecipe(1, recipe);
-			if (add) {
-				return "Y";
-			}
-			return "F";
+//			Recipes recipe = new Recipes();
+//			recipe.setRecipeTitle(recipeTitle);
+//			recipe.setRecipeAuthor(member);
+//			recipe.setCookingTime(cookingTime);
+//			recipe.setRecipeCreateDate(LocalDateTime.now());
+//			recipe.setRecipeIntroduction(recipeIntroduction);
+//			recipe.setRecipeStatus(1);
+//
+//			String mainPicUrl = imgUtil.savePicture(pictureURL, 1, "recipe", recipeTitle);
+//			recipe.setPictureURL(mainPicUrl);
+//
+//			IngredientList ingredientList = new IngredientList();
+//			Ingredient ingredient = new Ingredient();
+//			int ingredientsIndex = ingredients.size() / 2;
+//			for (int i = 1; i <= ingredientsIndex; i++) {
+//				String ingredientNameKey = "ingredientName" + i;
+//				String ingredientQtyKey = "ingredientQuantity" + i;
+//				String ingredientName = ingredients.get(ingredientNameKey);
+//				String ingredientQty = ingredients.get(ingredientQtyKey);
+//				if (ingredientQty != null && !ingredientQty.isEmpty()) {
+//					try {
+//						ingredientList.setIngredientQuantity(Integer.parseInt(ingredientQty));
+//					} catch (NumberFormatException e) {
+//						// 处理无法解析为整数的情况
+//					}
+//				}
+////	    		ingredientList.setIngredientQuantity(Integer.parseInt(ingredientQty));
+//				ingredient.setIngredientName(ingredientName);
+//			}
+//			RecipeSteps recipeSteps = new RecipeSteps();
+//			recipeSteps.setRecipe(recipe);
+//			int stepsIndex = steps.size() / 2;
+//			for (int i = 1; i <= stepsIndex; i++) {
+//				recipeSteps.setStepNumber(i);
+//				String stepImgKey = "recipeStep" + i;
+//				MultipartFile stepImg = steps.get(stepImgKey);
+//				String picUrl = imgUtil.savePicture(stepImg, 1, "recipe", recipeTitle);
+//				recipeSteps.setStepPicture(picUrl);
+//			}
+//			int stepIntroIndex = stepDescriptions.size() / 2;
+//			for (int i = 1; i <= stepIntroIndex; i++) {
+//				String stepIntroIndexKey = "recipeIntroduction" + i;
+//				String stepIntro = stepDescriptions.get(stepIntroIndexKey);
+//				recipeSteps.setStepContext(stepIntro);
+//			}
+//
+//			Boolean add = recipeService.addRecipe(1, recipe);
+//			if (add) {
+//				return "Y";
+//			}
+//			return "F";
 		}
 		return "N";
 	}
 
 	@SuppressWarnings("resource")
 	@PostMapping(path = "test/uploadimg")
-	public String sendPic(@RequestBody List<PicturesDTO> pictures) {
-		final String uploadPath = "D:/dessertoasis-vue/public/images/";
+	public List<String> sendPic(@RequestBody List<PicturesDTO> pictures) {
+//		final String uploadPath = "D:/dessertoasis-vue/public/images/";
+		final String uploadPath = "C:/Users/iSpan/Documents/dessertoasis-vue/public/images/";
 //		Member member = (Member) session.getAttribute("loggedInMember");
 //		Recipes recipe = (Recipes) session.getAttribute("recipeId");
-		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmssSSS");
-		String timestamp = LocalDateTime.now().format(formatter);
+		List<String> msg = new ArrayList<>();
+		if (!pictures.isEmpty() && pictures != null) {
+			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmssSSS");
+			String timestamp = LocalDateTime.now().format(formatter);
 //		if (member != null) {
-			String userFolder = uploadPath + 1 + "/";
+			String userFolder = uploadPath + "recipe" + "/" + 1 + "/";
 			File folder = new File(userFolder);
 			if (!folder.exists()) {
 				folder.mkdirs();
@@ -223,67 +223,86 @@ public class RecipeController {
 //			Optional<Recipes> getRecipe = recipeRepo.findById(recipe.getId());
 //			if (getRecipe.isPresent()) {
 //				Recipes useRecipe = getRecipe.get();
-				if (!pictures.isEmpty()) {
-					String mainPic = pictures.get(0).getBase64Content();
-					String mainPicName = pictures.get(0).getFileName();
-					String mainFileName = mainPicName.substring(0, mainPicName.lastIndexOf("."));
-					String mainExtension = mainPicName.substring(mainPicName.lastIndexOf("."));
-					String mainUniqueName = mainFileName + "_" + timestamp + mainExtension;
+			if (pictures.get(0) != null) {
 
-					byte[] mainDecode = Base64.getDecoder().decode(mainPic);
-					File mainfile = new File(userFolder + mainUniqueName);
-					 
-					try {
-						FileOutputStream mainfileOutputStream = new FileOutputStream(mainfile);
-						mainfileOutputStream.write(mainDecode);
-						mainfileOutputStream.flush();
-					} catch (FileNotFoundException e) {
-						e.printStackTrace();
-						return "MainFile not found";
-					} catch (IOException e) {
-						e.printStackTrace();
-						return "MainFile upload failed";
-					}
+				String mainPic = pictures.get(0).getBase64Content();
+				String mainPicName = pictures.get(0).getFileName();
+
+				String mainFileName = mainPicName.substring(0, mainPicName.lastIndexOf("."));
+				String mainExtension = mainPicName.substring(mainPicName.lastIndexOf("."));
+				String mainUniqueName = mainFileName + "_" + timestamp + mainExtension;
+
+				byte[] mainDecode = Base64.getDecoder().decode(mainPic);
+				File mainfile = new File(userFolder + mainUniqueName);
+
+				try {
+					FileOutputStream mainfileOutputStream = new FileOutputStream(mainfile);
+					mainfileOutputStream.write(mainDecode);
+					mainfileOutputStream.flush();
+					msg.add("-1");
+					msg.add(userFolder + mainUniqueName);
+				} catch (FileNotFoundException e) {
+					e.printStackTrace();
+					msg.add("N");
+					msg.add("MainFile not found");
+					return msg;
+				} catch (IOException e) {
+					e.printStackTrace();
+					msg.add("N");
+					msg.add("MainFile upload failed");
+					return msg;
+				}
+			}
 //					useRecipe.setPictureURL(userFolder + mainUniqueName);
 //					recipeRepo.save(useRecipe);
 
-					// 處理步驟圖片
-//					List<RecipeSteps> steps = stepRepo.findRecipeStepsByRecipeId(recipe.getId());
+			// 處理步驟圖片
+//						List<RecipeSteps> steps = stepRepo.findRecipeStepsByRecipeId(recipe.getId());
 //					if (!steps.isEmpty()) {
-						for (int i = 1; i < pictures.size(); i++) {
+
+			for (int i = 1; i < pictures.size(); i++) {
 //							RecipeSteps step = steps.get(i);
-							String steptimestamp = LocalDateTime.now().format(formatter);
-							String stepPic = pictures.get(i).getBase64Content();
-							String originalfileName = pictures.get(i).getFileName();
-							String fileName = originalfileName.substring(0, originalfileName.lastIndexOf("."));
-							String extension = originalfileName.substring(originalfileName.lastIndexOf("."));
-							String uniqueName = fileName + "_" + steptimestamp + extension;
+				if (pictures.get(i) != null) {
+				String steptimestamp = LocalDateTime.now().format(formatter);
+				String stepPic = pictures.get(i).getBase64Content();
+					String originalfileName = pictures.get(i).getFileName();
+					String fileName = originalfileName.substring(0, originalfileName.lastIndexOf("."));
+					String extension = originalfileName.substring(originalfileName.lastIndexOf("."));
+					String uniqueName = fileName + "_" + steptimestamp + extension;
 
-							try {
-								byte[] decode = Base64.getDecoder().decode(stepPic);
-								File file = new File(userFolder + uniqueName);
-								FileOutputStream fileOutputStream = new FileOutputStream(file);
-								fileOutputStream.write(decode);
-								fileOutputStream.flush();
-
-								fileOutputStream.close();
-							} catch (FileNotFoundException e) {
-								e.printStackTrace();
-								return "StepFile not found";
-							} catch (IOException e) {
-								e.printStackTrace();
-								return "StepFile upload failed";
-							}
+					try {
+						byte[] decode = Base64.getDecoder().decode(stepPic);
+						File file = new File(userFolder + uniqueName);
+						FileOutputStream fileOutputStream = new FileOutputStream(file);
+						fileOutputStream.write(decode);
+						fileOutputStream.flush();
+						fileOutputStream.close();
+						// 將步驟圖片儲存位置放入陣列
+						msg.add(userFolder + uniqueName);
+					} catch (FileNotFoundException e) {
+						e.printStackTrace();
+						msg.add("N");
+						msg.add("MainFile not found");
+						return msg;
+					} catch (IOException e) {
+						e.printStackTrace();
+						msg.add("N");
+						msg.add("MainFile upload failed");
+						return msg;
+					}
 //							step.setStepPicture(userFolder + uniqueName);
 //							stepRepo.save(step);
-						}
-					}
+				}
+			}
+			return msg; // 送出處理好的圖片儲存位址,成品圖找到-1後的一筆，其後皆為步驟圖片
+		}
 
 //				}
 //			}
 
 //		}
-		return "N";
+		msg.add("F");
+		return msg;
 	}
 
 	// 更新食譜
