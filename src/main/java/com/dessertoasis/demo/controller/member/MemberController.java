@@ -1,4 +1,4 @@
-package com.dessertoasis.demo.controller;
+package com.dessertoasis.demo.controller.member;
 
 import java.util.List;
 
@@ -12,8 +12,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.dessertoasis.demo.model.member.Member;
 import com.dessertoasis.demo.model.member.MemberAccess;
 import com.dessertoasis.demo.model.member.MemberDetail;
-import com.dessertoasis.demo.service.MemberDetailService;
-import com.dessertoasis.demo.service.MemberService;
+import com.dessertoasis.demo.service.member.MemberDetailService;
+import com.dessertoasis.demo.service.member.MemberService;
 
 @RestController
 @RequestMapping("/member")

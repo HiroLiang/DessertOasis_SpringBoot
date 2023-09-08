@@ -14,6 +14,7 @@ import com.dessertoasis.demo.model.course.CourseTeacherDTO;
 import com.dessertoasis.demo.model.course.Teacher;
 import com.dessertoasis.demo.model.course.TeacherRepository;
 import com.dessertoasis.demo.model.member.Member;
+import com.dessertoasis.demo.model.member.MemberRepository;
 
 @Service
 public class CourseService {
@@ -24,12 +25,16 @@ public class CourseService {
 	@Autowired
 	private TeacherRepository tRepo;
 	
+	@Autowired
+	private MemberRepository mRepo;
+	
 	//利用 id 查詢課程
 	public Course findById(Integer id) {
 		Optional<Course> optional = cRepo.findById(id);
 		
 		if(optional.isPresent()) {
-			return optional.get();
+			Course course = optional.get();
+			return course;
 		}
 		return null;
 	}
@@ -54,29 +59,40 @@ public class CourseService {
 			result.setId(id);
 			result.setCourseName(course.getCourseName());
 			result.setCourseStatus(course.getCourseStatus());
-//			result.setCourseDate(course.getCourseDate());
-//			result.setRegDeadline(course.getRegDeadline());
-//			result.setCourseDescription(course.getCourseDescription());
-//			result.setCourseLocation(course.getCourseLocation());
+			result.setCourseDate(course.getCourseDate());
+			result.setCloseDate(course.getCloseDate());
+			result.setCourseIntroduction(course.getCourseIntroduction());
+			result.setCoursePlace(course.getCoursePlace());
 		}
 		return null;
 	}
 
 	//刪除單筆課程
-	public boolean deleteById(Integer id) {
-		Optional<Course> optional = cRepo.findById(id);
-		
+//	public Boolean deleteById(Integer courseId,Integer memberId) {
+//		Optional<Member> member = mRepo.findById(memberId);
+//		Optional<Course> course = cRepo.findById(courseId);
+//		
+//		if(course.isPresent()) {
+//			 Course courseData = course.get();
+//			 if(courseData.getTeacher().getMember().getId().equals(member.get().getId())) {
+//			 cRepo.deleteById(courseId);
+//			return true;
+//			}
+//			 
+//		}
+//		return false;
+//	}
+	
+	public Boolean deleteById(Integer courseId) {
+		Optional<Course> optional = cRepo.findById(courseId);
 		if(optional.isPresent()) {
-			cRepo.deleteById(id);
+			cRepo.deleteById(courseId);
 			return true;
 		}
 		return false;
 	}
 	
-//	public List<Course> getCoursesByTeacher(Teacher teacher) {
-//        return cRepo.findByTeacher(teacher);
-//    }
-	
+	//列出該老師所有課程
 	public List<CourseDTO> getCoursesByTeacherId(Integer teacherId){
 		List<Course> courses = cRepo.findByTeacherId(teacherId);
 		List<CourseDTO> cDTOs = new ArrayList<>();

@@ -1,9 +1,11 @@
-package com.dessertoasis.demo.service;
+package com.dessertoasis.demo.service.member;
 
 import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -20,6 +22,9 @@ public class MemberService {
 
 	@Autowired
 	private PasswordEncoder passwordEncoder;
+	
+	@Autowired
+	private JavaMailSender javaMailSender;
 	
 	//新增 更改成加密後的版本
 //	public void insert(Member member) {
@@ -60,20 +65,16 @@ public class MemberService {
     
 
     
-    //密碼加密
-    public Member addMember(Member member) {
-    	System.out.println("Member object: " + member);
-    	    
+    //密碼加密並新增
+    public Member addMember(Member member) {  
     	String rawPassword = member.getPasswords();
-    	System.out.println("Raw password: " + rawPassword);
-    	member.setPasswords(passwordEncoder.encode(member.getPasswords()));
+    	member.setPasswords(passwordEncoder.encode(rawPassword));
 		return mRepo.save(member);
 	}
     
     //驗證是否重複帳號
     public boolean checkIfAccountExist(String account) {
-		Member dbmem = mRepo.findByAccount(account);
-		
+		Member dbmem = mRepo.findByAccount(account);	
 		if(dbmem != null) {
 			return true;
 		}else {
@@ -95,7 +96,16 @@ public class MemberService {
         return null;
     }
 
- 
+    
+    //寄驗證信
+    public void sendVerificationEmail(String toEmail, String verificationLink) {
+    	SimpleMailMessage mailMessage = new SimpleMailMessage();
+    	mailMessage.setFrom("Dessert0asis@outlook.com");
+    	mailMessage.setTo(toEmail);
+    	mailMessage.setSubject("驗證信");
+    	mailMessage.setText("點擊連結進行驗證"+verificationLink);
+    	javaMailSender.send(mailMessage);
+    }
 
 
 	
