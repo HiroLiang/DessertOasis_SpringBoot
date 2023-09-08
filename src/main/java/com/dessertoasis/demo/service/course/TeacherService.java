@@ -19,7 +19,7 @@ import com.dessertoasis.demo.model.sort.DateRules;
 import com.dessertoasis.demo.model.sort.SearchRules;
 import com.dessertoasis.demo.model.sort.SortCondition;
 import com.dessertoasis.demo.model.sort.SortCondition.SortWay;
-import com.dessertoasis.demo.service.MemberService;
+import com.dessertoasis.demo.service.member.MemberService;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
