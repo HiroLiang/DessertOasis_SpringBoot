@@ -1,4 +1,4 @@
-package com.dessertoasis.demo.service;
+package com.dessertoasis.demo.service.member;
 
 import java.io.File;
 
@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import com.dessertoasis.demo.model.member.EmailDetails;
 import com.dessertoasis.demo.model.member.Emailinterface;
+import com.dessertoasis.demo.model.member.Member;
 
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
@@ -97,4 +98,6 @@ public class EmailService implements Emailinterface {
             return "Error while sending mail!!!";
         }
     }
+
+	
 }

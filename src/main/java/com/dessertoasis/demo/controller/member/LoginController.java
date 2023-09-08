@@ -1,4 +1,4 @@
-package com.dessertoasis.demo.controller;
+package com.dessertoasis.demo.controller.member;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.dessertoasis.demo.model.member.Member;
 import com.dessertoasis.demo.model.member.MemberAccess;
 import com.dessertoasis.demo.model.member.MemberState;
-import com.dessertoasis.demo.service.MemberService;
+import com.dessertoasis.demo.service.member.MemberService;
 
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;

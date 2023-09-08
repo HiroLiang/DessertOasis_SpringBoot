@@ -1,6 +1,7 @@
-package com.dessertoasis.demo.controller;
+package com.dessertoasis.demo.controller.member;
 
 import java.util.Date;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -10,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.dessertoasis.demo.model.member.Member;
 import com.dessertoasis.demo.model.member.MemberAccess;
 import com.dessertoasis.demo.model.member.MemberState;
-import com.dessertoasis.demo.service.MemberService;
+import com.dessertoasis.demo.service.member.MemberService;
 
 @RestController
 public class RegisterController {
@@ -32,13 +33,25 @@ public class RegisterController {
         newMember.setEmail(member.getEmail());
         newMember.setPasswords(member.getPasswords());
         
-        member.getMemberStatus();//創立新帳號為不活耀狀態
+        //創立新帳，產生驗證token
+        String verificationToken = UUID.randomUUID().toString();
+        newMember.setVerificationToken(verificationToken);
+        
+        //產生此會員的驗證信連結
+        String verificationLink ="http://localhost:5173/#/"+verificationToken;
+        mService.sendVerificationEmail(newMember.getEmail(),verificationLink);
+        
+        
+        //創立新帳號為不活耀狀態
+        member.getMemberStatus();
 		newMember.setMemberStatus(MemberState.INACTIVE); 
 		
-		member.getAccess();//創立新帳號為一般會員
+		//創立新帳號為一般會員
+		member.getAccess();
 		newMember.setAccess(MemberAccess.USER);
 		
-        newMember.setSignDate(new Date());//創立帳號日期是系統當下時間
+		//創立帳號日期是系統當下時間
+        newMember.setSignDate(new Date());
         
         newMember = mService.addMember(newMember);
         
