@@ -42,13 +42,16 @@ public class Category {
     private List<Category> children;
    
     //食譜分類
+    @JsonIgnoreProperties({"category"})
     @OneToMany(mappedBy = "category")
     private List<RecipeCategory> recipeCategories;
     //商品
+    @JsonIgnoreProperties({"category"})
     @OneToMany(mappedBy = "category")
     private List<Product> products;
    
     //課程分類
+    @JsonIgnoreProperties({"category"})
     @OneToMany(mappedBy = "category")
     private List<Course> courses;
 

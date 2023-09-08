@@ -1,11 +1,15 @@
 package com.dessertoasis.demo.controller.recipe;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Base64;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -23,6 +27,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.dessertoasis.demo.ImageUploadUtil;
 import com.dessertoasis.demo.model.category.Category;
 import com.dessertoasis.demo.model.member.Member;
+import com.dessertoasis.demo.model.member.MemberRepository;
 import com.dessertoasis.demo.model.recipe.Ingredient;
 import com.dessertoasis.demo.model.recipe.IngredientList;
 import com.dessertoasis.demo.model.recipe.PicturesDTO;
@@ -42,11 +47,17 @@ import jakarta.servlet.http.HttpSession;
 public class RecipeController {
 
 	@Autowired
+	private MemberRepository memberRepo;
+
+	@Autowired
 	private RecipeService recipeService;
-	
+
 	@Autowired
 	private RecipeRepository recipeRepo;
-	
+
+//	@Autowired
+//	private RecipeStepsRepository stepRepo;
+
 	@Autowired
 	private ImageUploadUtil imgUtil;
 
@@ -56,75 +67,73 @@ public class RecipeController {
 //		recipeService.insert(recipe);
 //		return "食譜新增成功";
 //	}
-	
-	
 
 	@GetMapping("/recipe/all")
 	public List<Recipes> findAllRecipes() {
 		List<Recipes> recipes = recipeService.findAllRecipes();
-	
+
 		return recipes;
-		
+
 	}
-	
+
 	@GetMapping("/recipe/{id}")
 	public RecipeDTO findRecipeById(@PathVariable("id") Integer id) {
 		RecipeDTO recipe = recipeService.findById(id);
-		
+
 		return recipe;
 	}
-	
+
 //	@DeleteMapping("/recipe/delete")
 //	public String deleteRecipeById(@RequestParam("id") Integer id) {
 //		String deleteRecipe = recipeService.deleteById(id);
 //		return deleteRecipe;
 //	}
-	
-	//透過食譜名稱模糊搜尋食譜
+
+	// 透過食譜名稱模糊搜尋食譜
 	@GetMapping("recipe/recipeTitle")
-	public List<Recipes> findRecipeByTitle(@RequestParam("rt") String recipeTitle){
+	public List<Recipes> findRecipeByTitle(@RequestParam("rt") String recipeTitle) {
 		String nameLikeRecipe = "%" + recipeTitle + "%";
 		List<Recipes> optional = recipeRepo.findRecipeByTiltleLike(nameLikeRecipe);
-		
-		if(optional != null) {
-			return optional;	
+
+		if (optional != null) {
+			return optional;
 		}
 		return null;
 	}
-	
-	//透過難易度搜尋食譜
+
+	// 透過難易度搜尋食譜
 	@GetMapping("recipe/difficulty")
-	public List<Recipes> findRecipeByDifficulty(@RequestParam("dif") String difficulty){
+	public List<Recipes> findRecipeByDifficulty(@RequestParam("dif") String difficulty) {
 		return recipeRepo.findRecipeByDifficulty(difficulty);
 	}
-	
+
 	/*--------------------------------------------食譜主頁使用controller ------------------------------------------------*/
-	
-	//取得最新的10筆食譜
+
+	// 取得最新的10筆食譜
 	@GetMapping("recipe/latest10Recipes")
-	public List<RecipeCarouselDTO> findTop10RecipeByCreateTime(){
+	public List<RecipeCarouselDTO> findTop10RecipeByCreateTime() {
 		List<RecipeCarouselDTO> recipes = recipeService.findTop10RecipesByCreateTime();
-		
-		if(recipes !=null && !recipes.isEmpty()) {
+
+		if (recipes != null && !recipes.isEmpty()) {
 			return recipes;
 		}
 		return null;
 	}
-	
-	//取得訪問數最高的10筆食譜
+
+	// 取得訪問數最高的10筆食譜
 	@GetMapping("recipe/hottest10Recipes")
-	public List<RecipeCarouselDTO> findTop10RecipeByVisitCount(){
+	public List<RecipeCarouselDTO> findTop10RecipeByVisitCount() {
 		List<RecipeCarouselDTO> recipes = recipeService.findTop10RecipesByVisitCount();
-		
-		if(recipes !=null && !recipes.isEmpty()) {
+
+		if (recipes != null && !recipes.isEmpty()) {
 			return recipes;
 		}
 		return null;
 	}
-	
-	//取得特定類別的10筆食譜
+
+	// 取得特定類別的10筆食譜
 	@GetMapping("/recipe/get10categoryRecipes")
-	public List<RecipeCarouselDTO> find10RecipeByCategory(@RequestParam("cid") Integer cid){
+	public List<RecipeCarouselDTO> find10RecipeByCategory(@RequestParam("cid") Integer cid) {
 		Category category = new Category();
 		category.setId(cid);
 		return recipeService.find10RecipeByCategory(category);
@@ -132,15 +141,16 @@ public class RecipeController {
 
 	/*--------------------------------------------食譜建立頁使用controller ------------------------------------------------*/
 
-	//新增食譜
+	// 新增食譜
 	@PostMapping("/recipe/addrecipe")
 	@ResponseBody
-	public String addRecipe(@RequestParam("recipeTitle") String recipeTitle,@RequestParam("recipeIntroduction") String recipeIntroduction,
-			@RequestParam("pictureURL") MultipartFile pictureURL,@RequestParam("cookingTime") Integer cookingTime,
-			@RequestParam Map<String, String> ingredients,@RequestParam Map<String, MultipartFile> steps,@RequestParam Map<String, String> stepDescriptions,
-			HttpSession session) {
+	public String addRecipe(@RequestParam("recipeTitle") String recipeTitle,
+			@RequestParam("recipeIntroduction") String recipeIntroduction,
+			@RequestParam("pictureURL") MultipartFile pictureURL, @RequestParam("cookingTime") Integer cookingTime,
+			@RequestParam Map<String, String> ingredients, @RequestParam Map<String, MultipartFile> steps,
+			@RequestParam Map<String, String> stepDescriptions, HttpSession session) {
 		Member member = (Member) session.getAttribute("loggedInMember");
-		if(member != null) {
+		if (member != null) {
 			Recipes recipe = new Recipes();
 			recipe.setRecipeTitle(recipeTitle);
 			recipe.setRecipeAuthor(member);
@@ -148,112 +158,175 @@ public class RecipeController {
 			recipe.setRecipeCreateDate(LocalDateTime.now());
 			recipe.setRecipeIntroduction(recipeIntroduction);
 			recipe.setRecipeStatus(1);
-			
+
 			String mainPicUrl = imgUtil.savePicture(pictureURL, 1, "recipe", recipeTitle);
 			recipe.setPictureURL(mainPicUrl);
 
 			IngredientList ingredientList = new IngredientList();
 			Ingredient ingredient = new Ingredient();
-	    	int ingredientsIndex = ingredients.size()/2;
-	    	for(int i = 1 ; i <= ingredientsIndex ; i++) {
-	    		String ingredientNameKey = "ingredientName"+i;
-	    		String ingredientQtyKey ="ingredientQuantity"+i;
-	    		String ingredientName = ingredients.get(ingredientNameKey);
-	    		String ingredientQty= ingredients.get(ingredientQtyKey);
-	    		if (ingredientQty != null && !ingredientQty.isEmpty()) {
-	    		    try {
-	    		        ingredientList.setIngredientQuantity(Integer.parseInt(ingredientQty));
-	    		    } catch (NumberFormatException e) {
-	    		        // 处理无法解析为整数的情况
-	    		    }
-	    		}
+			int ingredientsIndex = ingredients.size() / 2;
+			for (int i = 1; i <= ingredientsIndex; i++) {
+				String ingredientNameKey = "ingredientName" + i;
+				String ingredientQtyKey = "ingredientQuantity" + i;
+				String ingredientName = ingredients.get(ingredientNameKey);
+				String ingredientQty = ingredients.get(ingredientQtyKey);
+				if (ingredientQty != null && !ingredientQty.isEmpty()) {
+					try {
+						ingredientList.setIngredientQuantity(Integer.parseInt(ingredientQty));
+					} catch (NumberFormatException e) {
+						// 处理无法解析为整数的情况
+					}
+				}
 //	    		ingredientList.setIngredientQuantity(Integer.parseInt(ingredientQty));
-	    		ingredient.setIngredientName(ingredientName);
-	    	}
-	    	RecipeSteps recipeSteps = new RecipeSteps();
-	    	recipeSteps.setRecipe(recipe);
-	    	int stepsIndex = steps.size()/2;
-	    	for(int i= 1 ; i <= stepsIndex ; i++) {
-	    		recipeSteps.setStepNumber(i);
-	    		String stepImgKey = "recipeStep"+i;
-	    		MultipartFile stepImg = steps.get(stepImgKey);
-	    		String picUrl = imgUtil.savePicture(stepImg, 1, "recipe", recipeTitle);
-	    		recipeSteps.setStepPicture(picUrl);
-	    	}
-	    	int stepIntroIndex = stepDescriptions.size()/2;
-	    	for(int i= 1 ; i <= stepIntroIndex ; i++) {
-	    		String stepIntroIndexKey = "recipeIntroduction"+i;
-	    		String stepIntro = stepDescriptions.get(stepIntroIndexKey);
-	    		recipeSteps.setStepContext(stepIntro);
-	    	}
-	    	
-			Boolean add = recipeService.addRecipe(1, recipe);
-			if(add) {
-				return "Y";
+				ingredient.setIngredientName(ingredientName);
 			}
-			return "F";
-		}
-		return"N";
-	}
-	
-	
-	@SuppressWarnings("resource")
-	@PostMapping(path = "test/uploadimg")
-	public void sendPic(@RequestBody  List<PicturesDTO> pictures,@RequestParam String recipe ) throws IOException {
-		
-		String base64 = pictures.get(0).getBase64Content();
-		String path = "C:\\Users\\iSpan\\"+pictures.get(0).getFileName();
-		
-		byte[] decode = Base64.getDecoder().decode(base64);
-		FileOutputStream fileOutputStream = new FileOutputStream(path);
-		fileOutputStream.write(decode);
-		
-		fileOutputStream.close();
-	}
-	
-	//更新食譜
-	@PutMapping("recipe/updaterecipe")
-	public String updateRecipe(@RequestBody Recipes recipe,HttpSession session) {
-		Member member = (Member) session.getAttribute("loggedInMember");
-		if(member != null) {
-			Boolean update = recipeService.updateRecipe(member.getId(), recipe);
-			if(update) {
+			RecipeSteps recipeSteps = new RecipeSteps();
+			recipeSteps.setRecipe(recipe);
+			int stepsIndex = steps.size() / 2;
+			for (int i = 1; i <= stepsIndex; i++) {
+				recipeSteps.setStepNumber(i);
+				String stepImgKey = "recipeStep" + i;
+				MultipartFile stepImg = steps.get(stepImgKey);
+				String picUrl = imgUtil.savePicture(stepImg, 1, "recipe", recipeTitle);
+				recipeSteps.setStepPicture(picUrl);
+			}
+			int stepIntroIndex = stepDescriptions.size() / 2;
+			for (int i = 1; i <= stepIntroIndex; i++) {
+				String stepIntroIndexKey = "recipeIntroduction" + i;
+				String stepIntro = stepDescriptions.get(stepIntroIndexKey);
+				recipeSteps.setStepContext(stepIntro);
+			}
+
+			Boolean add = recipeService.addRecipe(1, recipe);
+			if (add) {
 				return "Y";
 			}
 			return "F";
 		}
 		return "N";
 	}
-	
-	//刪除食譜
+
+	@SuppressWarnings("resource")
+	@PostMapping(path = "test/uploadimg")
+	public String sendPic(@RequestBody List<PicturesDTO> pictures) {
+		final String uploadPath = "D:/dessertoasis-vue/public/images/";
+//		Member member = (Member) session.getAttribute("loggedInMember");
+//		Recipes recipe = (Recipes) session.getAttribute("recipeId");
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmssSSS");
+		String timestamp = LocalDateTime.now().format(formatter);
+//		if (member != null) {
+			String userFolder = uploadPath + 1 + "/";
+			File folder = new File(userFolder);
+			if (!folder.exists()) {
+				folder.mkdirs();
+			}
+//			Optional<Recipes> getRecipe = recipeRepo.findById(recipe.getId());
+//			if (getRecipe.isPresent()) {
+//				Recipes useRecipe = getRecipe.get();
+				if (!pictures.isEmpty()) {
+					String mainPic = pictures.get(0).getBase64Content();
+					String mainPicName = pictures.get(0).getFileName();
+					String mainFileName = mainPicName.substring(0, mainPicName.lastIndexOf("."));
+					String mainExtension = mainPicName.substring(mainPicName.lastIndexOf("."));
+					String mainUniqueName = mainFileName + "_" + timestamp + mainExtension;
+
+					byte[] mainDecode = Base64.getDecoder().decode(mainPic);
+					File mainfile = new File(userFolder + mainUniqueName);
+					 
+					try {
+						FileOutputStream mainfileOutputStream = new FileOutputStream(mainfile);
+						mainfileOutputStream.write(mainDecode);
+						mainfileOutputStream.flush();
+					} catch (FileNotFoundException e) {
+						e.printStackTrace();
+						return "MainFile not found";
+					} catch (IOException e) {
+						e.printStackTrace();
+						return "MainFile upload failed";
+					}
+//					useRecipe.setPictureURL(userFolder + mainUniqueName);
+//					recipeRepo.save(useRecipe);
+
+					// 處理步驟圖片
+//					List<RecipeSteps> steps = stepRepo.findRecipeStepsByRecipeId(recipe.getId());
+//					if (!steps.isEmpty()) {
+						for (int i = 1; i < pictures.size(); i++) {
+//							RecipeSteps step = steps.get(i);
+							String steptimestamp = LocalDateTime.now().format(formatter);
+							String stepPic = pictures.get(i).getBase64Content();
+							String originalfileName = pictures.get(i).getFileName();
+							String fileName = originalfileName.substring(0, originalfileName.lastIndexOf("."));
+							String extension = originalfileName.substring(originalfileName.lastIndexOf("."));
+							String uniqueName = fileName + "_" + steptimestamp + extension;
+
+							try {
+								byte[] decode = Base64.getDecoder().decode(stepPic);
+								File file = new File(userFolder + uniqueName);
+								FileOutputStream fileOutputStream = new FileOutputStream(file);
+								fileOutputStream.write(decode);
+								fileOutputStream.flush();
+
+								fileOutputStream.close();
+							} catch (FileNotFoundException e) {
+								e.printStackTrace();
+								return "StepFile not found";
+							} catch (IOException e) {
+								e.printStackTrace();
+								return "StepFile upload failed";
+							}
+//							step.setStepPicture(userFolder + uniqueName);
+//							stepRepo.save(step);
+						}
+					}
+
+//				}
+//			}
+
+//		}
+		return "N";
+	}
+
+	// 更新食譜
+	@PutMapping("recipe/updaterecipe")
+	public String updateRecipe(@RequestBody Recipes recipe, HttpSession session) {
+		Member member = (Member) session.getAttribute("loggedInMember");
+		if (member != null) {
+			Boolean update = recipeService.updateRecipe(member.getId(), recipe);
+			if (update) {
+				return "Y";
+			}
+			return "F";
+		}
+		return "N";
+	}
+
+	// 刪除食譜
 	@DeleteMapping()
 	public String deleteRecipe(@RequestParam("id") Integer id, HttpSession session) {
 		Member member = (Member) session.getAttribute("loggedInMember");
-		if(member != null) {
+		if (member != null) {
 			Boolean delete = recipeService.deleteById(id, member.getId());
-			if(delete) {
+			if (delete) {
 				return "Y";
 			}
 			return "F";
 		}
 		return "N";
 	}
-	
+
 	@GetMapping("/recipe/search")
 	public ResponseEntity<List<Recipes>> searchRecipes(@RequestParam(required = false) String keyword,
-            @RequestParam(defaultValue = "1") int page,
-            @RequestParam(defaultValue = "10") int pageSize){
-		
+			@RequestParam(defaultValue = "1") int page, @RequestParam(defaultValue = "10") int pageSize) {
+
 		SortCondition sortCondition = new SortCondition();
 		sortCondition.setSortBy(keyword);
 		sortCondition.setPage(page);
 		sortCondition.setPageSize(pageSize);
-		
+
 		List<Recipes> resultList = recipeService.getRecipePage(sortCondition);
-		
+
 		return ResponseEntity.ok(resultList);
-		
+
 	}
-	
 
 }
