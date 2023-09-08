@@ -1,4 +1,4 @@
-package com.dessertoasis.demo.controller;
+package com.dessertoasis.demo.controller.member;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.dessertoasis.demo.model.member.EmailDetails;
-import com.dessertoasis.demo.service.EmailService;
+import com.dessertoasis.demo.service.member.EmailService;
  
 @RestController
 public class SendingEmailController {

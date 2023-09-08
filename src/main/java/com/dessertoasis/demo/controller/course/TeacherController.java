@@ -21,9 +21,9 @@ import com.dessertoasis.demo.model.course.TeacherDemo;
 import com.dessertoasis.demo.model.course.TeacherRepository;
 import com.dessertoasis.demo.model.member.Member;
 import com.dessertoasis.demo.model.sort.SortCondition;
-import com.dessertoasis.demo.service.MemberService;
 import com.dessertoasis.demo.service.course.CourseService;
 import com.dessertoasis.demo.service.course.TeacherService;
+import com.dessertoasis.demo.service.member.MemberService;
 import com.fasterxml.jackson.annotation.JsonRawValue;
 
 import jakarta.servlet.http.Cookie;

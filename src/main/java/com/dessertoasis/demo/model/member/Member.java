@@ -69,6 +69,9 @@ public class Member { //與會員帳號相關
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name="signDate" , columnDefinition ="datetime2(0)")
 	private Date signDate;
+	
+	@Column(name="verificationToken", columnDefinition ="VARCHAR(100)")
+	private String verificationToken;
 
 	@JsonIgnore
 	@OneToMany(mappedBy = "recipeAuthor",cascade = CascadeType.ALL,fetch = FetchType.EAGER)
