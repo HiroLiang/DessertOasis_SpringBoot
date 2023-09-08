@@ -78,41 +78,38 @@ public class OrderService {
 	
 	public Order placeProdOrderItem(Order order, List<ProductCartDTO> productCartDTOs) {
 		if (productCartDTOs != null) {
-			if (order.getProdOrderItems() == null) {
-				order.setProdOrderItems(new ArrayList<>());
-			}
+			List<ProdOrderItem> orderItems = new ArrayList<>(); 
 			for (ProductCartDTO cartDTO : productCartDTOs) {
 				Product product = productRepo.findById(cartDTO.getProductId()).get();
 				ProdOrderItem ordItem = new ProdOrderItem(cartDTO, product, order);
-				order.getProdOrderItems().add(ordItem);
+				orderItems.add(ordItem);
 			}
+			order.setProdOrderItems(orderItems);
 		}
 		return order;
 	}
 	
 	public Order placeCourseOrderItem(Order order, List<CourseCartDTO> courseCartDTOs) {
 		if (courseCartDTOs != null) {
-			if (order.getCourseOrderItems() == null) {
-				order.setCourseOrderItems(new ArrayList<>());
-			}
+			List<CourseOrderItem> orderItems = new ArrayList<>();
 			for (CourseCartDTO cartDTO : courseCartDTOs) {
 				Course course = courseRepo.findById(cartDTO.getCourseId()).get();
 				CourseOrderItem ordItem = new CourseOrderItem(cartDTO, course, order);
-				order.getCourseOrderItems().add(ordItem);
+				orderItems.add(ordItem);
 			}
+			order.setCourseOrderItems(orderItems);
 		}
 		return order;
 	}
 	
 	public Order placeReservation(Order order, List<ReservationCartDTO> rsvCartDTOs) {
 		if (rsvCartDTOs != null) {
-			if (order.getReservations() == null) {
-				order.setReservations(new ArrayList<>());
-			}
+			List<Reservation> reservations = new ArrayList<>();
 			for (ReservationCartDTO cartDTO : rsvCartDTOs) {
 				Reservation rsv = new Reservation(cartDTO, order);
-				order.getReservations().add(rsv);
+				reservations.add(rsv);
 			}
+			order.setReservations(reservations);
 		}
 		return order;
 	}
