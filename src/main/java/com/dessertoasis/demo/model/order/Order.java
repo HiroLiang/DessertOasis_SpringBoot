@@ -40,7 +40,7 @@ public class Order {
 	private LocalDateTime updateDate;
 	
 	@Column(columnDefinition = "nvarchar(max)")
-	private String prodOrderMark;
+	private String prodOrderAddress;
 	
 	@OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
 	private List<Reservation> reservations;

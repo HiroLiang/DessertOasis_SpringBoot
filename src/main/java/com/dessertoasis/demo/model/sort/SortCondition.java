@@ -2,6 +2,9 @@ package com.dessertoasis.demo.model.sort;
 
 import java.util.List;
 
+import lombok.Data;
+
+@Data
 public class SortCondition {
 	/*
 	 * 		物件結構： 

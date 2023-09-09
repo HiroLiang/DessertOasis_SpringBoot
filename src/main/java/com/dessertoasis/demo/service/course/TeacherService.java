@@ -19,6 +19,7 @@ import com.dessertoasis.demo.model.sort.DateRules;
 import com.dessertoasis.demo.model.sort.SearchRules;
 import com.dessertoasis.demo.model.sort.SortCondition;
 import com.dessertoasis.demo.model.sort.SortCondition.SortWay;
+import com.dessertoasis.demo.service.PageSortService;
 import com.dessertoasis.demo.service.member.MemberService;
 
 import jakarta.persistence.EntityManager;
@@ -39,6 +40,9 @@ public class TeacherService {
 	@Autowired
 	private MemberService mService;
 
+	@Autowired
+	private PageSortService pService;
+	
 	@PersistenceContext
 	private EntityManager em;
 
@@ -143,10 +147,10 @@ public class TeacherService {
 		// 日期範圍搜索
 		if (dateRules != null) {
 			for (DateRules rule : dateRules) {
-				if (hasProperty(teacher, rule.getKey())) {
+				if (pService.hasProperty(teacher, rule.getKey())) {
 					predicates[counter] = cb.between(root.get(rule.getKey()), rule.getStart(), rule.getEnd());
 					counter++;
-				} else if (hasProperty(member, rule.getKey())) {
+				} else if (pService.hasProperty(member, rule.getKey())) {
 					predicates[counter] = cb.between(memberJoin.get(rule.getKey()), rule.getStart(), rule.getEnd());
 					counter++;
 				}
@@ -155,10 +159,10 @@ public class TeacherService {
 		// 模糊搜索條件
 		if (searchRules != null) {
 			for (SearchRules rule : searchRules) {
-				if (hasProperty(teacher, rule.getKey())) {
+				if (pService.hasProperty(teacher, rule.getKey())) {
 					predicates[counter] = cb.like(root.get(rule.getKey()), rule.getInput());
 					counter++;
-				} else if (hasProperty(member, rule.getKey())) {
+				} else if (pService.hasProperty(member, rule.getKey())) {
 					predicates[counter] = cb.like(memberJoin.get(rule.getKey()), rule.getInput());
 					counter++;
 				}
@@ -166,23 +170,23 @@ public class TeacherService {
 		}
 		// 數字範圍搜索
 		if (numKey != null) {
-			if (hasProperty(teacher, numKey)) {
+			if (pService.hasProperty(teacher, numKey)) {
 				predicates[counter] = cb.between(root.get(numKey), sortCod.getNumStart(), sortCod.getNumEnd());
 				counter++;
-			} else if (hasProperty(member, numKey)) {
+			} else if (pService.hasProperty(member, numKey)) {
 				predicates[counter] = cb.between(memberJoin.get(numKey), sortCod.getNumStart(), sortCod.getNumEnd());
 				counter++;
 			}
 		}
 		//取得排序條件
 		if(sortCod.getSortBy()!=null) {
-			if(hasProperty(teacher, sortCod.getSortBy())) {
+			if(pService.hasProperty(teacher, sortCod.getSortBy())) {
 				if(sortCod.getSortWay().equals(SortWay.ASC)) {
 					cq.where(predicates).orderBy(cb.asc(root.get(sortCod.getSortBy())));
 				}else {
 					cq.where(predicates).orderBy(cb.desc(root.get(sortCod.getSortBy())));
 				}
-			}else if(hasProperty(member, sortCod.getSortBy())) {
+			}else if(pService.hasProperty(member, sortCod.getSortBy())) {
 				if(sortCod.getSortWay().equals(SortWay.ASC)) {
 					cq.where(predicates).orderBy(cb.asc(memberJoin.get(sortCod.getSortBy())));
 				}else {
@@ -202,18 +206,5 @@ public class TeacherService {
 		return result;
 	}
 
-	//確認class中有沒有該屬性
-	public static boolean hasProperty(Object bean, String propertyName) {
-		try {
-			BeanInfo beanInfo = Introspector.getBeanInfo(bean.getClass());
-			PropertyDescriptor[] propertyDescriptors = beanInfo.getPropertyDescriptors();
-			for (PropertyDescriptor propertyDescriptor : propertyDescriptors) {
-				if (propertyDescriptor.getName().equals(propertyName)) 
-					return true;
-			}
-		} catch (IntrospectionException e) {
-			e.printStackTrace();
-		}
-		return false;
-	}
+	
 }

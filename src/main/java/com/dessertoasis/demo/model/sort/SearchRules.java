@@ -1,5 +1,8 @@
 package com.dessertoasis.demo.model.sort;
 
+import lombok.Data;
+
+@Data
 public class SearchRules {
 	
 	private String input;
