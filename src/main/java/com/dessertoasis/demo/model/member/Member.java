@@ -27,7 +27,7 @@ import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
 import lombok.Data;
 
-@Data
+//@Data
 @Entity @Table(name="member")
 public class Member { //與會員帳號相關
 	
@@ -96,6 +96,142 @@ public class Member { //與會員帳號相關
 	@JsonIgnore
 	@OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
 	private List<Cart> carts;
+
+	public Integer getId() {
+		return id;
+	}
+
+	public void setId(Integer id) {
+		this.id = id;
+	}
+
+	public String getFullName() {
+		return fullName;
+	}
+
+	public void setFullName(String fullName) {
+		this.fullName = fullName;
+	}
+
+	public String getMemberName() {
+		return memberName;
+	}
+
+	public void setMemberName(String memberName) {
+		this.memberName = memberName;
+	}
+
+	public String getAccount() {
+		return account;
+	}
+
+	public void setAccount(String account) {
+		this.account = account;
+	}
+
+	public String getEmail() {
+		return email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
+	}
+
+	public String getPasswords() {
+		return passwords;
+	}
+
+	public void setPasswords(String passwords) {
+		this.passwords = passwords;
+	}
+
+	public String getEmailForCode() {
+		return emailForCode;
+	}
+
+	public void setEmailForCode(String emailForCode) {
+		this.emailForCode = emailForCode;
+	}
+
+	public String getCode() {
+		return code;
+	}
+
+	public void setCode(String code) {
+		this.code = code;
+	}
+
+	public MemberAccess getAccess() {
+		return access;
+	}
+
+	public void setAccess(MemberAccess access) {
+		this.access = access;
+	}
+
+	public MemberState getMemberStatus() {
+		return memberStatus;
+	}
+
+	public void setMemberStatus(MemberState memberStatus) {
+		this.memberStatus = memberStatus;
+	}
+
+	public Date getSignDate() {
+		return signDate;
+	}
+
+	public void setSignDate(Date signDate) {
+		this.signDate = signDate;
+	}
+
+	public String getVerificationToken() {
+		return verificationToken;
+	}
+
+	public void setVerificationToken(String verificationToken) {
+		this.verificationToken = verificationToken;
+	}
+
+	public List<Recipes> getRecipes() {
+		return recipes;
+	}
+
+	public void setRecipes(List<Recipes> recipes) {
+		this.recipes = recipes;
+	}
+
+	public MemberDetail getMemberDetail() {
+		return memberDetail;
+	}
+
+	public void setMemberDetail(MemberDetail memberDetail) {
+		this.memberDetail = memberDetail;
+	}
+
+	public Teacher getTeacher() {
+		return teacher;
+	}
+
+	public void setTeacher(Teacher teacher) {
+		this.teacher = teacher;
+	}
+
+	public List<Order> getOrders() {
+		return orders;
+	}
+
+	public void setOrders(List<Order> orders) {
+		this.orders = orders;
+	}
+
+	public List<Cart> getCarts() {
+		return carts;
+	}
+
+	public void setCarts(List<Cart> carts) {
+		this.carts = carts;
+	}
 
 //	public Company getCompany() {
 //		return company;
