@@ -45,7 +45,6 @@ public class OrderController {
 		Member member = (Member) session.getAttribute("loggedInMember");
 		if (member == null)
 			return ResponseEntity.ok("沒有會員");
-		;
 
 		List<ProductCartDTO> productCartDTOs = cartList.getProductCartDTOs();
 		List<CourseCartDTO> courseCartDTOs = cartList.getCourseCartDTOs();
