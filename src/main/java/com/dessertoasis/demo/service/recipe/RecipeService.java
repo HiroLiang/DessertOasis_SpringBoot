@@ -1,6 +1,8 @@
 package com.dessertoasis.demo.service.recipe;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -12,6 +14,8 @@ import com.dessertoasis.demo.model.recipe.Recipes;
 import com.dessertoasis.demo.model.sort.DateRules;
 import com.dessertoasis.demo.model.sort.SearchRules;
 import com.dessertoasis.demo.model.sort.SortCondition;
+import com.dessertoasis.demo.model.sort.SortCondition.SortWay;
+import com.dessertoasis.demo.service.PageSortService;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
@@ -27,28 +31,45 @@ import com.dessertoasis.demo.model.category.Category;
 import com.dessertoasis.demo.model.category.CategoryRepository;
 import com.dessertoasis.demo.model.member.Member;
 import com.dessertoasis.demo.model.member.MemberRepository;
+import com.dessertoasis.demo.model.order.Order;
+import com.dessertoasis.demo.model.order.OrderCmsTable;
 import com.dessertoasis.demo.model.recipe.RecipeCategory;
 import com.dessertoasis.demo.model.recipe.RecipeCategoryRepository;
+import com.dessertoasis.demo.model.recipe.RecipeCmsTable;
 import com.dessertoasis.demo.model.recipe.RecipeCreateDTO;
 import com.dessertoasis.demo.model.recipe.RecipeDTO;
+import com.dessertoasis.demo.model.recipe.RecipeIngredientKey;
+import com.dessertoasis.demo.model.recipe.Ingredient;
+import com.dessertoasis.demo.model.recipe.IngredientList;
+import com.dessertoasis.demo.model.recipe.IngredientListRepository;
+import com.dessertoasis.demo.model.recipe.IngredientRepository;
 import com.dessertoasis.demo.model.recipe.RecipeCarouselDTO;
 import com.dessertoasis.demo.model.recipe.RecipeRepository;
 import com.dessertoasis.demo.model.recipe.RecipeSteps;
-
+import com.dessertoasis.demo.model.recipe.RecipeStepsRepository;
 
 @Service
 public class RecipeService {
 
 	@Autowired
 	private RecipeRepository recipeRepo;
-	
+
 	@Autowired
 	private MemberRepository memberRepo;
-	
+
 	@Autowired
 	private CategoryRepository cateRepo;
 
-	//利用id查詢
+	@Autowired
+	private RecipeStepsRepository stepRepo;
+
+	@Autowired
+	private IngredientRepository ingreRepo;
+
+	@Autowired
+	private IngredientListRepository ingreListRepo;
+
+	// 利用id查詢
 	public RecipeDTO findById(Integer id) {
 		Optional<Recipes> optional = recipeRepo.findById(id);
 
@@ -61,39 +82,39 @@ public class RecipeService {
 			List<RecipeCategory> recipeCategories = recipe.getRecipeCategories();
 			List<Integer> categoryIds = new ArrayList<>();
 			for (RecipeCategory rc : recipeCategories) {
-                categoryIds.add(rc.getCategory().getId());
-            }
+				categoryIds.add(rc.getCategory().getId());
+			}
 			rDto.setRecipeCategoryIds(categoryIds);
 			rDto.setPictureURL(recipe.getPictureURL());
 			rDto.setRecipeIntroduction(recipe.getRecipeIntroduction());
 			rDto.setCookingTime(recipe.getCookingTime());
 			rDto.setDifficulty(recipe.getDifficulty());
 			rDto.setRecipeStatus(recipe.getRecipeStatus());
-			
-		return rDto;
+
+			return rDto;
 		}
 		return null;
 	}
 
-	//查詢全部
+	// 查詢全部
 	public List<Recipes> findAllRecipes() {
 		List<Recipes> result = recipeRepo.findAll();
 		return result;
 	}
 
-	//新增
+	// 新增
 	public void insert(Recipes recipe) {
 		recipeRepo.save(recipe);
 	}
-	
+
 	/*--------------------------------------------食譜主頁使用service ------------------------------------------------*/
 
-	//取得最新的10筆食譜
-	public List<RecipeCarouselDTO> findTop10RecipesByCreateTime(){
+	// 取得最新的10筆食譜
+	public List<RecipeCarouselDTO> findTop10RecipesByCreateTime() {
 		List<Recipes> latest10Recipes = recipeRepo.findTop10RecipeByCreateTime();
-		List<RecipeCarouselDTO>latest10RecipeDTO = new ArrayList<>();
-		
-		if(latest10Recipes != null && !latest10Recipes.isEmpty()) {
+		List<RecipeCarouselDTO> latest10RecipeDTO = new ArrayList<>();
+
+		if (latest10Recipes != null && !latest10Recipes.isEmpty()) {
 			for (int i = 0; i < latest10Recipes.size(); i++) {
 				Recipes recipe = latest10Recipes.get(i);
 				RecipeCarouselDTO rcDto = new RecipeCarouselDTO();
@@ -102,24 +123,24 @@ public class RecipeService {
 				List<RecipeCategory> recipeCategories = recipe.getRecipeCategories();
 				List<Integer> categoryIds = new ArrayList<>();
 				for (RecipeCategory rc : recipeCategories) {
-	                categoryIds.add(rc.getCategory().getId());
-	            }
+					categoryIds.add(rc.getCategory().getId());
+				}
 				rcDto.setRecipeCategoryIds(categoryIds);
 				rcDto.setPictureURL(recipe.getPictureURL());
 				rcDto.setRecipeIntroduction(recipe.getRecipeIntroduction());
-				
+
 				latest10RecipeDTO.add(rcDto);
 			}
 		}
 		return latest10RecipeDTO;
 	}
 
-	//取得訪問數最高的10筆食譜
-	public List<RecipeCarouselDTO> findTop10RecipesByVisitCount(){
+	// 取得訪問數最高的10筆食譜
+	public List<RecipeCarouselDTO> findTop10RecipesByVisitCount() {
 		List<Recipes> hottest10Recipes = recipeRepo.findTop10RecipeByVisitCount();
-		List<RecipeCarouselDTO>hottest10RecipeDTO = new ArrayList<>();
-		
-		if(hottest10Recipes != null && !hottest10Recipes.isEmpty()) {
+		List<RecipeCarouselDTO> hottest10RecipeDTO = new ArrayList<>();
+
+		if (hottest10Recipes != null && !hottest10Recipes.isEmpty()) {
 			for (int i = 0; i < hottest10Recipes.size(); i++) {
 				Recipes recipe = hottest10Recipes.get(i);
 				RecipeCarouselDTO rcDto = new RecipeCarouselDTO();
@@ -128,22 +149,22 @@ public class RecipeService {
 				List<RecipeCategory> recipeCategories = recipe.getRecipeCategories();
 				List<Integer> categoryIds = new ArrayList<>();
 				for (RecipeCategory rc : recipeCategories) {
-	                categoryIds.add(rc.getCategory().getId());
-	            }
+					categoryIds.add(rc.getCategory().getId());
+				}
 				rcDto.setRecipeCategoryIds(categoryIds);
 				rcDto.setPictureURL(recipe.getPictureURL());
 				rcDto.setRecipeIntroduction(recipe.getRecipeIntroduction());
-				
+
 				hottest10RecipeDTO.add(rcDto);
 			}
 		}
 		return hottest10RecipeDTO;
 	}
-	
-	public List<RecipeCarouselDTO> find10RecipeByCategory(Category category){
+
+	public List<RecipeCarouselDTO> find10RecipeByCategory(Category category) {
 		List<Recipes> recipes = recipeRepo.findRecipesByCategory(category);
 		List<RecipeCarouselDTO> categoryRecipeDTO = new ArrayList<>();
-		if(recipes != null && !recipes.isEmpty()) {
+		if (recipes != null && !recipes.isEmpty()) {
 			for (int i = 0; i < Math.min(10, recipes.size()); i++) {
 				Recipes recipe = recipes.get(i);
 				RecipeCarouselDTO rcDto = new RecipeCarouselDTO();
@@ -152,12 +173,12 @@ public class RecipeService {
 				List<RecipeCategory> recipeCategories = recipe.getRecipeCategories();
 				List<Integer> categoryIds = new ArrayList<>();
 				for (RecipeCategory rc : recipeCategories) {
-	                categoryIds.add(rc.getCategory().getId());
-	            }
+					categoryIds.add(rc.getCategory().getId());
+				}
 				rcDto.setRecipeCategoryIds(categoryIds);
 				rcDto.setPictureURL(recipe.getPictureURL());
 				rcDto.setRecipeIntroduction(recipe.getRecipeIntroduction());
-				
+
 				categoryRecipeDTO.add(rcDto);
 			}
 		}
@@ -165,29 +186,80 @@ public class RecipeService {
 	}
 	/*--------------------------------------------食譜建立頁使用service ------------------------------------------------*/
 
-	//新增食譜
+	// 新增食譜
 	public Boolean addRecipe(Integer id, Recipes recipe) {
 		Optional<Member> optional = memberRepo.findById(id);
-		if(optional.isPresent()) {
-						
+		if (optional.isPresent()) {
+			recipe.setRecipeAuthor(optional.get());
+			recipe.setRecipeCreateDate(LocalDateTime.now());
+			recipe.setRecipeStatus(1);
+			recipe.setPictureURL(recipe.getPictureURL());
+			recipe.setRecipeIntroduction(recipe.getRecipeIntroduction());
+
+			if (recipe.getCookingTime() == null) {
+				recipe.setCookingTime(0);
+			}
 			recipeRepo.save(recipe);
+
+			List<IngredientList> ingredientList = new ArrayList<>();
+
+			for (IngredientList ingredientListData : recipe.getIngredientList()) {
+
+				RecipeIngredientKey recipeIngredientKey = new RecipeIngredientKey();
+				Ingredient ingredient = ingredientListData.getIngredient();
+				Ingredient existIngredient = ingreRepo.findByIngredientName(ingredient.getIngredientName());
+				if (existIngredient != null) {
+					ingredient = existIngredient;
+				} else {
+					ingreRepo.save(ingredient);
+				}
+
+				IngredientList newIngredientListData = new IngredientList();
+//
+//
+//				
+				recipeIngredientKey.setIngredientId(existIngredient.getId());
+				recipeIngredientKey.setRecipeId(recipe.getId());
+//
+//				newIngredientListData.setIngredient(existIngredient);
+//				newIngredientListData.setId(recipeIngredientKey);
+//				newIngredientListData.setRecipe(recipe);
+//				newIngredientListData.setIngredient(ingredient);
+//				newIngredientListData.setIngredientQuantity(ingredientListData.getIngredientQuantity());
+//				newIngredientListData.setIngredientUnit(ingredientListData.getIngredientUnit());
+//				
+				ingredientList.add(newIngredientListData);
+//
+				ingreListRepo.save(newIngredientListData);
+			}
+			recipe.setIngredientList(ingredientList);
+
+//			for (RecipeSteps stepData : recipe.getRecipeSteps()) {
+//				RecipeSteps recipeSteps = new RecipeSteps();
+//				recipeSteps.setRecipe(recipe);
+//				recipeSteps.setStepNumber(stepData.getStepNumber());
+//				recipeSteps.setStepPicture(stepData.getStepPicture());
+//				recipeSteps.setStepContext(stepData.getStepContext());
+//
+//				stepRepo.save(recipeSteps);
+//			}
+
 			return true;
 		}
 		return false;
 	}
-	
-	//修改食譜
-	public Boolean updateRecipe(Integer id,Recipes recipe) {
+
+	// 修改食譜
+	public Boolean updateRecipe(Integer id, Recipes recipe) {
 		Optional<Member> member = memberRepo.findById(id);
 		Optional<Recipes> optional = recipeRepo.findById(recipe.getId());
-		
-		if(optional.isPresent()) {
+
+		if (optional.isPresent()) {
 			Recipes recipeData = optional.get();
-			if(recipeData.getRecipeAuthor().getId().equals(member.get().getId())) {
+			if (recipeData.getRecipeAuthor().getId().equals(member.get().getId())) {
 				recipeRepo.save(recipe);
 			}
-			
-			
+
 //			RecipeDTO rDto = new RecipeDTO();
 //			rDto.setId(recipe.getId());
 //			rDto.setRecipeAuthorId(recipe.getRecipeAuthor().getId());
@@ -208,49 +280,107 @@ public class RecipeService {
 		}
 		return false;
 	}
-	
-	//以id刪除食譜
+
+	// 以id刪除食譜
 	public Boolean deleteById(Integer recipeId, Integer memberId) {
 		Optional<Member> member = memberRepo.findById(memberId);
 		Optional<Recipes> recipe = recipeRepo.findById(recipeId);
 
 		if (recipe.isPresent()) {
 			Recipes recipeData = recipe.get();
-			if(recipeData.getRecipeAuthor().getId().equals(member.get().getId())) {
+			if (recipeData.getRecipeAuthor().getId().equals(member.get().getId())) {
 				recipeRepo.deleteById(recipeId);
 				return true;
 			}
 		}
 		return false;
 	}
+
 	/*--------------------------------------------測試Criteria ------------------------------------------------*/
 	@PersistenceContext
 	private EntityManager em;
-	
-	//動態條件搜索
-	public List<Recipes> getRecipePage(SortCondition sortCod){
+
+	@Autowired
+	private PageSortService pService;
+
+	// 動態條件搜索
+	public List<RecipeCmsTable> getRecipePagenation(SortCondition sortCon) {
+
 		CriteriaBuilder cb = em.getCriteriaBuilder();
 		// 決定select table
-		CriteriaQuery<Recipes> cq = cb.createQuery(Recipes.class);
-		Root<Recipes> root = cq.from(Recipes.class);
-		Predicate[] predicates = new Predicate[20];
-		int counter = 0;
-		if(sortCod.getSortBy() != null) {
-			predicates[counter] = cb.like(root.get("recipeTitle"), "%" + sortCod.getSortBy() + "%");
-			counter++;
-		}
-		CriteriaQuery<Recipes> select = cq.select(root).where(predicates);
-		TypedQuery<Recipes> query = em.createQuery(select);
-		query.setFirstResult((sortCod.getPage()-1)*sortCod.getPageSize());
-		query.setMaxResults(sortCod.getPageSize());
-		List<Recipes> list = query.getResultList();
-		System.out.println(list);
-		
-		return list;
+		CriteriaQuery<RecipeCmsTable> cq = cb.createQuery(RecipeCmsTable.class);
 
+		// 決定select.join表格
+		Root<Recipes> root = cq.from(Recipes.class);
+		Join<Recipes, Member> join = root.join("recipeAuthor");
+
+		// 決定查詢 column
+		cq.multiselect(root.get("id"), join.get("fullName"),root.get("recipeCreateDate"),
+				root.get("recipeStatus"), root.get("recipeMonthlyVisitCount"));
+
+		// 加入查詢條件
+		Predicate predicate = cb.conjunction();
+		Recipes recipes = new Recipes();
+		Predicate pre = pService.checkRecipeCondition(root, join, predicate, sortCon, cb, recipes);
+
+		// 填入 where 條件
+		cq.where(pre);
+
+		// 排序條件
+		if (sortCon.getSortBy() != null) {
+			if (pService.hasProperty(recipes, sortCon.getSortBy())) {
+				if (sortCon.getSortBy() != null && sortCon.getSortWay().equals(SortWay.ASC)) {
+					cq.orderBy(cb.asc(root.get(sortCon.getSortBy())));
+				} else if (sortCon.getSortBy() != null && sortCon.getSortWay().equals(SortWay.DESC)) {
+					cq.orderBy(cb.desc(root.get(sortCon.getSortBy())));
+				}
+			} else {
+				if (sortCon.getSortBy() != null && sortCon.getSortWay().equals(SortWay.ASC)) {
+					cq.orderBy(cb.asc(join.get(sortCon.getSortBy())));
+				} else if (sortCon.getSortBy() != null && sortCon.getSortWay().equals(SortWay.DESC)) {
+					cq.orderBy(cb.desc(join.get(sortCon.getSortBy())));
+				}
+			}
+
+		}
+
+		// 分頁
+		TypedQuery<RecipeCmsTable> query = em.createQuery(cq);
+		query.setFirstResult((sortCon.getPage() - 1) * sortCon.getPageSize());
+		query.setMaxResults(sortCon.getPageSize());
+
+		// 送出請求
+		List<RecipeCmsTable> list = query.getResultList();
+		if (list != null) {
+		    return list;
+		}  
+		return null;
 	}
 	
+	public Integer getPages(SortCondition sortCon) {
+		CriteriaBuilder cb = em.getCriteriaBuilder();
 
+		// 決定輸出表格型態
+		CriteriaQuery<Long> cq = cb.createQuery(Long.class);
+		
+		// 決定select.join表格
+		Root<Recipes> root = cq.from(Recipes.class);
+		Join<Recipes, Member> join = root.join("recipeAuthor");
+		
+		// 決定查詢 column
+		cq.select(cb.count(root));
+		
+		// 加入查詢條件
+		Predicate predicate = cb.conjunction();
+		Recipes recipes = new Recipes();
+		Predicate pre = pService.checkRecipeCondition(root, join, predicate, sortCon, cb, recipes);
+		cq.where(pre);
+		
+		//查詢傯頁數
+		Long totalRecords = em.createQuery(cq).getSingleResult();
+		Integer totalPages = (int) Math.ceil((double) totalRecords / sortCon.getPageSize());
+				
+		return totalPages;
+	}
 	
-
 }

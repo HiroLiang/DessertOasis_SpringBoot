@@ -6,7 +6,6 @@ import java.util.Objects;
 import jakarta.persistence.Embeddable;
 import lombok.Data;
 
-@Data
 @Embeddable
 public class RecipeIngredientKey implements Serializable {
 	private static final long serialVersionUID = 1L;
@@ -22,6 +21,24 @@ public class RecipeIngredientKey implements Serializable {
 		this.recipeId = recipeId;
 		this.ingredientId = ingredientId;
 	}
+ 
+	
+	public Integer getRecipeId() {
+		return recipeId;
+	}
+
+	public void setRecipeId(Integer recipeId) {
+		this.recipeId = recipeId;
+	}
+
+	public Integer getIngredientId() {
+		return ingredientId;
+	}
+
+	public void setIngredientId(Integer ingredientId) {
+		this.ingredientId = ingredientId;
+	}
+
 
 	@Override
 	public int hashCode() {

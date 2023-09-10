@@ -9,9 +9,14 @@ import org.springframework.format.annotation.DateTimeFormat;
 import com.dessertoasis.demo.model.course.Course;
 import com.dessertoasis.demo.model.member.Member;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -22,8 +27,8 @@ import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
 import lombok.Data;
+import lombok.ToString;
 
-@Data
 @Entity @Table(name = "recipes")
 public class Recipes {
 
@@ -32,8 +37,9 @@ public class Recipes {
 	private Integer id;
 	
 	//撰寫者ID(連結Member id)
+//	@JsonProperty(access = JsonProperty.Access.READ_ONLY)
 	@ManyToOne
-	@JoinColumn(name="memberId", nullable = false)
+	@JoinColumn(name="memberId", nullable = true)
 	private Member recipeAuthor;
 	
 	//分類Id  OneToMany
@@ -41,26 +47,26 @@ public class Recipes {
 	private List<RecipeCategory> recipeCategories;
 	
 	//食譜步驟
-	@OneToMany(mappedBy = "recipe")
+	@OneToMany(mappedBy = "recipe", cascade = CascadeType.ALL)
 	private List<RecipeSteps> recipeSteps;
 	
-	@OneToMany()
+	@OneToMany(mappedBy = "recipe", cascade = CascadeType.ALL)
 	private List<IngredientList> ingredientList;
 	
 	//食譜名稱
-	@Column(name = "recipeTitle", nullable=false,columnDefinition = "nvarchar(100)")
+	@Column(name = "recipeTitle", nullable=true,columnDefinition = "nvarchar(100)")
 	private String recipeTitle;
 	
 	//成品圖圖庫位址
-	@Column(name = "pictureURL",nullable=false,columnDefinition = "nvarchar(MAX)" )
+	@Column(name = "pictureURL",nullable=true,columnDefinition = "nvarchar(MAX)" )
 	private String pictureURL;
 	
 	//食譜簡介
-	@Column(name = "recipeIntroduction",nullable=false,columnDefinition = "nvarchar(MAX)")
+	@Column(name = "recipeIntroduction",nullable=true,columnDefinition = "nvarchar(MAX)")
 	private String recipeIntroduction;
 	
 	//製作時間
-	@Column(name = "cookingTime",nullable=false,columnDefinition = "int")
+	@Column(name = "cookingTime",nullable=true,columnDefinition = "int")
 	private Integer cookingTime;
 	
 	//難度
@@ -68,13 +74,11 @@ public class Recipes {
 	private String difficulty;
 	
 	//食譜建立時間
-	@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss:SSS")  // 在資料進 Java 環境時，做格式化
-	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name = "recipeCreateDate",nullable=false,columnDefinition = "datetime2")
+	@Column(name = "recipeCreateDate",nullable=true,columnDefinition = "datetime2")
 	private LocalDateTime  recipeCreateDate;
 	
 	//食譜狀態
-	@Column(name = "recipeStatus",nullable=false,columnDefinition = "int")
+	@Column(name = "recipeStatus",nullable=true,columnDefinition = "int")
 	private Integer recipeStatus;
 	
 	//食譜每月計數器(統計每月熱門食譜)
@@ -88,21 +92,130 @@ public class Recipes {
 	public Recipes() {
 	}
 
-	public Recipes(Member recipeAuthor, List<RecipeCategory> recipeCategories, List<RecipeSteps> recipeSteps,
-			String recipeTitle, String pictureURL, String recipeIntroduction, Integer cookingTime,
-			LocalDateTime recipeCreateDate, Integer recipeStatus) {
+	
+	public Recipes(Integer id, Member recipeAuthor, String recipeTitle, LocalDateTime recipeCreateDate,
+			Integer recipeStatus, Integer recipeMonthlyVisitCount) {
 		super();
+		this.id = id;
 		this.recipeAuthor = recipeAuthor;
-		this.recipeCategories = recipeCategories;
-		this.recipeSteps = recipeSteps;
 		this.recipeTitle = recipeTitle;
-		this.pictureURL = pictureURL;
-		this.recipeIntroduction = recipeIntroduction;
-		this.cookingTime = cookingTime;
 		this.recipeCreateDate = recipeCreateDate;
 		this.recipeStatus = recipeStatus;
+		this.recipeMonthlyVisitCount = recipeMonthlyVisitCount;
 	}
-	
+
+	public Integer getId() {
+		return id;
+	}
+
+	public void setId(Integer id) {
+		this.id = id;
+	}
+
+	public Member getRecipeAuthor() {
+		return recipeAuthor;
+	}
+
+	public void setRecipeAuthor(Member recipeAuthor) {
+		this.recipeAuthor = recipeAuthor;
+	}
+
+	public List<RecipeCategory> getRecipeCategories() {
+		return recipeCategories;
+	}
+
+	public void setRecipeCategories(List<RecipeCategory> recipeCategories) {
+		this.recipeCategories = recipeCategories;
+	}
+
+	public List<RecipeSteps> getRecipeSteps() {
+		return recipeSteps;
+	}
+
+	public void setRecipeSteps(List<RecipeSteps> recipeSteps) {
+		this.recipeSteps = recipeSteps;
+	}
+
+	public List<IngredientList> getIngredientList() {
+		return ingredientList;
+	}
+
+	public void setIngredientList(List<IngredientList> ingredientList) {
+		this.ingredientList = ingredientList;
+	}
+
+	public String getRecipeTitle() {
+		return recipeTitle;
+	}
+
+	public void setRecipeTitle(String recipeTitle) {
+		this.recipeTitle = recipeTitle;
+	}
+
+	public String getPictureURL() {
+		return pictureURL;
+	}
+
+	public void setPictureURL(String pictureURL) {
+		this.pictureURL = pictureURL;
+	}
+
+	public String getRecipeIntroduction() {
+		return recipeIntroduction;
+	}
+
+	public void setRecipeIntroduction(String recipeIntroduction) {
+		this.recipeIntroduction = recipeIntroduction;
+	}
+
+	public Integer getCookingTime() {
+		return cookingTime;
+	}
+
+	public void setCookingTime(Integer cookingTime) {
+		this.cookingTime = cookingTime;
+	}
+
+	public String getDifficulty() {
+		return difficulty;
+	}
+
+	public void setDifficulty(String difficulty) {
+		this.difficulty = difficulty;
+	}
+
+	public LocalDateTime getRecipeCreateDate() {
+		return recipeCreateDate;
+	}
+
+	public void setRecipeCreateDate(LocalDateTime recipeCreateDate) {
+		this.recipeCreateDate = recipeCreateDate;
+	}
+
+	public Integer getRecipeStatus() {
+		return recipeStatus;
+	}
+
+	public void setRecipeStatus(Integer recipeStatus) {
+		this.recipeStatus = recipeStatus;
+	}
+
+	public Integer getRecipeMonthlyVisitCount() {
+		return recipeMonthlyVisitCount;
+	}
+
+	public void setRecipeMonthlyVisitCount(Integer recipeMonthlyVisitCount) {
+		this.recipeMonthlyVisitCount = recipeMonthlyVisitCount;
+	}
+
+	public List<Course> getCourse() {
+		return course;
+	}
+
+	public void setCourse(List<Course> course) {
+		this.course = course;
+	}
+
 	
 }
 
