@@ -19,10 +19,8 @@ import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
 import lombok.Data;
 
-<<<<<<< HEAD
-=======
+
 //@Data
->>>>>>> origin/test-branch
 @Entity @Table(name="memberDetail")
 public class MemberDetail {
 
@@ -112,9 +110,5 @@ public class MemberDetail {
 	public void setMember(Member member) {
 		this.member = member;
 	}
-<<<<<<< HEAD
-	 
-	 
-=======
->>>>>>> origin/test-branch
+
 }

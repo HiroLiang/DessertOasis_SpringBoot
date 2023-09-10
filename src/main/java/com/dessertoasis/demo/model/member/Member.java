@@ -29,10 +29,8 @@ import jakarta.persistence.TemporalType;
 import lombok.Data;
 import lombok.ToString;
 
-<<<<<<< HEAD
-=======
+
 //@Data
->>>>>>> origin/test-branch
 @Entity @Table(name="member")
 public class Member { //與會員帳號相關
 	
