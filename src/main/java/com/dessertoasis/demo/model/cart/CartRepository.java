@@ -5,5 +5,5 @@ import org.springframework.data.repository.query.Param;
 
 public interface CartRepository extends JpaRepository<Cart, Integer> {
 	
-	public Cart findByInterestedId(@Param("interestedId") Integer interestedId);
+	public Cart findByCategoryIdAndInterestedId(Integer categoryId, Integer interestedId);
 }

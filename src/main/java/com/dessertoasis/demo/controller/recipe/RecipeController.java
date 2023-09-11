@@ -14,6 +14,7 @@ import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -28,18 +29,25 @@ import org.springframework.web.multipart.MultipartFile;
 import com.dessertoasis.demo.ImageUploadUtil;
 import com.dessertoasis.demo.model.category.Category;
 import com.dessertoasis.demo.model.member.Member;
+import com.dessertoasis.demo.model.member.MemberAccess;
 import com.dessertoasis.demo.model.member.MemberRepository;
 import com.dessertoasis.demo.model.recipe.Ingredient;
 import com.dessertoasis.demo.model.recipe.IngredientList;
+import com.dessertoasis.demo.model.recipe.IngredientListRepository;
+import com.dessertoasis.demo.model.recipe.IngredientRepository;
 import com.dessertoasis.demo.model.recipe.PicturesDTO;
 import com.dessertoasis.demo.model.recipe.RecipeCarouselDTO;
+import com.dessertoasis.demo.model.recipe.RecipeCmsTable;
 import com.dessertoasis.demo.model.recipe.RecipeDTO;
+import com.dessertoasis.demo.model.recipe.RecipeIngredientKey;
 import com.dessertoasis.demo.model.recipe.RecipeRepository;
 import com.dessertoasis.demo.model.recipe.RecipeSteps;
+import com.dessertoasis.demo.model.recipe.RecipeStepsRepository;
 import com.dessertoasis.demo.model.recipe.Recipes;
 import com.dessertoasis.demo.model.sort.SortCondition;
 import com.dessertoasis.demo.service.recipe.RecipeService;
 
+import jakarta.persistence.EntityManager;
 import jakarta.servlet.annotation.MultipartConfig;
 import jakarta.servlet.http.HttpSession;
 
@@ -56,8 +64,8 @@ public class RecipeController {
 	@Autowired
 	private RecipeRepository recipeRepo;
 
-//	@Autowired
-//	private RecipeStepsRepository stepRepo;
+	@Autowired
+	private RecipeStepsRepository stepRepo;
 
 	@Autowired
 	private ImageUploadUtil imgUtil;
@@ -141,13 +149,61 @@ public class RecipeController {
 	}
 
 	/*--------------------------------------------食譜建立頁使用controller ------------------------------------------------*/
+	@Autowired
+	private IngredientRepository ingreRepo;
+
+	@Autowired
+	private IngredientListRepository ingreListRepo;
+
+	@Autowired
+	private EntityManager entityManager;
 
 	// 新增食譜
-	@PostMapping("/recipe/addrecipe")
+	@Transactional
+	@PostMapping(value = "/recipe/addrecipe")
 	@ResponseBody
-	public String addRecipe(HttpSession session) {
-		Member member = (Member) session.getAttribute("loggedInMember");
-		if (member != null) {
+	public String addRecipe(@RequestBody Recipes recipe) {
+//		Member member = (Member) session.getAttribute("loggedInMember");
+//		if (member != null) {
+//			Boolean add = recipeService.addRecipe(4, recipe);
+		List<IngredientList> ingredientList = new ArrayList<>();
+	
+		System.out.println(recipe.getId()); //持久化前沒有id
+		recipeRepo.save(recipe);
+		System.out.println(recipe.getId());  //持久化後能取得id
+		Ingredient existIngredient = null;
+		for (int i = 0; i < recipe.getIngredientList().size(); i++) {
+			Ingredient ingredient = recipe.getIngredientList().get(i).getIngredient();
+			System.out.println("before  "+ingredient.getId());
+//			Optional<Ingredient> iOptional = ingreRepo.findById(ingredient.getId());
+//			if (iOptional.isPresent()) {
+//					ingredient = iOptional.get();
+//			} else {
+			ingreRepo.save(ingredient);
+			System.out.println("after  "+ingredient.getId());
+//			}
+			
+			
+			RecipeIngredientKey recipeIngredientKey = new RecipeIngredientKey(recipe.getId(), ingredient.getId());
+			System.out.println(recipeIngredientKey.getRecipeId());
+			System.out.println(recipeIngredientKey.getIngredientId());
+			
+			IngredientList newIngredientListData = new IngredientList();
+//			newIngredientListData.setId(recipeIngredientKey);
+			newIngredientListData.setIngredient(ingredient);
+//			System.out.println(newIngredientListData.getId().getRecipeId());
+//			System.out.println(newIngredientListData.getId().getIngredientId());
+			System.out.println(newIngredientListData.getIngredient().getIngredientName());
+			
+			newIngredientListData.setIngredientQuantity(recipe.getIngredientList().get(i).getIngredientQuantity());
+			newIngredientListData.setIngredientUnit(recipe.getIngredientList().get(i).getIngredientUnit());
+//
+//			newIngredientListData.setRecipe(); //導致無限回調  
+			ingredientList.add(newIngredientListData);
+	}
+	
+		ingreListRepo.saveAll(ingredientList);
+		/*-------------------------------使用ImageUploadUtil儲存圖片並接收回傳儲存位置區塊--------------------------------------*/
 //			Recipes recipe = new Recipes();
 //			recipe.setRecipeTitle(recipeTitle);
 //			recipe.setRecipeAuthor(member);
@@ -196,11 +252,12 @@ public class RecipeController {
 //
 //			Boolean add = recipeService.addRecipe(1, recipe);
 //			if (add) {
-//				return "Y";
+//				return "Y"; //新增成功
 //			}
-//			return "F";
-		}
-		return "N";
+		return "F";// 新增失敗 recipebean資料不符或是找不到對應使用者
+		/*-------------------------------使用ImageUploadUtil儲存圖片並接收回傳儲存位置區塊--------------------------------------*/
+//		}
+//		return "N";//新增失敗 找不到session中的使用者資料
 	}
 
 	/*----------------------------------------------圖檔處理回傳儲存路徑Controller------------------------------------------------------------------*/
@@ -208,17 +265,17 @@ public class RecipeController {
 	@PostMapping(path = "test/uploadimg")
 	public List<String> sendPic(@RequestBody List<PicturesDTO> pictures) {
 		/*---------設定儲存路徑---------*/
-		final String uploadPath = "D:/dessertoasis-vue/public/images/";  
+		final String uploadPath = "D:/dessertoasis-vue/public/images/";
 //		final String uploadPath = "C:/Users/iSpan/Documents/dessertoasis-vue/public/images/";
 //		Member member = (Member) session.getAttribute("loggedInMember");
 //		Recipes recipe = (Recipes) session.getAttribute("recipeId");
-		
+
 		/*---------msg儲存準備回傳的字串陣列---------*/
 		List<String> msg = new ArrayList<>();
-		
+
 		/*---------判斷是否有接收到資料---------*/
 		if (!pictures.isEmpty() && pictures != null) {
-			
+
 			/*---------儲存成品圖區塊---------*/
 			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmssSSS");
 			String timestamp = LocalDateTime.now().format(formatter);
@@ -231,18 +288,18 @@ public class RecipeController {
 //			Optional<Recipes> getRecipe = recipeRepo.findById(recipe.getId());
 //			if (getRecipe.isPresent()) {
 //				Recipes useRecipe = getRecipe.get();
-			
-			//判斷陣列內有無檔案 避免讀取空值錯誤
+
+			// 判斷陣列內有無檔案 避免讀取空值錯誤
 			if (pictures.get(0) != null) {
 				/*----------取得前端傳來的圖檔字串----------*/
 				String mainPic = pictures.get(0).getBase64Content();
 				String mainPicName = pictures.get(0).getFileName();
 				/*----------取得前端傳來的圖檔字串----------*/
-				
+
 				/*----------寫入檔案及儲存位置串接字串----------*/
-				String mainFileName = mainPicName.substring(0, mainPicName.lastIndexOf("."));//將副檔名與檔名拆開 取得檔名
-				String mainExtension = mainPicName.substring(mainPicName.lastIndexOf("."));//將副檔名與檔名拆開  取得副檔名
-				String mainUniqueName = mainFileName + "_" + timestamp + mainExtension;//將時間串入檔名
+				String mainFileName = mainPicName.substring(0, mainPicName.lastIndexOf("."));// 將副檔名與檔名拆開 取得檔名
+				String mainExtension = mainPicName.substring(mainPicName.lastIndexOf("."));// 將副檔名與檔名拆開 取得副檔名
+				String mainUniqueName = mainFileName + "_" + timestamp + mainExtension;// 將時間串入檔名
 
 				byte[] mainDecode = Base64.getDecoder().decode(mainPic);
 				File mainfile = new File(userFolder + mainUniqueName);
@@ -252,7 +309,7 @@ public class RecipeController {
 					mainfileOutputStream.write(mainDecode);
 					mainfileOutputStream.flush();
 					/*----------寫入檔案及儲存位置串接字串----------*/
-					
+
 					/*----------將儲存位置準備回傳前端----------*/
 					msg.add("-1");
 					msg.add(userFolder + mainUniqueName);
@@ -280,16 +337,16 @@ public class RecipeController {
 			/*---------儲存步驟圖區塊---------*/
 			for (int i = 1; i < pictures.size(); i++) {
 //							RecipeSteps step = steps.get(i);
-				
-				//判斷陣列內有無檔案 避免讀取空值錯誤
+
+				// 判斷陣列內有無檔案 避免讀取空值錯誤
 				if (pictures.get(i) != null) {
 					String steptimestamp = LocalDateTime.now().format(formatter);
-					
+
 					/*----------取得前端傳來的圖檔字串----------*/
 					String stepPic = pictures.get(i).getBase64Content();
 					String originalfileName = pictures.get(i).getFileName();
 					/*----------取得前端傳來的圖檔字串----------*/
-					
+
 					/*----------寫入檔案及儲存位置串接字串----------*/
 					String fileName = originalfileName.substring(0, originalfileName.lastIndexOf("."));
 					String extension = originalfileName.substring(originalfileName.lastIndexOf("."));
@@ -304,11 +361,10 @@ public class RecipeController {
 						fileOutputStream.close();
 						/*----------寫入檔案及儲存位置串接字串----------*/
 
-						
 						/*----------將儲存位置準備回傳前端----------*/
 						msg.add(userFolder + uniqueName);
 						/*----------將儲存位置準備回傳前端----------*/
-						
+
 					} catch (FileNotFoundException e) {
 						e.printStackTrace();
 						msg.add("N");
@@ -355,6 +411,7 @@ public class RecipeController {
 	// 刪除食譜
 	@DeleteMapping()
 	public String deleteRecipe(@RequestParam("id") Integer id, HttpSession session) {
+		
 		Member member = (Member) session.getAttribute("loggedInMember");
 		if (member != null) {
 			Boolean delete = recipeService.deleteById(id, member.getId());
@@ -366,19 +423,34 @@ public class RecipeController {
 		return "N";
 	}
 
-	@GetMapping("/recipe/search")
-	public ResponseEntity<List<Recipes>> searchRecipes(@RequestParam(required = false) String keyword,
-			@RequestParam(defaultValue = "1") int page, @RequestParam(defaultValue = "10") int pageSize) {
-
-		SortCondition sortCondition = new SortCondition();
-		sortCondition.setSortBy(keyword);
-		sortCondition.setPage(page);
-		sortCondition.setPageSize(pageSize);
-
-		List<Recipes> resultList = recipeService.getRecipePage(sortCondition);
-
-		return ResponseEntity.ok(resultList);
-
+	@PostMapping("/recipe/pagenation")
+	public List<RecipeCmsTable> getRecipePage(@RequestBody SortCondition sortCon, HttpSession session){
+		System.out.println(sortCon);
+		// 判斷 user 存在且為 ADMIN
+		Member user = (Member) session.getAttribute("loggedInMember");
+		if (user == null || !user.getAccess().equals(MemberAccess.ADMIN)) {
+			return null;
+		}
+		// 送出查詢條件給service，若有結果則回傳list
+		List<RecipeCmsTable> result = recipeService.getRecipePagenation(sortCon);
+		if(result != null) {
+			System.out.println(result);
+			return result;
+		}
+		return null;
+	}
+	
+	@PostMapping("/recipe/pages")
+	public Integer getPages(@RequestBody SortCondition sortCon, HttpSession session) {
+		System.out.println(sortCon);
+		// 判斷 user 存在且為 ADMIN
+		Member user = (Member) session.getAttribute("loggedInMember");
+		if (user == null || !user.getAccess().equals(MemberAccess.ADMIN)) {
+			return null;
+		}
+		// 送出條件查詢總頁數
+		Integer pages = recipeService.getPages(sortCon);
+		return pages;
 	}
 
 }

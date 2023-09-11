@@ -1,5 +1,9 @@
 package com.dessertoasis.demo.controller.member;
 
+import java.util.Base64;
+
+import javax.crypto.SecretKey;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -7,10 +11,12 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.util.WebUtils;
 
 import com.dessertoasis.demo.model.member.Member;
 import com.dessertoasis.demo.model.member.MemberAccess;
 import com.dessertoasis.demo.model.member.MemberState;
+import com.dessertoasis.demo.service.member.CookieEncryptionUtil;
 import com.dessertoasis.demo.service.member.MemberService;
 
 import jakarta.servlet.http.Cookie;
@@ -23,56 +29,55 @@ public class LoginController {
 	
 	@Autowired
     private MemberService mService;
+	@Autowired
+	private SecretKey secretKey;
 	
-	@PostMapping("/memberLogin")
-	public String  MemberLogin(@RequestBody Member member,HttpSession session,HttpServletResponse response) {
+		//拿到密鑰
+		@GetMapping("/getSecretKey")
+	    public ResponseEntity<String> getSecretKey() {
+	        // 密鑰轉為字串
+	        String keyBase64 = Base64.getEncoder().encodeToString(secretKey.getEncoded());
+	        return ResponseEntity.ok(keyBase64);
+	    }
+	
+	
+		@PostMapping("/memberLogin")
+		public String  MemberLogin(@RequestBody Member member,HttpSession session,HttpServletResponse response) throws Exception {
 
 		
-		//輸入資料匹配資料庫=>登入成功回傳 Y; 登入失敗回傳 N
+		
+			//輸入資料匹配資料庫=>登入成功回傳 Y; 登入失敗回傳 N
 		    Member memberLogin = mService.memberLogin(member.getAccount(), member.getPasswords(), session);
 
 		    if (memberLogin != null) {
+		    	
 		    	session.setAttribute("loggedInMember", memberLogin);
 		    	MemberState state = memberLogin.getMemberStatus();
 		    	MemberAccess access = memberLogin.getAccess();
 		    	
 		    		    	
-				    	//登入後判斷會員權限設定不同cookies，
-				    	// isLogin=1，管理員
-				    	// isLogin=2，一般使用者
-				    	// isLogin=3，老師
+				 //登入後判斷會員權限設定不同cookies，
 		    	 if (access == MemberAccess.ADMIN ) {
-		             Cookie cookie = new Cookie("isLogin", "10");
-		             cookie.setMaxAge(3600); //cookie存1小時
-		             cookie.setPath("/");
-		             response.addCookie(cookie);
+		    		
+		    		 //透過setEncryptedCookie來做加密
+		    		 String cookieName = "isLogin";
+		    		 String cookieValue = "admin";
+		    		 CookieEncryptionUtil.setEncryptedCookie(response, cookieName, cookieValue, secretKey);
+		    		 
+//		             Cookie cookie = new Cookie("isLogin", "10");
+//		             cookie.setMaxAge(3600); //cookie存1小時
+//		             cookie.setPath("/");
+//		             response.addCookie(cookie);
 		             
 		             
 		         } else if (access == MemberAccess.USER && state ==MemberState.ACTIVE) {
-		             Cookie cookie = new Cookie("isLogin", "20");
-		             cookie.setMaxAge(3600); 
-		             cookie.setPath("/");
-		             response.addCookie(cookie);
-		             
-		             if(state == MemberState.INACTIVE) {
-		            	 Cookie cookieInact = new Cookie("isLogin", "21");
-		            	 cookieInact.setMaxAge(3600); 
-		            	 cookieInact.setPath("/");
-			             response.addCookie(cookieInact);
-			             
-		             }else if(state == MemberState.BANDED) {
-		            	 Cookie cookieBan = new Cookie("isLogin", "22");
-		            	 cookieBan.setMaxAge(3600); 
-		            	 cookieBan.setPath("/");
-			             response.addCookie(cookieBan);
-		             }
-		             
+		        	 String cookieName = "isLogin";
+		    		 String cookieValue = "user";
+		    		 CookieEncryptionUtil.setEncryptedCookie(response, cookieName, cookieValue, secretKey);
 		         } else if (access == MemberAccess.TEACHER) {
-		        	 Cookie cookie = new Cookie("isLogin", "30");
-		             cookie.setMaxAge(3600); 
-		             cookie.setPath("/");
-		             response.addCookie(cookie);
-		             
+		        	 String cookieName = "isLogin";
+		    		 String cookieValue = "teacher";
+		    		 CookieEncryptionUtil.setEncryptedCookie(response, cookieName, cookieValue, secretKey);
 		         } 
 		    	 
 		        return "Y";
@@ -80,6 +85,40 @@ public class LoginController {
 		    	return "N";
 
 	}
+		
+		 //取得權限
+		 @GetMapping("/checkUserPermission")
+		    public String checkUserPermission(HttpServletRequest request) {
+		        // 從請求中獲取Cookie
+		        Cookie cookie = WebUtils.getCookie(request, "isLogin");
+
+		        if (cookie != null) {
+		            // 使用解密方法解密Cookie值
+		            String decryptedCookieValue = null;
+		            try {
+		                decryptedCookieValue = CookieEncryptionUtil.getDecryptedCookieValue(cookie, secretKey);
+		            } catch (Exception e) {
+		                
+		            }
+
+		            // 執行條件判斷
+		            if ("admin".equals(decryptedCookieValue)) {
+		                // 用戶是管理員
+		                return "User is an admin";
+		            } else if ("user".equals(decryptedCookieValue)) {
+		                // 用戶是一般用戶
+		                return "User is a regular user";
+		            } else if ("teacher".equals(decryptedCookieValue)) {
+		                // 用戶是老師
+		                return "User is a teacher";
+		            }
+		        }
+
+		        // 如果Cookie不存在或解密失敗，可以返回默認值或執行其他適當的處理邏輯
+		        return "User's permission is unknown";
+		    }
+		
+		
 	
 	//登出
 	@RequestMapping("/memberLogout")

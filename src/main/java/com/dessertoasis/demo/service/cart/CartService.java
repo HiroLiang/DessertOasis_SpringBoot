@@ -106,10 +106,10 @@ public class CartService {
 		
 		// 若購物車內已經有此商品，更新商品 quantity
 		if (cartDTO.getCategoryId() == productCategoryId &&
-				cartRepo.findByInterestedId(cartDTO.getInterestedId()) != null) {
+				cartRepo.findByCategoryIdAndInterestedId(productCategoryId,cartDTO.getInterestedId()) != null) {
 			
 			Integer prodQuantity = cartDTO.getProdQuantity();
-			Cart prodCart = cartRepo.findByInterestedId(cartDTO.getInterestedId());
+			Cart prodCart = cartRepo.findByCategoryIdAndInterestedId(productCategoryId, cartDTO.getInterestedId());
 			prodQuantity += prodCart.getProdQuantity();
 			return this.updateProdQuantity(prodCart, prodQuantity);
 		}

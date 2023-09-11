@@ -45,7 +45,6 @@ public class OrderController {
 		Member member = (Member) session.getAttribute("loggedInMember");
 		if (member == null)
 			return ResponseEntity.ok("沒有會員");
-		;
 
 		List<ProductCartDTO> productCartDTOs = cartList.getProductCartDTOs();
 		List<CourseCartDTO> courseCartDTOs = cartList.getCourseCartDTOs();
@@ -63,7 +62,7 @@ public class OrderController {
 		order = orderService.placeProdOrderItem(order, productCartDTOs);
 		order = orderService.placeCourseOrderItem(order, courseCartDTOs);
 		order = orderService.placeReservation(order, rsvCartDTOs);
-
+	
 		// 新增訂單
 		order = orderService.insert(order, member.getId());
 
