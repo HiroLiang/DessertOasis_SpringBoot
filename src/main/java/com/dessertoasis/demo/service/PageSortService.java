@@ -56,9 +56,9 @@ public class PageSortService {
 			System.out.println("search");
 			for (SearchRules rule : sortCon.getSearchRules()) {
 				if (hasProperty(order, rule.getKey())) {
-					predicate = cb.and(predicate, cb.like(root.get(rule.getKey()), rule.getInput()));
+					predicate = cb.and(predicate, cb.like(root.get(rule.getKey()), "%"+rule.getInput()+"%"));
 				} else {
-					predicate = cb.and(predicate, cb.like(join.get(rule.getKey()), rule.getInput()));
+					predicate = cb.and(predicate, cb.like(join.get(rule.getKey()), "%"+rule.getInput()+"%"));
 				}
 			}
 		}
