@@ -26,6 +26,7 @@ public class MemberService {
 	@Autowired
 	private JavaMailSender javaMailSender;
 	
+	
 	//新增 更改成加密後的版本
 //	public void insert(Member member) {
 //		mRepo.save(member);
@@ -98,7 +99,8 @@ public class MemberService {
 
     
     //寄驗證信
-    public void sendVerificationEmail(String toEmail, String verificationLink) {
+    public void sendVerificationEmail(String toEmail, String token) {
+    	String verificationLink = "localhost:5173/#/token=" + token;
     	SimpleMailMessage mailMessage = new SimpleMailMessage();
     	mailMessage.setFrom("Dessert0asis@outlook.com");
     	mailMessage.setTo(toEmail);
