@@ -1,5 +1,8 @@
 package com.dessertoasis.demo.model.course;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -22,6 +25,7 @@ public class CoursePicture {
 	
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name="courseId", referencedColumnName = "id")
+	@JsonIgnoreProperties({"coursePictureList"})
 	private Course course;
 	
 	@Column(columnDefinition = "nvarchar(max)")

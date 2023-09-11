@@ -10,6 +10,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.dessertoasis.demo.model.course.Course;
+import com.dessertoasis.demo.model.course.CourseCmsTable;
 import com.dessertoasis.demo.model.course.CourseDTO;
 import com.dessertoasis.demo.model.course.CourseRepository;
 import com.dessertoasis.demo.model.course.CourseSearchDTO;
@@ -18,14 +19,29 @@ import com.dessertoasis.demo.model.course.Teacher;
 import com.dessertoasis.demo.model.course.TeacherRepository;
 import com.dessertoasis.demo.model.member.Member;
 import com.dessertoasis.demo.model.member.MemberRepository;
+import com.dessertoasis.demo.model.order.Order;
+import com.dessertoasis.demo.model.order.OrderCmsTable;
 import com.dessertoasis.demo.model.product.ProdSearchDTO;
 import com.dessertoasis.demo.model.product.Product;
+import com.dessertoasis.demo.model.sort.SortCondition;
+import com.dessertoasis.demo.model.sort.SortCondition.SortWay;
+import com.dessertoasis.demo.service.PageSortService;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.TypedQuery;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Join;
 import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Root;
 
 @Service
 public class CourseService {
 
+	@PersistenceContext
+	private EntityManager em;
+	
 	@Autowired
 	private CourseRepository cRepo;
 	
@@ -34,6 +50,9 @@ public class CourseService {
 	
 	@Autowired
 	private MemberRepository mRepo;
+	
+	@Autowired
+	private PageSortService pService;
 	
 	//利用 id 查詢課程
 	public Course findById(Integer id) {
@@ -155,4 +174,83 @@ public class CourseService {
             return builder.and(predicates.toArray(new Predicate[0]));
         }, pageable);
     }
+	
+	// Order table範例
+		public List<CourseCmsTable> getCoursePagenation(SortCondition sortCon) {
+			CriteriaBuilder cb = em.getCriteriaBuilder();
+
+			// 決定輸出表格型態
+			CriteriaQuery<CourseCmsTable> cq = cb.createQuery(CourseCmsTable.class);
+
+			// 決定select.join表格
+			Root<Course> root = cq.from(Course.class);
+			Join<Course, Teacher> join = root.join("teacher");
+
+			// 決定查詢 column
+			cq.multiselect(root.get("id"), join.get("teacherName"),root.get("courseName")
+					);
+
+			// 加入查詢條件
+			Predicate predicate = cb.conjunction();
+			Course course = new Course();
+			Predicate pre = pService.checkCourseCondition(root, join, predicate, sortCon, cb, course);
+			
+			// 填入 where 條件
+			cq.where(pre);
+
+			// 排序條件
+			if (sortCon.getSortBy() != null) {
+				System.out.println("sort");
+				if (pService.hasProperty(course, sortCon.getSortBy())) {
+					if (sortCon.getSortBy() != null && sortCon.getSortWay().equals(SortWay.ASC)) {
+						cq.orderBy(cb.asc(root.get(sortCon.getSortBy())));
+					} else if (sortCon.getSortBy() != null && sortCon.getSortWay().equals(SortWay.DESC)) {
+						cq.orderBy(cb.desc(root.get(sortCon.getSortBy())));
+					}
+				} else {
+					if (sortCon.getSortBy() != null && sortCon.getSortWay().equals(SortWay.ASC)) {
+						cq.orderBy(cb.asc(join.get(sortCon.getSortBy())));
+					} else if (sortCon.getSortBy() != null && sortCon.getSortWay().equals(SortWay.DESC)) {
+						cq.orderBy(cb.desc(join.get(sortCon.getSortBy())));
+					}
+				}
+			}
+
+			// 分頁
+			TypedQuery<CourseCmsTable> query = em.createQuery(cq);
+			query.setFirstResult((sortCon.getPage() - 1) * sortCon.getPageSize());
+			query.setMaxResults(sortCon.getPageSize());
+
+			// 送出請求
+			List<CourseCmsTable> list = query.getResultList();
+			if (list != null) 
+				return list;
+			return null;
+		}
+
+		public Integer getPages(SortCondition sortCon) {
+			CriteriaBuilder cb = em.getCriteriaBuilder();
+
+			// 決定輸出表格型態
+			CriteriaQuery<Long> cq = cb.createQuery(Long.class);
+
+			// 決定select.join表格
+			Root<Course> root = cq.from(Course.class);
+			Join<Course, Teacher> join = root.join("teacher");
+
+			// 決定查詢 column
+			cq.select(cb.count(root));
+
+			// 加入查詢條件
+			Predicate predicate = cb.conjunction();
+			Course course = new Course();
+			Predicate pre = pService.checkCourseCondition(root, join, predicate, sortCon, cb, course);
+			cq.where(pre);
+			
+			//查詢傯頁數
+			Long totalRecords = em.createQuery(cq).getSingleResult();
+			Integer totalPages = (int) Math.ceil((double) totalRecords / sortCon.getPageSize());
+			
+			return totalPages;
+		}
 }

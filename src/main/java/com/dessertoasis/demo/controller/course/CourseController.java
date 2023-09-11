@@ -26,16 +26,20 @@ import org.springframework.web.bind.annotation.RestController;
 import com.dessertoasis.demo.model.category.Category;
 import com.dessertoasis.demo.model.category.CategoryRepository;
 import com.dessertoasis.demo.model.course.Course;
+import com.dessertoasis.demo.model.course.CourseCmsTable;
 import com.dessertoasis.demo.model.course.CourseDTO;
 import com.dessertoasis.demo.model.course.CourseSearchDTO;
 import com.dessertoasis.demo.model.course.CourseTeacherDTO;
 import com.dessertoasis.demo.model.course.Teacher;
 import com.dessertoasis.demo.model.member.Member;
+import com.dessertoasis.demo.model.member.MemberAccess;
+import com.dessertoasis.demo.model.order.OrderCmsTable;
 import com.dessertoasis.demo.model.product.ProdSearchDTO;
 import com.dessertoasis.demo.model.product.Product;
 import com.dessertoasis.demo.model.recipe.RecipeDTO;
 import com.dessertoasis.demo.model.recipe.RecipeRepository;
 import com.dessertoasis.demo.model.recipe.Recipes;
+import com.dessertoasis.demo.model.sort.SortCondition;
 import com.dessertoasis.demo.service.course.CourseService;
 import com.dessertoasis.demo.service.course.TeacherService;
 import com.dessertoasis.demo.service.recipe.RecipeService;
@@ -77,7 +81,7 @@ public class CourseController {
 		List<CourseDTO> courseDTOList = new ArrayList<>();
 		for(Course course: courseList) {
 			CourseDTO courseDTOItem = new CourseDTO(course);
-			System.out.println(course.getTeacher().getTeacherName()+"---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
+			System.out.println(course.getCoursePictureList().get(0).getCourseImgURL()+"---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
 			courseDTOList.add(courseDTOItem);
 		}
 		return ResponseEntity.ok(courseDTOList);
@@ -225,7 +229,38 @@ public class CourseController {
         int effectivePageSize = pageSize != null ? pageSize : 20;
 
         Page<Course> courses = cService.searchCourses(criteria, PageRequest.of(adjustedPage, effectivePageSize, sort));
-        System.out.println(courses.getContent().get(0).getTeacher().getTeacherName());
+        System.out.println(courses.getContent().get(0).getCoursePictureList().get(0).getCourseImgURL());
         return ResponseEntity.ok(courses);
     }
+	
+	// 課程分頁查詢
+	@PostMapping("/pagenation")
+	public List<CourseCmsTable> getOrderPage(@RequestBody SortCondition sortCon, HttpSession session) {
+		System.out.println(sortCon);
+		// 判斷 user 存在且為 ADMIN
+		Member user = (Member) session.getAttribute("loggedInMember");
+		if (user == null || !user.getAccess().equals(MemberAccess.ADMIN)) {
+			return null;
+		}
+		// 送出查詢條件給service，若有結果則回傳list
+		List<CourseCmsTable> result = cService.getCoursePagenation(sortCon);
+		if (result != null) {
+			System.out.println(result);
+			return result;
+		}
+		return null;
+	}
+
+	@PostMapping("/pages")
+	public Integer getPages(@RequestBody SortCondition sortCon, HttpSession session) {
+		System.out.println(sortCon);
+		// 判斷 user 存在且為 ADMIN
+		Member user = (Member) session.getAttribute("loggedInMember");
+		if (user == null || !user.getAccess().equals(MemberAccess.ADMIN)) {
+			return null;
+		}
+		// 送出條件查詢總頁數
+		Integer pages = cService.getPages(sortCon);
+		return pages;
+	}
 }
