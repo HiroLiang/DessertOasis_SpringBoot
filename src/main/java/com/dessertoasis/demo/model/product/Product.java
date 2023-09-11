@@ -46,7 +46,8 @@ public class Product {
 	
     private Category category;
 	//private Integer categoryId;
-	
+//	@Column(name = "categoryName", insertable = false, updatable = false)
+//	private String categoryName;
 	
 	@Column(name = "prodName",columnDefinition = "nvarchar(100)")
 	private String prodName;
@@ -58,7 +59,7 @@ public class Product {
 	private Integer prodStock;
 	
 	@Column(name = "prodPrice", columnDefinition = "DECIMAL(10, 2)")
-	private BigDecimal prodPrice;
+	private Integer prodPrice;
 	
 	
 	@Column(name = "prodPurchase")
@@ -88,6 +89,11 @@ public class Product {
 	 @JsonIgnore
 	 @OneToMany(mappedBy = "product")
 	 private List<ProdOrderItem> prodOrderItems;
+
+	public Object getAccess() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 	
 //	public Product() {
 //	}

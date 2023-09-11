@@ -9,16 +9,16 @@ public class ProdSearchDTO {
 	private String sortBy;
     private String sortOrder;
 	    private String prodName;
-	    private String category;
-	    //private BigDecimal prodPrice;
-	    //private Integer prodPurchase;
-	    //private Integer prodStock;
+	    private String categoryName;
+	    private Integer prodPrice;
+	    private Integer prodPurchase;
+	    private Integer prodStock;
 	    private String productStatus;
-	    //private Timestamp updateTime;
-	    //private Integer saleAfterUpdate;
+	    private Timestamp updateTime;
+	    private Integer saleAfterUpdate;
 	    private String prodRemark;
-	    private BigDecimal minprodPrice;
-	    private BigDecimal maxprodPrice;
+	    private Integer minprodPrice;
+	    private Integer maxprodPrice;
 	    private Integer minprodPurchase;
 	    private Integer maxprodPurchase;
 	    private Integer minprodStock;
@@ -31,11 +31,11 @@ public class ProdSearchDTO {
 		public void setProdName(String prodName) {
 			this.prodName = prodName;
 		}
-		public String getCategory() {
-			return category;
+		public String getCategoryName() {
+			return categoryName;
 		}
-		public void setCategory(String category) {
-			this.category = category;
+		public void setCategoryName(String categoryName) {
+			this.categoryName = categoryName;
 		}
 		public String getProductStatus() {
 			return productStatus;
@@ -49,16 +49,16 @@ public class ProdSearchDTO {
 		public void setProdRemark(String prodRemark) {
 			this.prodRemark = prodRemark;
 		}
-		public BigDecimal getMinprodPrice() {
+		public Integer getMinprodPrice() {
 			return minprodPrice;
 		}
-		public void setMinprodPrice(BigDecimal minprodPrice) {
+		public void setMinprodPrice(Integer minprodPrice) {
 			this.minprodPrice = minprodPrice;
 		}
-		public BigDecimal getMaxprodPrice() {
+		public Integer getMaxprodPrice() {
 			return maxprodPrice;
 		}
-		public void setMaxprodPrice(BigDecimal maxprodPrice) {
+		public void setMaxprodPrice(Integer maxprodPrice) {
 			this.maxprodPrice = maxprodPrice;
 		}
 		public Integer getMinprodPurchase() {
@@ -123,37 +123,37 @@ public class ProdSearchDTO {
 			this.sortOrder = sortOrder;
 		}
 		
-//		public BigDecimal getProdPrice() {
-//			return prodPrice;
-//		}
-//		public void setProdPrice(BigDecimal prodPrice) {
-//			this.prodPrice = prodPrice;
-//		}
-//		public Integer getProdPurchase() {
-//			return prodPurchase;
-//		}
-//		public void setProdPurchase(Integer prodPurchase) {
-//			this.prodPurchase = prodPurchase;
-//		}
-//		public Integer getProdStock() {
-//			return prodStock;
-//		}
-//		public void setProdStock(Integer prodStock) {
-//			this.prodStock = prodStock;
-//		}
+		public Integer getProdPrice() {
+			return prodPrice;
+		}
+		public void setProdPrice(Integer prodPrice) {
+			this.prodPrice = prodPrice;
+		}
+		public Integer getProdPurchase() {
+			return prodPurchase;
+		}
+		public void setProdPurchase(Integer prodPurchase) {
+			this.prodPurchase = prodPurchase;
+		}
+		public Integer getProdStock() {
+			return prodStock;
+		}
+		public void setProdStock(Integer prodStock) {
+			this.prodStock = prodStock;
+		}
 		
-//		public Timestamp getUpdateTime() {
-//			return updateTime;
-//		}
-//		public void setUpdateTime(Timestamp updateTime) {
-//			this.updateTime = updateTime;
-//		}
-//		public Integer getSaleAfterUpdate() {
-//			return saleAfterUpdate;
-//		}
-//		public void setSaleAfterUpdate(Integer saleAfterUpdate) {
-//			this.saleAfterUpdate = saleAfterUpdate;
-//		}
+		public Timestamp getUpdateTime() {
+			return updateTime;
+		}
+		public void setUpdateTime(Timestamp updateTime) {
+			this.updateTime = updateTime;
+		}
+		public Integer getSaleAfterUpdate() {
+			return saleAfterUpdate;
+		}
+		public void setSaleAfterUpdate(Integer saleAfterUpdate) {
+			this.saleAfterUpdate = saleAfterUpdate;
+		}
 		
 
 	    

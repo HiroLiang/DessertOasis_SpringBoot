@@ -9,18 +9,39 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import com.dessertoasis.demo.model.category.Category;
+import com.dessertoasis.demo.model.member.Member;
+import com.dessertoasis.demo.model.order.Order;
+import com.dessertoasis.demo.model.order.OrderCmsTable;
 import com.dessertoasis.demo.model.product.ProdSearchDTO;
 import com.dessertoasis.demo.model.product.Product;
 import com.dessertoasis.demo.model.product.ProductRepository;
+import com.dessertoasis.demo.model.sort.DateRules;
+import com.dessertoasis.demo.model.sort.SearchRules;
+import com.dessertoasis.demo.model.sort.SortCondition;
+import com.dessertoasis.demo.model.sort.SortCondition.SortWay;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.TypedQuery;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Join;
 import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Root;
+
 import org.springframework.data.jpa.domain.Specification;
 @Service
 public class ProductService {
-
+	@PersistenceContext
+	private EntityManager em;
+	
     @Autowired
     private ProductRepository prodRepo;
-
+ 
+    @Autowired
+	private ProdPageService pService;
+    
     public Product findProductById(Integer id) {
         Optional<Product> optional = prodRepo.findById(id);
         return optional.orElse(null);
@@ -56,8 +77,8 @@ public class ProductService {
                 predicates.add(builder.like(root.get("prodName"), "%" + criteria.getProdName() + "%"));
             }
             
-            if (criteria.getCategory() != null) {
-                predicates.add(builder.like(root.get("category"), "%" + criteria.getCategory() + "%"));
+            if (criteria.getCategoryName() != null) {
+                predicates.add(builder.like(root.get("categoryName"), "%" + criteria.getCategoryName() + "%"));
             }
             
 //            if (criteria.getProdPrice() != null) {
@@ -127,4 +148,87 @@ public class ProductService {
             return builder.and(predicates.toArray(new Predicate[0]));
         }, pageable);
     }
+
+    
+ 
+ 	
+//Order table範例
+	public List<ProdSearchDTO> getProductPagenation(SortCondition sortCon) {
+		CriteriaBuilder cb = em.getCriteriaBuilder();
+
+		// 決定輸出表格型態
+		CriteriaQuery<ProdSearchDTO> cq = cb.createQuery(ProdSearchDTO.class);
+
+		// 決定select.join表格
+		Root<Product> root = cq.from(Product.class);
+		Join<Product,Category> join = root.join("category");
+
+		// 決定查詢 column
+		cq.multiselect(root.get("id"), join.get("prodName"), root.get("prodPrice"), root.get("prodPurchase"),
+				root.get("prodRemark"), root.get("prodStock"),root.get("productStatus"),root.get("saleAfterUpdate"),root.get("updateTime"),root.get("categoryName"));
+
+		// 加入查詢條件
+		Predicate predicate = cb.conjunction();
+		Product product = new Product();
+		Predicate pre = pService.checkCondition(root, join, predicate, sortCon, cb, product);
+		
+		// 填入 where 條件
+		cq.where(pre);
+
+		// 排序條件
+		if (sortCon.getSortBy() != null) {
+			System.out.println("sort");
+			if (pService.hasProperty(product, sortCon.getSortBy())) {
+				if (sortCon.getSortBy() != null && sortCon.getSortWay().equals(SortWay.ASC)) {
+					cq.orderBy(cb.asc(root.get(sortCon.getSortBy())));
+				} else if (sortCon.getSortBy() != null && sortCon.getSortWay().equals(SortWay.DESC)) {
+					cq.orderBy(cb.desc(root.get(sortCon.getSortBy())));
+				}
+			} else {
+				if (sortCon.getSortBy() != null && sortCon.getSortWay().equals(SortWay.ASC)) {
+					cq.orderBy(cb.asc(join.get(sortCon.getSortBy())));
+				} else if (sortCon.getSortBy() != null && sortCon.getSortWay().equals(SortWay.DESC)) {
+					cq.orderBy(cb.desc(join.get(sortCon.getSortBy())));
+				}
+			}
+		}
+
+		// 分頁
+		TypedQuery<ProdSearchDTO> query = em.createQuery(cq);
+		query.setFirstResult((sortCon.getPage() - 1) * sortCon.getPageSize());
+		query.setMaxResults(sortCon.getPageSize());
+
+		// 送出請求
+		List<ProdSearchDTO> list = query.getResultList();
+		if (list != null) 
+			return list;
+		return null;
+	}
+
+	public Integer getPages(SortCondition sortCon) {
+		CriteriaBuilder cb = em.getCriteriaBuilder();
+
+		// 決定輸出表格型態
+		CriteriaQuery<Long> cq = cb.createQuery(Long.class);
+
+		// 決定select.join表格
+		Root<Product> root = cq.from(Product.class);
+		Join<Product,Category> join = root.join("category");
+
+		// 決定查詢 column
+		cq.select(cb.count(root));
+
+		// 加入查詢條件
+		Predicate predicate = cb.conjunction();
+		Product product = new Product();
+		Predicate pre = pService.checkCondition(root, join, predicate, sortCon, cb, product);
+		cq.where(pre);
+		
+		//查詢總頁數
+		Long totalRecords = em.createQuery(cq).getSingleResult();
+		Integer totalPages = (int) Math.ceil((double) totalRecords / sortCon.getPageSize());
+		
+		return totalPages;
+	}
+	
 }
