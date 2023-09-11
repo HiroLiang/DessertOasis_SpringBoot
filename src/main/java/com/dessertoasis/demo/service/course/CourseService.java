@@ -5,16 +5,23 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.dessertoasis.demo.model.course.Course;
 import com.dessertoasis.demo.model.course.CourseDTO;
 import com.dessertoasis.demo.model.course.CourseRepository;
+import com.dessertoasis.demo.model.course.CourseSearchDTO;
 import com.dessertoasis.demo.model.course.CourseTeacherDTO;
 import com.dessertoasis.demo.model.course.Teacher;
 import com.dessertoasis.demo.model.course.TeacherRepository;
 import com.dessertoasis.demo.model.member.Member;
 import com.dessertoasis.demo.model.member.MemberRepository;
+import com.dessertoasis.demo.model.product.ProdSearchDTO;
+import com.dessertoasis.demo.model.product.Product;
+
+import jakarta.persistence.criteria.Predicate;
 
 @Service
 public class CourseService {
@@ -117,4 +124,35 @@ public class CourseService {
 		return cDTOs;
 	}
 
+	public Page<Course> searchCourses(CourseSearchDTO criteria, Pageable pageable) {
+        return cRepo.findAll((root, query, builder) -> {
+            List<Predicate> predicates = new ArrayList<>();
+
+            if (criteria.getCourseName() != null) {
+                predicates.add(builder.like(root.get("courseName"), "%" + criteria.getCourseName() + "%"));
+            }
+            
+            if (criteria.getCategory() != null) {
+                predicates.add(builder.like(root.get("category"), "%" + criteria.getCategory() + "%"));
+            }
+            
+            if (criteria.getCourseStatus() != null) {
+                predicates.add(builder.like(root.get("courseStatus"), "%" + criteria.getCourseStatus() + "%"));
+            }
+            
+           
+
+            if (criteria.getMinCoursePrice() != null) {
+                predicates.add(builder.greaterThanOrEqualTo(root.get("coursePrice"), criteria.getMinCoursePrice()));
+            }
+
+            if (criteria.getMaxCoursePrice() != null) {
+                predicates.add(builder.lessThanOrEqualTo(root.get("coursePrice"), criteria.getMaxCoursePrice()));
+            }
+            
+
+
+            return builder.and(predicates.toArray(new Predicate[0]));
+        }, pageable);
+    }
 }
