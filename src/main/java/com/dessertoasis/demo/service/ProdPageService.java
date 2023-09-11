@@ -39,9 +39,7 @@ import org.springframework.data.jpa.domain.Specification;
 public class ProdPageService {
 	@PersistenceContext
 	private EntityManager em;
-    @Autowired
-    private ProductRepository prodRepo;
-
+    
  // 確認class中有沒有該屬性
  	public boolean hasProperty(Object bean, String propertyName) {
  		try {

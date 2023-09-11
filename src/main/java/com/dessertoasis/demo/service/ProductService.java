@@ -105,43 +105,43 @@ public class ProductService {
 //                predicates.add(builder.like(root.get("saleAfterUpdate"), "%" + criteria.getSaleAfterUpdate() + "%"));
 //            }
             
-            if (criteria.getProdRemark() != null) {
-                predicates.add(builder.like(root.get("prodRemark"), "%" + criteria.getProdRemark() + "%"));
-            }
-           
-
-            if (criteria.getMinprodPrice() != null) {
-                predicates.add(builder.greaterThanOrEqualTo(root.get("prodPrice"), criteria.getMinprodPrice()));
-            }
-
-            if (criteria.getMaxprodPrice() != null) {
-                predicates.add(builder.lessThanOrEqualTo(root.get("prodPrice"), criteria.getMaxprodPrice()));
-            }
-            
-
-            if (criteria.getMinprodPurchase() != null) {
-                predicates.add(builder.greaterThanOrEqualTo(root.get("prodPurchase"), criteria.getMinprodPurchase()));
-            }
-
-            if (criteria.getMaxprodPurchase() != null) {
-                predicates.add(builder.lessThanOrEqualTo(root.get("prodPurchase"), criteria.getMaxprodPurchase()));
-            }
-            
-            if (criteria.getMinprodStock() != null) {
-                predicates.add(builder.greaterThanOrEqualTo(root.get("prodStock"), criteria.getMinprodStock()));
-            }
-
-            if (criteria.getMaxprodStock() != null) {
-                predicates.add(builder.lessThanOrEqualTo(root.get("prodStock"), criteria.getMaxprodStock()));
-            }
-            
-            if (criteria.getMinsaleAfterUpdate() != null) {
-                predicates.add(builder.greaterThanOrEqualTo(root.get("saleAfterUpdate"), criteria.getMinsaleAfterUpdate()));
-            }
-
-            if (criteria.getMaxsaleAfterUpdate() != null) {
-                predicates.add(builder.lessThanOrEqualTo(root.get("saleAfterUpdate"), criteria.getMaxsaleAfterUpdate()));
-            }
+//            if (criteria.getProdRemark() != null) {
+//                predicates.add(builder.like(root.get("prodRemark"), "%" + criteria.getProdRemark() + "%"));
+//            }
+//           
+//
+//            if (criteria.getMinprodPrice() != null) {
+//                predicates.add(builder.greaterThanOrEqualTo(root.get("prodPrice"), criteria.getMinprodPrice()));
+//            }
+//
+//            if (criteria.getMaxprodPrice() != null) {
+//                predicates.add(builder.lessThanOrEqualTo(root.get("prodPrice"), criteria.getMaxprodPrice()));
+//            }
+//            
+//
+//            if (criteria.getMinprodPurchase() != null) {
+//                predicates.add(builder.greaterThanOrEqualTo(root.get("prodPurchase"), criteria.getMinprodPurchase()));
+//            }
+//
+//            if (criteria.getMaxprodPurchase() != null) {
+//                predicates.add(builder.lessThanOrEqualTo(root.get("prodPurchase"), criteria.getMaxprodPurchase()));
+//            }
+//            
+//            if (criteria.getMinprodStock() != null) {
+//                predicates.add(builder.greaterThanOrEqualTo(root.get("prodStock"), criteria.getMinprodStock()));
+//            }
+//
+//            if (criteria.getMaxprodStock() != null) {
+//                predicates.add(builder.lessThanOrEqualTo(root.get("prodStock"), criteria.getMaxprodStock()));
+//            }
+//            
+//            if (criteria.getMinsaleAfterUpdate() != null) {
+//                predicates.add(builder.greaterThanOrEqualTo(root.get("saleAfterUpdate"), criteria.getMinsaleAfterUpdate()));
+//            }
+//
+//            if (criteria.getMaxsaleAfterUpdate() != null) {
+//                predicates.add(builder.lessThanOrEqualTo(root.get("saleAfterUpdate"), criteria.getMaxsaleAfterUpdate()));
+//            }
 
             
 
@@ -164,8 +164,8 @@ public class ProductService {
 		Join<Product,Category> join = root.join("category");
 
 		// 決定查詢 column
-		cq.multiselect(root.get("id"), join.get("prodName"), root.get("prodPrice"), root.get("prodPurchase"),
-				root.get("prodRemark"), root.get("prodStock"),root.get("productStatus"),root.get("saleAfterUpdate"),root.get("updateTime"),root.get("categoryName"));
+		cq.multiselect(root.get("id"), join.get("categoryName"), root.get("prodPrice"), root.get("prodPurchase"),
+				root.get("prodRemark"), root.get("prodStock"),root.get("productStatus"),root.get("saleAfterUpdate"),root.get("updateTime"),root.get("prodName"));
 
 		// 加入查詢條件
 		Predicate predicate = cb.conjunction();
