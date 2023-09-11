@@ -1,43 +1,39 @@
 package com.dessertoasis.demo.model.recipe;
 
-import java.util.Date;
 import java.util.List;
 
 public class RecipeCreateDTO {
 	
-	//食譜名稱
-	private String recipeTitle;
+	private Recipes recipe;
 	
-	//食譜簡介
-	private String recipeIntroduction;
-	
-	//成品圖圖庫位址
-	private String pictureURL;
-	
-	//食譜人分
-	private Integer ingredientPersons;
-	
-	//製作時間
-	private Integer cookingTime;
-	
-	//難度
-	private String difficulty;
-	
-	//撰寫者ID(連結Member id)
-	private Integer recipeAuthorId;
-		
-	//分類Id取其中分類id
-	private List<Integer>recipeCategoryIds;
-	
-	//步驟
-	private List<String>steps;
-		
-	//食譜建立時間
-	private Date recipeCreateDate;
-	
-	//食譜狀態
-	private Integer recipeStatus;
-		
+	private List<Ingredient> ingredients;
+
+	public RecipeCreateDTO() {
+		super();
+	}
+
+	public RecipeCreateDTO(Recipes recipe, List<Ingredient> ingredients) {
+		super();
+		this.recipe = recipe;
+		this.ingredients = ingredients;
+	}
+
+	public Recipes getRecipe() {
+		return recipe;
+	}
+
+	public void setRecipe(Recipes recipe) {
+		this.recipe = recipe;
+	}
+
+	public List<Ingredient> getIngredients() {
+		return ingredients;
+	}
+
+	public void setIngredients(List<Ingredient> ingredients) {
+		this.ingredients = ingredients;
+	}
 		
 
+	
 }

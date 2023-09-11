@@ -38,6 +38,7 @@ import com.dessertoasis.demo.model.recipe.RecipeCategoryRepository;
 import com.dessertoasis.demo.model.recipe.RecipeCmsTable;
 import com.dessertoasis.demo.model.recipe.RecipeCreateDTO;
 import com.dessertoasis.demo.model.recipe.RecipeDTO;
+import com.dessertoasis.demo.model.recipe.RecipeFrontDTO;
 import com.dessertoasis.demo.model.recipe.RecipeIngredientKey;
 import com.dessertoasis.demo.model.recipe.Ingredient;
 import com.dessertoasis.demo.model.recipe.IngredientList;
@@ -187,62 +188,31 @@ public class RecipeService {
 	/*--------------------------------------------食譜建立頁使用service ------------------------------------------------*/
 
 	// 新增食譜
-	public Boolean addRecipe(Integer id, Recipes recipe) {
+	public Boolean addRecipe(Integer id, RecipeCreateDTO cDto) {
 		Optional<Member> optional = memberRepo.findById(id);
 		if (optional.isPresent()) {
-			recipe.setRecipeAuthor(optional.get());
-			recipe.setRecipeCreateDate(LocalDateTime.now());
-			recipe.setRecipeStatus(1);
-			recipe.setPictureURL(recipe.getPictureURL());
-			recipe.setRecipeIntroduction(recipe.getRecipeIntroduction());
 
-			if (recipe.getCookingTime() == null) {
-				recipe.setCookingTime(0);
-			}
-			recipeRepo.save(recipe);
-
-			List<IngredientList> ingredientList = new ArrayList<>();
-
-			for (IngredientList ingredientListData : recipe.getIngredientList()) {
-
-				RecipeIngredientKey recipeIngredientKey = new RecipeIngredientKey();
-				Ingredient ingredient = ingredientListData.getIngredient();
-				Ingredient existIngredient = ingreRepo.findByIngredientName(ingredient.getIngredientName());
+			int counter = 0;
+			for (Ingredient ingredientData : cDto.getIngredients()) {
+				Ingredient existIngredient = ingreRepo.findByIngredientName(ingredientData.getIngredientName());
 				if (existIngredient != null) {
-					ingredient = existIngredient;
+					ingredientData = existIngredient;
 				} else {
-					ingreRepo.save(ingredient);
+					ingreRepo.save(ingredientData);
 				}
-
-				IngredientList newIngredientListData = new IngredientList();
-//
-//
-//				
-				recipeIngredientKey.setIngredientId(existIngredient.getId());
-				recipeIngredientKey.setRecipeId(recipe.getId());
-//
-//				newIngredientListData.setIngredient(existIngredient);
-//				newIngredientListData.setId(recipeIngredientKey);
-//				newIngredientListData.setRecipe(recipe);
-//				newIngredientListData.setIngredient(ingredient);
-//				newIngredientListData.setIngredientQuantity(ingredientListData.getIngredientQuantity());
-//				newIngredientListData.setIngredientUnit(ingredientListData.getIngredientUnit());
-//				
-				ingredientList.add(newIngredientListData);
-//
-				ingreListRepo.save(newIngredientListData);
+				cDto.getRecipe().getIngredientList().get(counter).setIngredient(ingredientData);
+				counter++;
 			}
-			recipe.setIngredientList(ingredientList);
+			cDto.getRecipe().setRecipeAuthor(optional.get());
+			cDto.getRecipe().setRecipeCreateDate(LocalDateTime.now());
+			cDto.getRecipe().setRecipeStatus(1);
 
-//			for (RecipeSteps stepData : recipe.getRecipeSteps()) {
-//				RecipeSteps recipeSteps = new RecipeSteps();
-//				recipeSteps.setRecipe(recipe);
-//				recipeSteps.setStepNumber(stepData.getStepNumber());
-//				recipeSteps.setStepPicture(stepData.getStepPicture());
-//				recipeSteps.setStepContext(stepData.getStepContext());
-//
-//				stepRepo.save(recipeSteps);
-//			}
+			if (cDto.getRecipe().getCookingTime() == null) {
+				cDto.getRecipe().setCookingTime(0);
+			}
+//			System.out.println(cDto.getRecipe().getId()); //持久化前沒有id
+			recipeRepo.save(cDto.getRecipe());
+//			System.out.println(cDto.getRecipe().getId()); //持久化後能取得id
 
 			return true;
 		}
@@ -296,7 +266,7 @@ public class RecipeService {
 		return false;
 	}
 
-	/*--------------------------------------------測試Criteria ------------------------------------------------*/
+	/*--------------------------------------------後台Criteria ------------------------------------------------*/
 	@PersistenceContext
 	private EntityManager em;
 
@@ -315,7 +285,7 @@ public class RecipeService {
 		Join<Recipes, Member> join = root.join("recipeAuthor");
 
 		// 決定查詢 column
-		cq.multiselect(root.get("id"), join.get("fullName"),root.get("recipeCreateDate"),
+		cq.multiselect(root.get("id"), root.get("recipeTitle"), join.get("fullName"), root.get("recipeCreateDate"),
 				root.get("recipeStatus"), root.get("recipeMonthlyVisitCount"));
 
 		// 加入查詢條件
@@ -352,35 +322,73 @@ public class RecipeService {
 		// 送出請求
 		List<RecipeCmsTable> list = query.getResultList();
 		if (list != null) {
-		    return list;
-		}  
+			return list;
+		}
 		return null;
 	}
-	
+
 	public Integer getPages(SortCondition sortCon) {
 		CriteriaBuilder cb = em.getCriteriaBuilder();
 
 		// 決定輸出表格型態
 		CriteriaQuery<Long> cq = cb.createQuery(Long.class);
-		
+
 		// 決定select.join表格
 		Root<Recipes> root = cq.from(Recipes.class);
 		Join<Recipes, Member> join = root.join("recipeAuthor");
-		
+
 		// 決定查詢 column
 		cq.select(cb.count(root));
-		
+
 		// 加入查詢條件
 		Predicate predicate = cb.conjunction();
 		Recipes recipes = new Recipes();
 		Predicate pre = pService.checkRecipeCondition(root, join, predicate, sortCon, cb, recipes);
 		cq.where(pre);
-		
-		//查詢傯頁數
+
+		// 查詢傯頁數
 		Long totalRecords = em.createQuery(cq).getSingleResult();
 		Integer totalPages = (int) Math.ceil((double) totalRecords / sortCon.getPageSize());
-				
+
 		return totalPages;
 	}
-	
+
+	/*--------------------------------------------前台Criteria ------------------------------------------------*/
+
+	public List<RecipeFrontDTO> getFrontRecipePagenation(SortCondition sortCon) {
+		CriteriaBuilder cb = em.getCriteriaBuilder();
+
+		// 決定select table
+		CriteriaQuery<RecipeFrontDTO> cq = cb.createQuery(RecipeFrontDTO.class);
+
+		// 決定select.join表格
+		Root<Recipes> root = cq.from(Recipes.class);
+		Join<Recipes, Member> join = root.join("recipeAuthor");
+//		Join<Recipes,Category> categoryJoin = join.join("");
+
+		// 決定查詢 column
+		cq.multiselect(root.get("id"), root.get("recipeTitle"), join.get("fullName"),
+				root.get("pictureURL"), root.get("difficulty"), root.get("recipeIntroduction"));
+
+		// 加入查詢條件
+		Predicate predicate = cb.conjunction();
+		Recipes recipes = new Recipes();
+		Predicate pre = pService.checkRecipeCondition(root, join, predicate, sortCon, cb, recipes);
+
+		// 填入 where 條件
+		cq.where(pre);
+
+		// 分頁
+		TypedQuery<RecipeFrontDTO> query = em.createQuery(cq);
+		query.setFirstResult((sortCon.getPage() - 1) * sortCon.getPageSize());
+		query.setMaxResults(sortCon.getPageSize());
+
+		// 送出請求
+		List<RecipeFrontDTO> list = query.getResultList();
+		if (list != null) {
+			return list;
+		}
+		return null;
+	}
+
 }

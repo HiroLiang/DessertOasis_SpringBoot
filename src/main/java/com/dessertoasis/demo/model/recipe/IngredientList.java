@@ -34,10 +34,11 @@ public class IngredientList {
 	@ManyToOne(fetch = FetchType.EAGER)
 //	@MapsId("recipeId")
 	@JoinColumn(name = "recipeId")
-	@JsonIgnoreProperties({"recipeAuthor", "recipeCategories","recipeSteps",
-		"ingredientList","ingredientList","recipeTitle","pictureURL",
-		"recipeIntroduction","cookingTime","difficulty","recipeCreateDate",
-		"recipeStatus","recipeMonthlyVisitCount","course"})
+//	@JsonIgnoreProperties({"recipeAuthor", "recipeCategories","recipeSteps",
+//		"ingredientList","ingredientList","recipeTitle","pictureURL",
+//		"recipeIntroduction","cookingTime","difficulty","recipeCreateDate",
+//		"recipeStatus","recipeMonthlyVisitCount","course"})
+	@JsonIgnoreProperties("ingredientList")
 //	@JsonIgnore
 	private Recipes recipe;
 
