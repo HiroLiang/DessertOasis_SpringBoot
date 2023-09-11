@@ -50,6 +50,7 @@ public class Recipes {
 	@OneToMany(mappedBy = "recipe", cascade = CascadeType.ALL)
 	private List<RecipeSteps> recipeSteps;
 	
+	@JsonIgnoreProperties("recipe")
 	@OneToMany(mappedBy = "recipe", cascade = CascadeType.ALL)
 	private List<IngredientList> ingredientList;
 	

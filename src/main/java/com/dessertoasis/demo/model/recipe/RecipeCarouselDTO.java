@@ -17,6 +17,20 @@ public class RecipeCarouselDTO {
 	
 	//食譜簡介
 	private String recipeIntroduction;
+	
+	public RecipeCarouselDTO(Integer id, List<Integer> recipeCategoryIds, String recipeTitle, String pictureURL,
+			String recipeIntroduction) {
+		super();
+		this.id = id;
+		this.recipeCategoryIds = recipeCategoryIds;
+		this.recipeTitle = recipeTitle;
+		this.pictureURL = pictureURL;
+		this.recipeIntroduction = recipeIntroduction;
+	}
+
+	public RecipeCarouselDTO() {
+		super();
+	}
 
 	public Integer getId() {
 		return id;
@@ -25,7 +39,7 @@ public class RecipeCarouselDTO {
 	public void setId(Integer id) {
 		this.id = id;
 	}
-
+	
 	public List<Integer> getRecipeCategoryIds() {
 		return recipeCategoryIds;
 	}

@@ -5,6 +5,11 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -14,6 +19,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -21,9 +27,11 @@ import com.dessertoasis.demo.model.category.Category;
 import com.dessertoasis.demo.model.category.CategoryRepository;
 import com.dessertoasis.demo.model.course.Course;
 import com.dessertoasis.demo.model.course.CourseDTO;
+import com.dessertoasis.demo.model.course.CourseSearchDTO;
 import com.dessertoasis.demo.model.course.CourseTeacherDTO;
 import com.dessertoasis.demo.model.course.Teacher;
 import com.dessertoasis.demo.model.member.Member;
+import com.dessertoasis.demo.model.product.ProdSearchDTO;
 import com.dessertoasis.demo.model.product.Product;
 import com.dessertoasis.demo.model.recipe.RecipeDTO;
 import com.dessertoasis.demo.model.recipe.RecipeRepository;
@@ -69,15 +77,16 @@ public class CourseController {
 		List<CourseDTO> courseDTOList = new ArrayList<>();
 		for(Course course: courseList) {
 			CourseDTO courseDTOItem = new CourseDTO(course);
+			System.out.println(course.getTeacher().getTeacherName()+"---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------");
 			courseDTOList.add(courseDTOItem);
 		}
 		return ResponseEntity.ok(courseDTOList);
 //		return courseDTOList;
 	}
 	
-	@GetMapping("/{id}")
-	public ResponseEntity<CourseDTO> getCourseDetails(@PathVariable Integer id) {
-	    Course course = cService.findById(id);
+	@GetMapping("/{courseId}")
+	public ResponseEntity<CourseDTO> getCourseDetails(@PathVariable Integer courseId) {
+	    Course course = cService.findById(courseId);
 //	    List<CourseCtag> courseCtags = courseCtagService.findByCourseId(courseId);
 //	    List<CoursePicture> coursePictures = coursePictureService.findByCourseId(courseId);
 
@@ -181,4 +190,42 @@ public class CourseController {
 			return ResponseEntity.ok(courseDTOs);
 		}
 	}
+	@PostMapping("/criteria")
+    public ResponseEntity<Page<Course>> searchProducts(
+            @RequestBody CourseSearchDTO criteria,
+            Pageable pageable) {
+    	
+        Page<Course> products = cService.searchCourses(criteria, pageable);
+        return ResponseEntity.ok(products);
+    }
+
+	@GetMapping("/search")
+    public ResponseEntity<Page<Course>> searchCourses(
+            CourseSearchDTO criteria,
+            @PageableDefault(size = 20) Pageable pageable,
+            @RequestParam(value = "sortBy", required = false) String sortBy,
+            @RequestParam(value = "pageSize", required = false) Integer pageSize
+    ) {
+        Sort sort = Sort.unsorted();
+
+        if (sortBy != null && !sortBy.isEmpty()) {
+            String[] sortParams = sortBy.split("&");
+            for (String param : sortParams) {
+                String[] sortField = param.split(",");
+                if (sortField.length == 2) {
+                    String field = sortField[0];
+                    String direction = sortField[1].toUpperCase(); // Ensure direction is uppercase
+                    Sort.Order order = "ASC".equals(direction) ? Sort.Order.asc(field) : Sort.Order.desc(field);
+                    sort = sort.and(Sort.by(order));
+                }
+            }
+        }
+
+        int adjustedPage = pageable.getPageNumber() - 1;
+        int effectivePageSize = pageSize != null ? pageSize : 20;
+
+        Page<Course> courses = cService.searchCourses(criteria, PageRequest.of(adjustedPage, effectivePageSize, sort));
+        System.out.println(courses.getContent().get(0).getTeacher().getTeacherName());
+        return ResponseEntity.ok(courses);
+    }
 }
