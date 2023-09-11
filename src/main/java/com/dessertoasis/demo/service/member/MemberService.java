@@ -103,7 +103,7 @@ public class MemberService {
     	mailMessage.setFrom("Dessert0asis@outlook.com");
     	mailMessage.setTo(toEmail);
     	mailMessage.setSubject("驗證信");
-    	mailMessage.setText("點擊連結進行驗證"+verificationLink);
+        mailMessage.setText("點擊連結進行驗證"+verificationLink);
     	javaMailSender.send(mailMessage);
     }
 

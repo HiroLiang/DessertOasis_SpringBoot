@@ -50,6 +50,7 @@ public class LoginController {
 		    Member memberLogin = mService.memberLogin(member.getAccount(), member.getPasswords(), session);
 
 		    if (memberLogin != null) {
+		    	
 		    	session.setAttribute("loggedInMember", memberLogin);
 		    	MemberState state = memberLogin.getMemberStatus();
 		    	MemberAccess access = memberLogin.getAccess();
@@ -60,7 +61,7 @@ public class LoginController {
 		    		
 		    		 //透過setEncryptedCookie來做加密
 		    		 String cookieName = "isLogin";
-		    		 String cookieValue = "10";
+		    		 String cookieValue = "admin";
 		    		 CookieEncryptionUtil.setEncryptedCookie(response, cookieName, cookieValue, secretKey);
 		    		 
 //		             Cookie cookie = new Cookie("isLogin", "10");
@@ -71,11 +72,11 @@ public class LoginController {
 		             
 		         } else if (access == MemberAccess.USER && state ==MemberState.ACTIVE) {
 		        	 String cookieName = "isLogin";
-		    		 String cookieValue = "20";
+		    		 String cookieValue = "user";
 		    		 CookieEncryptionUtil.setEncryptedCookie(response, cookieName, cookieValue, secretKey);
 		         } else if (access == MemberAccess.TEACHER) {
 		        	 String cookieName = "isLogin";
-		    		 String cookieValue = "30";
+		    		 String cookieValue = "teacher";
 		    		 CookieEncryptionUtil.setEncryptedCookie(response, cookieName, cookieValue, secretKey);
 		         } 
 		    	 
@@ -85,7 +86,7 @@ public class LoginController {
 
 	}
 		
-		
+		 //取得權限
 		 @GetMapping("/checkUserPermission")
 		    public String checkUserPermission(HttpServletRequest request) {
 		        // 從請求中獲取Cookie
@@ -101,13 +102,13 @@ public class LoginController {
 		            }
 
 		            // 執行條件判斷
-		            if ("10".equals(decryptedCookieValue)) {
+		            if ("admin".equals(decryptedCookieValue)) {
 		                // 用戶是管理員
 		                return "User is an admin";
-		            } else if ("20".equals(decryptedCookieValue)) {
+		            } else if ("user".equals(decryptedCookieValue)) {
 		                // 用戶是一般用戶
 		                return "User is a regular user";
-		            } else if ("30".equals(decryptedCookieValue)) {
+		            } else if ("teacher".equals(decryptedCookieValue)) {
 		                // 用戶是老師
 		                return "User is a teacher";
 		            }
