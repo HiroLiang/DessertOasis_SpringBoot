@@ -9,7 +9,7 @@ public class RecipeCmsTable {
 
 	private Integer id;
 	private String recipeTitle;
-	private String recipeAuthor;
+	private String fullName;
 //	private Integer recipeCategories;
 	private LocalDateTime recipeCreateDate;
 	private Integer recipeStatus;
@@ -20,12 +20,12 @@ public class RecipeCmsTable {
 		super();
 	}
 	
-	public RecipeCmsTable(Integer id, String recipeTitle, String recipeAuthor, /*Integer recipeCategories,*/
+	public RecipeCmsTable(Integer id, String recipeTitle, String fullName, /*Integer recipeCategories,*/
 			LocalDateTime recipeCreateDate, Integer recipeStatus, Integer recipeMonthlyVisitCount) {
 		super();
 		this.id = id;
 		this.recipeTitle = recipeTitle;
-		this.recipeAuthor = recipeAuthor;
+		this.fullName = fullName;
 //		this.recipeCategories = recipeCategories;
 		this.recipeCreateDate = recipeCreateDate;
 		this.recipeStatus = recipeStatus;

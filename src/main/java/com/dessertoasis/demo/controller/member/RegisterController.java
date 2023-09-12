@@ -13,9 +13,12 @@ import com.dessertoasis.demo.model.member.MemberAccess;
 import com.dessertoasis.demo.model.member.MemberState;
 import com.dessertoasis.demo.service.member.MemberService;
 
+
 @RestController
 public class RegisterController {
-
+	
+	
+	
     @Autowired
     private MemberService mService;
 
@@ -26,7 +29,7 @@ public class RegisterController {
         if (mService.checkIfAccountExist(member.getAccount())) {
             return "N";
         }
-        
+       
         // 創建會員並加密密碼
         Member newMember = new Member();
         newMember.setAccount(member.getAccount());
