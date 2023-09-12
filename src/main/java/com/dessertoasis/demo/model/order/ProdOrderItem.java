@@ -35,7 +35,7 @@ public class ProdOrderItem {
 	private Product product;
 	
 	@Column
-	private BigDecimal price;
+	private Integer price;
 	
 	@Column
 	private Integer quantity;

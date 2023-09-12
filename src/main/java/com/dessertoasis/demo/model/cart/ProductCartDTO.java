@@ -15,7 +15,7 @@ public class ProductCartDTO {
 	private Integer productId;
 	private String prodName;
 	private Integer prodStock;
-	private BigDecimal prodPrice;
+	private Integer prodPrice;
 	private List<ProductPicture> pictures;
 	private Integer prodQuantity;
 	
