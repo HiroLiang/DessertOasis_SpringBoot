@@ -3,6 +3,7 @@ package com.dessertoasis.demo.service.recipe;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 
@@ -64,6 +65,9 @@ public class RecipeService {
 	@Autowired
 	private RecipeStepsRepository stepRepo;
 
+	@Autowired
+	private RecipeCategoryRepository recaRepo;
+	
 	@Autowired
 	private IngredientRepository ingreRepo;
 
@@ -211,9 +215,27 @@ public class RecipeService {
 				cDto.getRecipe().setCookingTime(0);
 			}
 //			System.out.println(cDto.getRecipe().getId()); //持久化前沒有id
-			recipeRepo.save(cDto.getRecipe());
+			Recipes save = recipeRepo.save(cDto.getRecipe());
 //			System.out.println(cDto.getRecipe().getId()); //持久化後能取得id
-
+//			List<RecipeCategory> recipecategories = new ArrayList<>();
+			List<Category> categories = cDto.getCategories();
+//			System.out.println("before for");
+//			for (int i = 0; i < categories.size(); i++) {
+////				System.out.println("for");
+//				Optional<Category> existCategory = cateRepo.findById(categories.get(i).getId());
+////				System.out.println("before if"+existCategory.isPresent());
+//				if(existCategory.isPresent()) {
+//					
+//					RecipeCategory recipeCategory = new RecipeCategory();
+//					Category category = existCategory.get();
+//					recipeCategory.setCategory(category);
+//					recipeCategory.setRecipe(save);
+////					recipecategories.add(recipeCategory);
+////					System.out.println(" before save");
+//					recaRepo.save(recipeCategory);	
+////					System.out.println(" after save");
+//				}
+//			}
 			return true;
 		}
 		return false;

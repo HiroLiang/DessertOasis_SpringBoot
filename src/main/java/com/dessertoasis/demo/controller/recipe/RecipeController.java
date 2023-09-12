@@ -166,7 +166,7 @@ public class RecipeController {
 	@ResponseBody
 	public String addRecipe(@RequestBody RecipeCreateDTO createDto, HttpSession session) {
 		Member member = (Member) session.getAttribute("loggedInMember");
-		if (member != null) {
+//		if (member != null) {
 			Boolean add = recipeService.addRecipe(4, createDto);
 		/*-------------------------------使用ImageUploadUtil儲存圖片並接收回傳儲存位置區塊--------------------------------------*/
 //			Recipes recipe = new Recipes();
@@ -221,8 +221,8 @@ public class RecipeController {
 			}
 		return "F";// 新增失敗 recipebean資料不符或是找不到對應使用者
 		/*-------------------------------使用ImageUploadUtil儲存圖片並接收回傳儲存位置區塊--------------------------------------*/
-		}
-		return "N";//新增失敗 找不到session中的使用者資料
+//		}
+//		return "N";//新增失敗 找不到session中的使用者資料
 	}
 
 	/*----------------------------------------------圖檔處理回傳儲存路徑Controller------------------------------------------------------------------*/
@@ -230,8 +230,8 @@ public class RecipeController {
 	@PostMapping(path = "test/uploadimg")
 	public List<String> sendPic(@RequestBody List<PicturesDTO> pictures) {
 		/*---------設定儲存路徑---------*/
-		final String uploadPath = "D:/dessertoasis-vue/public/images/";
-//		final String uploadPath = "C:/Users/iSpan/Documents/dessertoasis-vue/public/images/";
+//		final String uploadPath = "D:/dessertoasis-vue/public/images/";
+		final String uploadPath = "C:/Users/iSpan/Documents/dessertoasis-vue/public/";
 //		Member member = (Member) session.getAttribute("loggedInMember");
 //		Recipes recipe = (Recipes) session.getAttribute("recipeId");
 
@@ -245,7 +245,10 @@ public class RecipeController {
 			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmssSSS");
 			String timestamp = LocalDateTime.now().format(formatter);
 //		if (member != null) {
-			String userFolder = uploadPath + "recipe" + "/" + 1 + "/";
+			//調整存入資料庫的路徑位置
+			String sqlPath = "images/recipe" + "/" + 1 + "/";
+			String userFolder = uploadPath + sqlPath;
+			
 			File folder = new File(userFolder);
 			if (!folder.exists()) {
 				folder.mkdirs();
@@ -277,7 +280,7 @@ public class RecipeController {
 
 					/*----------將儲存位置準備回傳前端----------*/
 					msg.add("-1");
-					msg.add(userFolder + mainUniqueName);
+					msg.add(sqlPath + mainUniqueName);
 					/*----------將儲存位置準備回傳前端----------*/
 				} catch (FileNotFoundException e) {
 					e.printStackTrace();
@@ -327,7 +330,7 @@ public class RecipeController {
 						/*----------寫入檔案及儲存位置串接字串----------*/
 
 						/*----------將儲存位置準備回傳前端----------*/
-						msg.add(userFolder + uniqueName);
+						msg.add(sqlPath + uniqueName);
 						/*----------將儲存位置準備回傳前端----------*/
 
 					} catch (FileNotFoundException e) {
