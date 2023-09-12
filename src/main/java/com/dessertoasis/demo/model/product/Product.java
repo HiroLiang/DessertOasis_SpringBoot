@@ -37,13 +37,11 @@ public class Product {
 //	@Column(name = "categoryId")
 //	private Integer categoryId;
 	
-	@ManyToOne(fetch = FetchType.EAGER)
-	//@MapsId("id")
+	@ManyToOne
     @JoinColumn(name = "categoryId", referencedColumnName = "id")
 	//@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 	//@JsonProperty("categoryId")
 	@JsonIgnoreProperties({"products"})
-	
     private Category category;
 	//private Integer categoryId;
 //	@Column(name = "categoryName", insertable = false, updatable = false)
@@ -90,227 +88,28 @@ public class Product {
 	 @OneToMany(mappedBy = "product")
 	 private List<ProdOrderItem> prodOrderItems;
 
-	public Object getAccess() {
-		// TODO Auto-generated method stub
-		return null;
+	public Product() {
+		super();
+	}
+
+	public Product(Integer id, Category category, String prodName, String prodDescription, Integer prodStock,
+			Integer prodPrice, Integer prodPurchase, Timestamp updateTime, Integer saleAfterUpdate,
+			String productStatus, String prodRemark, List<ProductPicture> pictures,
+			List<ProdOrderItem> prodOrderItems) {
+		super();
+		this.id = id;
+		this.category = category;
+		this.prodName = prodName;
+		this.prodDescription = prodDescription;
+		this.prodStock = prodStock;
+		this.prodPrice = prodPrice;
+		this.prodPurchase = prodPurchase;
+		this.updateTime = updateTime;
+		this.saleAfterUpdate = saleAfterUpdate;
+		this.productStatus = productStatus;
+		this.prodRemark = prodRemark;
+		this.pictures = pictures;
+		this.prodOrderItems = prodOrderItems;
 	}
 	
-//	public Product() {
-//	}
-//	
-//	
-//
-//	public Product(int prodID, int typeID, String prodName, String prodDescription, int prodStock, int prodPrice,
-//			String prodPicURL, Integer prodPurchase, Timestamp prodAddtime, Timestamp prodShelftime,
-//			String prodRemark) {
-//		super();
-//		this.prodID = prodID;
-//		this.typeID = typeID;
-//		this.prodName = prodName;
-//		this.prodDescription = prodDescription;
-//		this.prodStock = prodStock;
-//		this.prodPrice = prodPrice;
-//		this.prodPicURL = prodPicURL;
-//		this.prodPurchase = prodPurchase;
-//		this.prodAddtime = prodAddtime;
-//		this.prodShelftime = prodShelftime;
-//		this.prodRemark = prodRemark;
-//	}
-//
-//
-//
-//	public Product(int typeID, String prodName, String prodDescription, int prodStock, int prodPrice,
-//			String prodPicURL,String prodRemark) {
-//		super();
-//		this.typeID = typeID;
-//		this.prodName = prodName;
-//		this.prodDescription = prodDescription;
-//		this.prodStock = prodStock;
-//		this.prodPrice = prodPrice;
-//		this.prodPicURL = prodPicURL;
-//		//this.prodAddtime = prodAddtime;
-//		//this.prodShelftime = prodShelftime;
-//		this.prodRemark = prodRemark;
-//	}
-//	
-//	public Product(int typeID, String prodName, String prodDescription, int prodStock, int prodPrice,
-//			String prodRemark) {
-//		super();
-//		this.typeID = typeID;
-//		this.prodName = prodName;
-//		this.prodDescription = prodDescription;
-//		this.prodStock = prodStock;
-//		this.prodPrice = prodPrice;
-//		//this.prodPicURL = prodPicURL;
-//		//this.prodAddtime = prodAddtime;
-//		//this.prodShelftime = prodShelftime;
-//		this.prodRemark = prodRemark;
-//	}
-//	
-//	
-//	public Product(
-//			String prodPicURL) {
-//		super();
-//		
-//		this.prodPicURL = prodPicURL;
-//	
-//	}
-
-
-//	public Integer getId() {
-//		return id;
-//	}
-//
-//
-//	public void setId(Integer id) {
-//		this.id = id;
-//	}
-
-
-//	public Integer getCategoryId() {
-//		return categoryId;
-//	}
-//
-//
-//	public void setCategoryId(Integer categoryId) {
-//		this.categoryId = categoryId;
-//	}
-
-
-//	public String getProdName() {
-//		return prodName;
-//	}
-//
-//
-//	public void setProdName(String prodName) {
-//		this.prodName = prodName;
-//	}
-//
-//
-//	public String getProdDescription() {
-//		return prodDescription;
-//	}
-//
-//
-//	public void setProdDescription(String prodDescription) {
-//		this.prodDescription = prodDescription;
-//	}
-//
-//
-//	public Integer getProdStock() {
-//		return prodStock;
-//	}
-//
-//
-//	public void setProdStock(Integer prodStock) {
-//		this.prodStock = prodStock;
-//	}
-//
-//
-//	public BigDecimal getProdPrice() {
-//		return prodPrice;
-//	}
-//
-//
-//	public void setProdPrice(BigDecimal prodPrice) {
-//		this.prodPrice = prodPrice;
-//	}
-//
-//
-//	public Integer getProdPurchase() {
-//		return prodPurchase;
-//	}
-//
-//
-//	public void setProdPurchase(Integer prodPurchase) {
-//		this.prodPurchase = prodPurchase;
-//	}
-//
-//
-//	public Timestamp getUpdateTime() {
-//		return updateTime;
-//	}
-//
-//
-//	public void setUpdateTime(Timestamp updateTime) {
-//		this.updateTime = updateTime;
-//	}
-//
-//
-//	public Integer getSaleAfterUpdate() {
-//		return saleAfterUpdate;
-//	}
-//
-//
-//	public void setSaleAfterUpdate(Integer saleAfterUpdate) {
-//		this.saleAfterUpdate = saleAfterUpdate;
-//	}
-//
-//
-//	public String getProductStatus() {
-//		return productStatus;
-//	}
-//
-//
-//	public void setProductStatus(String productStatus) {
-//		this.productStatus = productStatus;
-//	}
-//
-//
-//	public String getProdRemark() {
-//		return prodRemark;
-//	}
-//
-//
-//	public void setProdRemark(String prodRemark) {
-//		this.prodRemark = prodRemark;
-//	}
-//	
-//	public Category getCategory() {
-//		return category;
-//	}
-//
-//
-//	public void setCategory(Category category) {
-//		this.category = category;
-//	}
-//
-//
-//	
-////	public Integer getCategoryId() {
-////		return categoryId;
-////	}
-////
-////
-////	public void setCategoryId(Integer categoryId) {
-////		this.categoryId = categoryId;
-////	}
-//
-//	public List<ProductPicture> getPictures() {
-//		return pictures;
-//	}
-//
-//
-//	public void setPictures(List<ProductPicture> pictures) {
-//		this.pictures = pictures;
-//	}
-//
-//
-//	public List<ProdOrderItem> getProdOrderItems() {
-//		return prodOrderItems;
-//	}
-//
-//
-//	public void setProdOrderItems(List<ProdOrderItem> prodOrderItems) {
-//		this.prodOrderItems = prodOrderItems;
-//	}
-
-
-	
-	
-
-	
-
-
-//	
 }

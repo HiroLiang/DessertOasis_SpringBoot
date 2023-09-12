@@ -164,10 +164,10 @@ public class ProductController {
  	public List<ProdSearchDTO> getOrderPage(@RequestBody SortCondition sortCon, HttpSession session) {
  		System.out.println(sortCon);
  		// 判斷 user 存在且為 ADMIN
- 		Member user = (Member) session.getAttribute("loggedInMember");
- 		if (user == null || !user.getAccess().equals(MemberAccess.ADMIN)) {
- 			return null;
- 		}
+// 		Member user = (Member) session.getAttribute("loggedInMember");
+// 		if (user == null || !user.getAccess().equals(MemberAccess.ADMIN)) {
+// 			return null;
+// 		}
  		// 送出查詢條件給service，若有結果則回傳list
  		List<ProdSearchDTO> result = pService.getProductPagenation(sortCon);
  		if (result != null) {
@@ -181,10 +181,10 @@ public class ProductController {
  	public Integer getPages(@RequestBody SortCondition sortCon, HttpSession session) {
  		System.out.println(sortCon);
  		// 判斷 user 存在且為 ADMIN
- 		Member user = (Member) session.getAttribute("loggedInMember");
- 		if (user == null || !user.getAccess().equals(MemberAccess.ADMIN)) {
- 			return null;
- 		}
+// 		Member user = (Member) session.getAttribute("loggedInMember");
+// 		if (user == null || !user.getAccess().equals(MemberAccess.ADMIN)) {
+// 			return null;
+// 		}
  		// 送出條件查詢總頁數
  		Integer pages = pService.getPages(sortCon);
  		return pages;

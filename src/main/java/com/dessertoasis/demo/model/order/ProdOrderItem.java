@@ -1,7 +1,5 @@
 package com.dessertoasis.demo.model.order;
 
-import java.math.BigDecimal;
-
 import com.dessertoasis.demo.model.cart.ProductCartDTO;
 import com.dessertoasis.demo.model.product.Product;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -35,7 +33,7 @@ public class ProdOrderItem {
 	private Product product;
 	
 	@Column
-	private BigDecimal price;
+	private Integer price;
 	
 	@Column
 	private Integer quantity;
