@@ -133,15 +133,15 @@ public class LoginController {
 	    return "redirect:/"; // 
 	}
 	
-//	//從session 拿出member資料
-//	  @GetMapping("/memberSession")
-//	    public Member getSessionMember(HttpServletRequest request) {
-//	        
-//	        HttpSession session = request.getSession();
-//	        Member loggedInMember = (Member) session.getAttribute("loggedInMember");
-//	        
-//	        return loggedInMember;
-//	    }
+	//從session 拿出member資料
+	  @GetMapping("/memberSession")
+	    public Member getSessionMember(HttpServletRequest request) {
+	        
+	        HttpSession session = request.getSession();
+	        Member loggedInMember = (Member) session.getAttribute("loggedInMember");
+	        
+	        return loggedInMember;
+	    }
 	  
 	  //更新密碼
 

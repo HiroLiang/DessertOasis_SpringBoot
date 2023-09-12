@@ -109,20 +109,35 @@ public class MemberService {
     	javaMailSender.send(mailMessage);
     }
 
-
-    public void changeMemberPassword(String account, String oldPassword, String newPassword) {
-        Member member = mRepo.findByAccount(account);
-
-        if (member != null) {
-            // 驗證輸入的舊密碼是否正確
-            if (passwordEncoder.matches(oldPassword, member.getPasswords())) {
-                // 正確的話，加密新密碼並更新
-                String encodedNewPassword = passwordEncoder.encode(newPassword);
-                member.setPasswords(encodedNewPassword);
-                mRepo.save(member);
-            } 
-        } 
+    //更新密碼
+    public void updateMemberPassword(Member member, String Password, String newPassword) {
+        try {
+            
+        	if (member != null) {
+                // 獲取 Member 對象的密碼，進行舊密碼驗證
+                String storedPassword = member.getPasswords();
+                
+                // 驗證舊密碼
+                if (passwordEncoder.matches(Password, storedPassword)) {
+                    // 舊密碼驗證通過，加密新密碼並更新
+                    String encodedNewPassword = passwordEncoder.encode(newPassword);
+                    member.setPasswords(encodedNewPassword);
+                    mRepo.save(member);
+                } else {
+                    // 密碼驗證失敗
+                    throw new IllegalArgumentException("舊密碼不正確，請重新輸入。");
+                }
+            } else {
+                // 如果傳入的 Member 對象為空
+                throw new IllegalArgumentException("會員不存在。");
+            }
+        } catch (Exception e) {
+            // 處理潛在的異常，如數據庫連接問題
+            throw new RuntimeException("密碼更新失敗，請稍後重試。", e);
+        }
     }
+
+
 	
 	
 	
