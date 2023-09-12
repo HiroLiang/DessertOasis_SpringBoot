@@ -7,33 +7,32 @@ import lombok.Data;
 @Data
 public class ProdSearchDTO {
 	private Integer id;
-	private String prodName;
 	private String categoryName;
 	private Integer prodPrice;
 	private Integer prodPurchase;
+	private String prodRemark;
 	private Integer prodStock;
 	private String productStatus;
-	private Timestamp updateTime;
 	private Integer saleAfterUpdate;
-	private String prodRemark;
-
-	public ProdSearchDTO(Integer id, String prodName, String categoryName, Integer prodPrice, Integer prodPurchase,
-			Integer prodStock, String productStatus, Timestamp updateTime, Integer saleAfterUpdate, String prodRemark) {
+	private Timestamp updateTime;
+	private String prodName;
+	public ProdSearchDTO(Integer id, String categoryName, Integer prodPrice, Integer prodPurchase, String prodRemark,
+			Integer prodStock, String productStatus, Integer saleAfterUpdate, Timestamp updateTime, String prodName) {
 		super();
 		this.id = id;
-		this.prodName = prodName;
 		this.categoryName = categoryName;
 		this.prodPrice = prodPrice;
 		this.prodPurchase = prodPurchase;
+		this.prodRemark = prodRemark;
 		this.prodStock = prodStock;
 		this.productStatus = productStatus;
-		this.updateTime = updateTime;
 		this.saleAfterUpdate = saleAfterUpdate;
-		this.prodRemark = prodRemark;
+		this.updateTime = updateTime;
+		this.prodName = prodName;
 	}
-
 	public ProdSearchDTO() {
 		super();
 	}
+
 
 }

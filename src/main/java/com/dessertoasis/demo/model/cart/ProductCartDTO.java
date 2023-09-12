@@ -1,6 +1,5 @@
 package com.dessertoasis.demo.model.cart;
 
-import java.math.BigDecimal;
 import java.util.List;
 
 import com.dessertoasis.demo.model.product.Product;
@@ -22,8 +21,20 @@ public class ProductCartDTO {
 	public ProductCartDTO() {
 		
 	}
+
+	public ProductCartDTO(Integer cartId, Integer productId, String prodName, Integer prodStock, Integer prodPrice,
+			List<ProductPicture> pictures, Integer prodQuantity) {
+		super();
+		this.cartId = cartId;
+		this.productId = productId;
+		this.prodName = prodName;
+		this.prodStock = prodStock;
+		this.prodPrice = prodPrice;
+		this.pictures = pictures;
+		this.prodQuantity = prodQuantity;
+	}
 	
-	public ProductCartDTO(Cart cart, Product product) {
+	public ProductCartDTO(Cart cart,Product product) {
 		this.cartId = cart.getId();
 		this.productId = product.getId();
 		this.prodName = product.getProdName();
@@ -32,4 +43,5 @@ public class ProductCartDTO {
 		this.pictures = product.getPictures();
 		this.prodQuantity = cart.getProdQuantity();
 	}
+	
 }

@@ -10,26 +10,27 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.Data;
 
-//@Entity 
+@Entity 
 @Data
-//@Table(name = "chatMessage")
+@Table(name = "chatMessage")
 public class ChatMessage {
 	
-//	@Id @Column(name = "ID" , columnDefinition = "INT")
-//	@GeneratedValue(strategy = GenerationType.IDENTITY)
-//	private Integer id;
-//	@Column(name = "SENDER" , columnDefinition = "INT")
+	@Id @Column(name = "ID" , columnDefinition = "INT")
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Integer id;
+	@Column(name = "SENDER" , columnDefinition = "INT")
 	private Integer  sender;
-//	@Column(name = "CATCHER" , columnDefinition = "INT")
+	@Column(name = "CATCHER" , columnDefinition = "INT")
 	private Integer catcher;
-//	@Column(name = "MESSAGE" , columnDefinition = "NVARCHAR(255)")
+	@Column(name = "MESSAGE" , columnDefinition = "NVARCHAR(255)")
 	private String message;
-//	@Column(name = "SENDTIME" , columnDefinition = "DATETIME2")
+	@Column(name = "SENDTIME" , columnDefinition = "DATETIME2")
 	private LocalDateTime sendTime;
-//	@Column(name = "MESSAGESTATE" , columnDefinition = "NVARCHAR(10)")
+	@Column(name = "MESSAGESTATE" , columnDefinition = "NVARCHAR(25)")
 	private MessageState messageState;
 	
 	public enum MessageState {
+		UNSENDED,
 		UNREAD,
 		READED
 	}
