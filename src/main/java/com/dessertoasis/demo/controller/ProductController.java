@@ -1,5 +1,7 @@
 package com.dessertoasis.demo.controller;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +19,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
+import com.dessertoasis.demo.model.category.Category;
 import com.dessertoasis.demo.model.member.Member;
 import com.dessertoasis.demo.model.member.MemberAccess;
 import com.dessertoasis.demo.model.order.OrderCmsTable;
@@ -53,12 +57,42 @@ public class ProductController {
             return ResponseEntity.notFound().build();
         }
     }
-
+//    @PostMapping("/add")
+//    public ResponseEntity<Product> addProduct(@RequestBody Product product) {
+//        pService.insert(product);
+//        return ResponseEntity.ok(product);
+//    }
+    
     @PostMapping("/add")
-    public ResponseEntity<Product> addProduct(@RequestBody Product product) {
-        pService.insert(product);
-        return ResponseEntity.ok(product);
+    public ResponseEntity<Product> addProduct(@RequestParam("images") List<MultipartFile> images, @RequestBody Product product) {
+        Product savedProduct = pService.insert(product);
+
+        
+        String uploadDir = "C:/workspace/dessertoasis-vue/public/images/product" + savedProduct.getId();
+        File dir = new File(uploadDir);
+        if (!dir.exists()) {
+            dir.mkdirs();
+        }
+
+       
+        for (MultipartFile image : images) {
+            if (!image.isEmpty()) {
+                try {
+                 
+                    String imagePath = uploadDir + "/" + image.getOriginalFilename();
+                    File destination = new File(imagePath);
+                    image.transferTo(destination);
+
+                    pService.addImageToProduct(savedProduct.getId(), imagePath);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        return ResponseEntity.ok(savedProduct);
     }
+
 
     @PostMapping("/edit/{id}")
     public ResponseEntity<Product> editProduct(@PathVariable Integer id, @RequestBody Product product) {
