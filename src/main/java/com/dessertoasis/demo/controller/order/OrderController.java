@@ -62,6 +62,9 @@ public class OrderController {
 		order = orderService.placeProdOrderItem(order, productCartDTOs);
 		order = orderService.placeCourseOrderItem(order, courseCartDTOs);
 		order = orderService.placeReservation(order, rsvCartDTOs);
+		
+		// 訂單設置商品運送地址
+		order.setProdOrderAddress(cartList.getProdOrderAddress());
 	
 		// 新增訂單
 		order = orderService.insert(order, member.getId());

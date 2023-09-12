@@ -9,6 +9,7 @@ public class CartListDTO {
 	private List<ProductCartDTO> productCartDTOs;
 	private List<CourseCartDTO> courseCartDTOs;
 	private List<ReservationCartDTO> reservationCartDTOs;
+	private String prodOrderAddress;
 	
 	public CartListDTO() {
 		
