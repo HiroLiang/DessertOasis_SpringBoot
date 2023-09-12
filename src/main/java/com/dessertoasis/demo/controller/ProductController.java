@@ -24,7 +24,7 @@ import com.dessertoasis.demo.model.order.OrderCmsTable;
 import com.dessertoasis.demo.model.product.ProdSearchDTO;
 import com.dessertoasis.demo.model.product.Product;
 import com.dessertoasis.demo.model.sort.SortCondition;
-import com.dessertoasis.demo.service.ProductService;
+import com.dessertoasis.demo.service.product.ProductService;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -85,7 +85,7 @@ public class ProductController {
         Page<Product> products = pService.searchProducts(criteria, pageable);
         return ResponseEntity.ok(products);
     }
-
+//
 //    @PostMapping("/criter")
 //    public ResponseEntity<Page<Product>> searchProducts(
 //            @RequestBody ProdSearchDTO criteria,
@@ -159,7 +159,7 @@ public class ProductController {
         return ResponseEntity.ok(products);
     }
     
- // 訂單分頁查詢
+ 
  	@PostMapping("/pagenation")
  	public List<ProdSearchDTO> getOrderPage(@RequestBody SortCondition sortCon, HttpSession session) {
  		System.out.println(sortCon);

@@ -88,6 +88,7 @@ public class Product {
 	 @OneToMany(mappedBy = "product")
 	 private List<ProdOrderItem> prodOrderItems;
 
+
 	public Product() {
 		super();
 	}
@@ -111,5 +112,5 @@ public class Product {
 		this.pictures = pictures;
 		this.prodOrderItems = prodOrderItems;
 	}
-	
+
 }
