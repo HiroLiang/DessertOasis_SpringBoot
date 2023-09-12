@@ -110,7 +110,19 @@ public class MemberService {
     }
 
 
-	
+    public void changeMemberPassword(String account, String oldPassword, String newPassword) {
+        Member member = mRepo.findByAccount(account);
+
+        if (member != null) {
+            // 驗證輸入的舊密碼是否正確
+            if (passwordEncoder.matches(oldPassword, member.getPasswords())) {
+                // 正確的話，加密新密碼並更新
+                String encodedNewPassword = passwordEncoder.encode(newPassword);
+                member.setPasswords(encodedNewPassword);
+                mRepo.save(member);
+            } 
+        } 
+    }
 	
 	
 	

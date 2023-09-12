@@ -6,7 +6,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.dessertoasis.demo.model.member.Member;
@@ -73,7 +75,19 @@ public class MemberController {
 	}
 	
 	
+	@PostMapping("/changepassword")
+	public ResponseEntity<String> changePassword(
+			@RequestParam("account") String account,
+			@RequestParam("oldPassword") String oldPassword,
+			@RequestParam("password") String password) {
+		
+		mService.changeMemberPassword(account, oldPassword, password);
+		
+		return ResponseEntity.ok("密碼已更改");
+		
 	
+	}
+	    
 	 
 	 
 	 

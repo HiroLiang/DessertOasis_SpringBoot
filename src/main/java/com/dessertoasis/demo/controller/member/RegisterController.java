@@ -37,12 +37,12 @@ public class RegisterController {
         newMember.setPasswords(member.getPasswords());
         
         //創立新帳，產生驗證token
-        String verificationToken = UUID.randomUUID().toString();
-        newMember.setVerificationToken(verificationToken);
-        
-        //產生此會員的驗證信連結
-        String verificationLink ="http://localhost:5173/#/"+verificationToken;
-        mService.sendVerificationEmail(newMember.getEmail(),verificationLink);
+//        String verificationToken = UUID.randomUUID().toString();
+//        newMember.setVerificationToken(verificationToken);
+//        
+//        //產生此會員的驗證信連結
+//        String verificationLink ="http://localhost:5173/#/"+verificationToken;
+//        mService.sendVerificationEmail(newMember.getEmail(),verificationLink);
         
         
         //創立新帳號為不活耀狀態
