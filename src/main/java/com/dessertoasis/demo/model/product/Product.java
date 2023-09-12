@@ -90,10 +90,7 @@ public class Product {
 	 @OneToMany(mappedBy = "product")
 	 private List<ProdOrderItem> prodOrderItems;
 
-	public Object getAccess() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+	
 	
 //	public Product() {
 //	}

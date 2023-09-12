@@ -1,4 +1,4 @@
-package com.dessertoasis.demo.service;
+package com.dessertoasis.demo.service.product;
 
 import java.beans.BeanInfo;
 import java.beans.IntrospectionException;
@@ -35,6 +35,7 @@ import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
 
 import org.springframework.data.jpa.domain.Specification;
+
 @Service
 public class ProdPageService {
 	@PersistenceContext
@@ -63,11 +64,11 @@ public class ProdPageService {
  			System.out.println("search");
  			for (SearchRules rule : sortCon.getSearchRules()) {
  				if (hasProperty(product, rule.getKey())) {
- 					predicate = cb.and(predicate, cb.like(root.get(rule.getKey()), rule.getInput()));
- 				} else {
- 					predicate = cb.and(predicate, cb.like(join.get(rule.getKey()), rule.getInput()));
- 				}
- 			}
+					predicate = cb.and(predicate, cb.like(root.get(rule.getKey()), "%"+rule.getInput()+"%"));
+				} else {
+					predicate = cb.and(predicate, cb.like(join.get(rule.getKey()), "%"+rule.getInput()+"%"));
+				}
+			}
  		}
  		// 日期範圍
  		if (sortCon.getDateRules() != null && sortCon.getDateRules().size() != 0) {

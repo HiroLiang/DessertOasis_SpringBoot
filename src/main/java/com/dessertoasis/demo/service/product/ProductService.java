@@ -1,4 +1,4 @@
-package com.dessertoasis.demo.service;
+package com.dessertoasis.demo.service.product;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,6 +20,7 @@ import com.dessertoasis.demo.model.sort.DateRules;
 import com.dessertoasis.demo.model.sort.SearchRules;
 import com.dessertoasis.demo.model.sort.SortCondition;
 import com.dessertoasis.demo.model.sort.SortCondition.SortWay;
+import com.dessertoasis.demo.service.PageSortService;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
@@ -39,8 +40,11 @@ public class ProductService {
     @Autowired
     private ProductRepository prodRepo;
  
+//    @Autowired
+//	private ProdPageService ppService;
+    
     @Autowired
-	private ProdPageService pService;
+	private PageSortService ppService;
     
     public Product findProductById(Integer id) {
         Optional<Product> optional = prodRepo.findById(id);
@@ -81,34 +85,34 @@ public class ProductService {
                 predicates.add(builder.like(root.get("categoryName"), "%" + criteria.getCategoryName() + "%"));
             }
             
-//            if (criteria.getProdPrice() != null) {
-//                predicates.add(builder.like(root.get("prodPrice"), "%" + criteria.getProdPrice() + "%"));
-//            }
-//            
-//            if (criteria.getProdPurchase() != null) {
-//                predicates.add(builder.like(root.get("prodPurchase"), "%" + criteria.getProdPurchase() + "%"));
-//            }
-//            
-//            if (criteria.getProdStock() != null) {
-//                predicates.add(builder.like(root.get("prodStock"), "%" + criteria.getProdStock() + "%"));
-//            }
+            if (criteria.getProdPrice() != null) {
+                predicates.add(builder.like(root.get("prodPrice"), "%" + criteria.getProdPrice() + "%"));
+            }
+            
+            if (criteria.getProdPurchase() != null) {
+                predicates.add(builder.like(root.get("prodPurchase"), "%" + criteria.getProdPurchase() + "%"));
+            }
+            
+            if (criteria.getProdStock() != null) {
+                predicates.add(builder.like(root.get("prodStock"), "%" + criteria.getProdStock() + "%"));
+            }
             
             if (criteria.getProductStatus() != null) {
                 predicates.add(builder.like(root.get("productStatus"), "%" + criteria.getProductStatus() + "%"));
             }
             
-//            if (criteria.getUpdateTime() != null) {
-//                predicates.add(builder.like(root.get("updateTime"), "%" + criteria.getUpdateTime() + "%"));
-//            }
-//            
-//            if (criteria.getSaleAfterUpdate() != null) {
-//                predicates.add(builder.like(root.get("saleAfterUpdate"), "%" + criteria.getSaleAfterUpdate() + "%"));
-//            }
+            if (criteria.getUpdateTime() != null) {
+                predicates.add(builder.like(root.get("updateTime"), "%" + criteria.getUpdateTime() + "%"));
+            }
             
-//            if (criteria.getProdRemark() != null) {
-//                predicates.add(builder.like(root.get("prodRemark"), "%" + criteria.getProdRemark() + "%"));
-//            }
-//           
+            if (criteria.getSaleAfterUpdate() != null) {
+                predicates.add(builder.like(root.get("saleAfterUpdate"), "%" + criteria.getSaleAfterUpdate() + "%"));
+            }
+            
+            if (criteria.getProdRemark() != null) {
+                predicates.add(builder.like(root.get("prodRemark"), "%" + criteria.getProdRemark() + "%"));
+            }
+           
 //
 //            if (criteria.getMinprodPrice() != null) {
 //                predicates.add(builder.greaterThanOrEqualTo(root.get("prodPrice"), criteria.getMinprodPrice()));
@@ -152,7 +156,7 @@ public class ProductService {
     
  
  	
-//Order table範例
+
 	public List<ProdSearchDTO> getProductPagenation(SortCondition sortCon) {
 		CriteriaBuilder cb = em.getCriteriaBuilder();
 
@@ -164,13 +168,12 @@ public class ProductService {
 		Join<Product,Category> join = root.join("category");
 
 		// 決定查詢 column
-		cq.multiselect(root.get("id"), join.get("categoryName"), root.get("prodPrice"), root.get("prodPurchase"),
-				root.get("prodRemark"), root.get("prodStock"),root.get("productStatus"),root.get("saleAfterUpdate"),root.get("updateTime"),root.get("prodName"));
-
+		cq.multiselect(root.get("id"),join.get("categoryName"),root.get("prodPrice"),root.get("prodPurchase"),root.get("prodRemark"),root.get("prodStock"),root.get("productStatus"),root.get("saleAfterUpdate"),root.get("updateTime"),root.get("prodName"));
+		
 		// 加入查詢條件
 		Predicate predicate = cb.conjunction();
 		Product product = new Product();
-		Predicate pre = pService.checkCondition(root, join, predicate, sortCon, cb, product);
+		Predicate pre = ppService.checkCondition(root, join, predicate, sortCon, cb, product);
 		
 		// 填入 where 條件
 		cq.where(pre);
@@ -178,7 +181,7 @@ public class ProductService {
 		// 排序條件
 		if (sortCon.getSortBy() != null) {
 			System.out.println("sort");
-			if (pService.hasProperty(product, sortCon.getSortBy())) {
+			if (ppService.hasProperty(product, sortCon.getSortBy())) {
 				if (sortCon.getSortBy() != null && sortCon.getSortWay().equals(SortWay.ASC)) {
 					cq.orderBy(cb.asc(root.get(sortCon.getSortBy())));
 				} else if (sortCon.getSortBy() != null && sortCon.getSortWay().equals(SortWay.DESC)) {
@@ -221,7 +224,7 @@ public class ProductService {
 		// 加入查詢條件
 		Predicate predicate = cb.conjunction();
 		Product product = new Product();
-		Predicate pre = pService.checkCondition(root, join, predicate, sortCon, cb, product);
+		Predicate pre = ppService.checkCondition(root, join, predicate, sortCon, cb, product);
 		cq.where(pre);
 		
 		//查詢總頁數
