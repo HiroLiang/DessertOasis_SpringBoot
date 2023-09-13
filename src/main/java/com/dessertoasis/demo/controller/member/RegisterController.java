@@ -13,9 +13,12 @@ import com.dessertoasis.demo.model.member.MemberAccess;
 import com.dessertoasis.demo.model.member.MemberState;
 import com.dessertoasis.demo.service.member.MemberService;
 
+
 @RestController
 public class RegisterController {
-
+	
+	
+	
     @Autowired
     private MemberService mService;
 
@@ -26,7 +29,7 @@ public class RegisterController {
         if (mService.checkIfAccountExist(member.getAccount())) {
             return "N";
         }
-        
+       
         // 創建會員並加密密碼
         Member newMember = new Member();
         newMember.setAccount(member.getAccount());
@@ -34,12 +37,12 @@ public class RegisterController {
         newMember.setPasswords(member.getPasswords());
         
         //創立新帳，產生驗證token
-        String verificationToken = UUID.randomUUID().toString();
-        newMember.setVerificationToken(verificationToken);
-        
-        //產生此會員的驗證信連結
-        String verificationLink ="http://localhost:5173/#/"+verificationToken;
-        mService.sendVerificationEmail(newMember.getEmail(),verificationLink);
+//        String verificationToken = UUID.randomUUID().toString();
+//        newMember.setVerificationToken(verificationToken);
+//        
+//        //產生此會員的驗證信連結
+//        String verificationLink ="http://localhost:5173/#/"+verificationToken;
+//        mService.sendVerificationEmail(newMember.getEmail(),verificationLink);
         
         
         //創立新帳號為不活耀狀態

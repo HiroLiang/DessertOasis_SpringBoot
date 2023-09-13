@@ -3,10 +3,13 @@ package com.dessertoasis.demo.controller.member;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.dessertoasis.demo.model.member.Member;
@@ -73,7 +76,31 @@ public class MemberController {
 	}
 	
 	
+	@PostMapping("/{id}/changepassword")
+	public ResponseEntity<String> changePassword(
+	        @PathVariable Integer id,
+	        @RequestParam("oldPassword") String Password,
+	        @RequestParam("newPassword") String newPassword) {
+
+	    try {
+	        mService.updateMemberPassword(mService.findByMemberId(id), Password, newPassword);
+	        return ResponseEntity.ok("密碼已更改");
+	    } catch (IllegalArgumentException e) {
+	        // 捕獲 IllegalArgumentException 異常，這是密碼驗證失敗的情況
+	        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+	    } catch (RuntimeException e) {
+	        // 捕獲其他可能的運行時異常，例如數據庫連接問題
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("密碼更新失敗，請稍後重試。");
+	    }
+	}
 	
+
+
+
+
+
+
+	    
 	 
 	 
 	 

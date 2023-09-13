@@ -2,9 +2,13 @@ package com.dessertoasis.demo.model.recipe;
 
 import com.dessertoasis.demo.model.category.Category;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.MapsId;
@@ -16,19 +20,23 @@ import lombok.Data;
 @Table(name="recipeCategory")
 public class RecipeCategory {
 	
-	@EmbeddedId
-	private RecipeCategoryKey id;
+//	@EmbeddedId
+//	private RecipeCategoryKey id;
 
-	@JsonIgnore
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY )
+	private Integer id;
+	
+//	@JsonIgnoreProperties("recipeCategories")
 	@ManyToOne
-	@MapsId("recipeId")
-	@JoinColumn(name = "recipeId")
+//	@MapsId("recipeId")
+	@JoinColumn(name = "recipeId",referencedColumnName = "id")
 	private Recipes recipe;
 	
-	@JsonIgnore
+//	@JsonIgnoreProperties("recipeCategories")
 	@ManyToOne
-	@MapsId("categoryId")
-	@JoinColumn(name = "categoryId")
+//	@MapsId("categoryId")
+	@JoinColumn(name = "categoryId",referencedColumnName = "id")
 	private Category category;
 	
 	public RecipeCategory() {

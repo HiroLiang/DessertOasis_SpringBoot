@@ -1,5 +1,7 @@
 package com.dessertoasis.demo.listener;
 
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
 import org.springframework.messaging.simp.SimpMessageSendingOperations;
@@ -8,7 +10,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.socket.messaging.SessionConnectedEvent;
 import org.springframework.web.socket.messaging.SessionDisconnectEvent;
 
-import com.dessertoasis.demo.model.Chat.ChatMessage;
+import com.dessertoasis.demo.model.websocket.ChatMessage;
 
 @Component
 public class WebSocketEventListener {
@@ -23,17 +25,23 @@ public class WebSocketEventListener {
 	
 	@EventListener
     public void handleWebSocketDisconnectListener(SessionDisconnectEvent event) {
-        StompHeaderAccessor headerAccessor = StompHeaderAccessor.wrap(event.getMessage());
-
-        String username = (String) headerAccessor.getSessionAttributes().get("username");
-        if(username != null) {
-            System.out.println("使用者" + username + "已離線");
-
-            ChatMessage chatMessage = new ChatMessage();
-            chatMessage.setType(ChatMessage.ChatType.LEAVE);
-            chatMessage.setSender(username);
-
-            messagingTemplate.convertAndSend("/topic/public", chatMessage);
-        }
+		System.out.println("disconnect");
+//        StompHeaderAccessor headerAccessor = StompHeaderAccessor.wrap(event.getMessage());
+//
+//        String username = (String) headerAccessor.getSessionAttributes().get("username");
+//        if(username != null) {
+//            System.out.println("使用者" + username + "已離線");
+//
+//            ChatMessage chatMessage = new ChatMessage();
+//
+//            messagingTemplate.convertAndSend("/topic/public", chatMessage);
+//        }
     }
+	
+	@EventListener
+	void handleSessionConnectedEvent(SessionConnectedEvent event) {
+	    // Get Accessor
+//	    StompHeaderAccessor sha = StompHeaderAccessor.wrap(event.getMessage());
+
+	}
 }

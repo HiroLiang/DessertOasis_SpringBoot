@@ -1,5 +1,7 @@
 package com.dessertoasis.demo.controller;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,10 +19,20 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
+import com.dessertoasis.demo.model.category.Category;
+import com.dessertoasis.demo.model.member.Member;
+import com.dessertoasis.demo.model.member.MemberAccess;
+import com.dessertoasis.demo.model.order.OrderCmsTable;
 import com.dessertoasis.demo.model.product.ProdSearchDTO;
 import com.dessertoasis.demo.model.product.Product;
-import com.dessertoasis.demo.service.ProductService;
+import com.dessertoasis.demo.model.sort.SortCondition;
+import com.dessertoasis.demo.service.product.ProductService;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import jakarta.servlet.http.HttpSession;
 
 @RestController
 @RequestMapping("/product")
@@ -45,12 +57,42 @@ public class ProductController {
             return ResponseEntity.notFound().build();
         }
     }
-
+//    @PostMapping("/add")
+//    public ResponseEntity<Product> addProduct(@RequestBody Product product) {
+//        pService.insert(product);
+//        return ResponseEntity.ok(product);
+//    }
+    
     @PostMapping("/add")
-    public ResponseEntity<Product> addProduct(@RequestBody Product product) {
-        pService.insert(product);
-        return ResponseEntity.ok(product);
+    public ResponseEntity<Product> addProduct(@RequestParam("images") List<MultipartFile> images, @RequestBody Product product) {
+        Product savedProduct = pService.insert(product);
+
+        
+        String uploadDir = "C:/workspace/dessertoasis-vue/public/images/product" + savedProduct.getId();
+        File dir = new File(uploadDir);
+        if (!dir.exists()) {
+            dir.mkdirs();
+        }
+
+       
+        for (MultipartFile image : images) {
+            if (!image.isEmpty()) {
+                try {
+                 
+                    String imagePath = uploadDir + "/" + image.getOriginalFilename();
+                    File destination = new File(imagePath);
+                    image.transferTo(destination);
+
+                    pService.addImageToProduct(savedProduct.getId(), imagePath);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        return ResponseEntity.ok(savedProduct);
     }
+
 
     @PostMapping("/edit/{id}")
     public ResponseEntity<Product> editProduct(@PathVariable Integer id, @RequestBody Product product) {
@@ -77,7 +119,7 @@ public class ProductController {
         Page<Product> products = pService.searchProducts(criteria, pageable);
         return ResponseEntity.ok(products);
     }
-
+//
 //    @PostMapping("/criter")
 //    public ResponseEntity<Page<Product>> searchProducts(
 //            @RequestBody ProdSearchDTO criteria,
@@ -104,31 +146,83 @@ public class ProductController {
 //    }
 
     @GetMapping("/search")
-    
     public ResponseEntity<Page<Product>> searchProducts(
-            ProdSearchDTO criteria,
-            @PageableDefault(size = 20) Pageable pageable,
-            @RequestParam(value = "sortBy", required = false) String sortBy,
-            @RequestParam(value = "pageSize", required = false) Integer pageSize
+    		@RequestParam(value = "prodName", required = false) String prodName,
+        @RequestParam(value = "productStatus", required = false) String productStatus,
+        @RequestParam(value = "categoryName", required = false) String categoryName,
+        @RequestParam(value = "sortBy", required = false) String sortBy,
+        @RequestParam(value = "pageSize", required = false) Integer pageSize,
+        @PageableDefault(size = 20) Pageable pageable
     ) {
-        Sort sort = Sort.unsorted();
+        ProdSearchDTO criteria = new ProdSearchDTO();
 
+        // 設置關鍵字
+        if (prodName != null && !prodName.isEmpty()) {
+            criteria.setProdName(prodName);
+        }
+        
+        if (productStatus != null && !productStatus.isEmpty()) {
+            criteria.setProductStatus(productStatus);
+        }
+        
+        if (categoryName != null && !categoryName.isEmpty()) {
+            criteria.setProductStatus(categoryName);
+        }
+        
+
+        // 設置排序
+        Sort sort = Sort.unsorted();
         if (sortBy != null && !sortBy.isEmpty()) {
-            String[] sortParams = sortBy.split("&");
+        	String[] sortParams = sortBy.split("&");
             for (String param : sortParams) {
                 String[] sortField = param.split(",");
                 if (sortField.length == 2) {
                     String field = sortField[0];
-                    String direction = sortField[1].toUpperCase(); // Ensure direction is uppercase
+                    String direction = sortField[1].toUpperCase(); // 確保方向為大寫
                     Sort.Order order = "ASC".equals(direction) ? Sort.Order.asc(field) : Sort.Order.desc(field);
                     sort = sort.and(Sort.by(order));
                 }
             }
         }
 
+        // 設置頁面大小
         int adjustedPage = pageable.getPageNumber() - 1;
         int effectivePageSize = pageSize != null ? pageSize : 20;
 
         Page<Product> products = pService.searchProducts(criteria, PageRequest.of(adjustedPage, effectivePageSize, sort));
         return ResponseEntity.ok(products);
-    }}
+    }
+    
+ 
+ 	@PostMapping("/pagenation")
+ 	public List<ProdSearchDTO> getOrderPage(@RequestBody SortCondition sortCon, HttpSession session) {
+ 		System.out.println(sortCon);
+ 		// 判斷 user 存在且為 ADMIN
+// 		Member user = (Member) session.getAttribute("loggedInMember");
+// 		if (user == null || !user.getAccess().equals(MemberAccess.ADMIN)) {
+// 			return null;
+// 		}
+ 		// 送出查詢條件給service，若有結果則回傳list
+ 		List<ProdSearchDTO> result = pService.getProductPagenation(sortCon);
+ 		if (result != null) {
+ 			System.out.println(result);
+ 			return result;
+ 		}
+ 		return null;
+ 	}
+
+ 	@PostMapping("/pages")
+ 	public Integer getPages(@RequestBody SortCondition sortCon, HttpSession session) {
+ 		System.out.println(sortCon);
+ 		// 判斷 user 存在且為 ADMIN
+// 		Member user = (Member) session.getAttribute("loggedInMember");
+// 		if (user == null || !user.getAccess().equals(MemberAccess.ADMIN)) {
+// 			return null;
+// 		}
+ 		// 送出條件查詢總頁數
+ 		Integer pages = pService.getPages(sortCon);
+ 		return pages;
+ 	}
+
+
+}
