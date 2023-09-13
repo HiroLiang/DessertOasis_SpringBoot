@@ -25,7 +25,7 @@ public class Ingredient {
 	private Integer id;
 	
 	//食材名稱
-	@Column(name = "ingredientName",nullable=true,columnDefinition = "nvarchar(50)")
+	@Column(name = "ingredientName",nullable=false,columnDefinition = "nvarchar(50)")
 	private String ingredientName;
 	
 	@OneToMany(mappedBy = "ingredient")

@@ -1,5 +1,7 @@
 package com.dessertoasis.demo.controller.recipe;
 
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -12,7 +14,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import javax.imageio.ImageIO;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -361,6 +368,49 @@ public class RecipeController {
 	}
 
 	/*----------------------------------------------圖檔處理回傳儲存路徑Controller------------------------------------------------------------------*/
+	/*----------------------------------------------處理前端請求回傳base64給前端顯示Controller------------------------------------------------------------------*/
+	
+	@PostMapping("recipe/getPic")
+	@ResponseBody
+	public ResponseEntity<String> getPic(@RequestBody Integer recipeId) {
+		Optional<Recipes> findById = recipeRepo.findById(recipeId);
+		if(findById.isPresent()) {
+			String userPath= "C:\\Users\\iSpan\\Documents\\dessertoasis-vue\\public\\";
+			Recipes recipe = findById.get();
+			String pictureURL = recipe.getPictureURL();
+			try {
+				BufferedImage read = ImageIO.read(new File(userPath+pictureURL));
+				
+				if(read != null) {
+					ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+					int lastDotIndex = pictureURL.lastIndexOf(".");
+					if(lastDotIndex>0) {
+						String formatName = pictureURL.substring(lastDotIndex+1);
+						ImageIO.write(read, formatName, byteArrayOutputStream);
+						byte[] img = byteArrayOutputStream.toByteArray();
+						String base64Img = Base64.getEncoder().encodeToString(img);
+						
+						 HttpHeaders headers = new HttpHeaders();
+					        headers.setContentType(MediaType.parseMediaType("image/" + formatName));
+						
+						return ResponseEntity.ok().headers(headers).body(base64Img);
+					}
+					
+				}else {
+					ResponseEntity.ok("Image not found");
+				}
+				
+			} catch (IOException e) {
+				e.printStackTrace();
+				ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("F");	
+			}
+		}
+		return ResponseEntity.ok("recipe not found");
+	}
+	
+	
+	/*----------------------------------------------處理前端請求回傳base64給前端顯示Controller------------------------------------------------------------------*/
+
 
 	// 更新食譜
 	@PutMapping("recipe/updaterecipe")

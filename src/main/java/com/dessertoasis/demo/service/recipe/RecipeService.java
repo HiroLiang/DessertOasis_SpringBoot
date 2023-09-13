@@ -197,7 +197,10 @@ public class RecipeService {
 		if (optional.isPresent()) {
 
 			int counter = 0;
+			System.out.println("out for");
 			for (Ingredient ingredientData : cDto.getIngredients()) {
+				System.out.println("in for");
+				System.out.println("name-------------------------------------------"+ingredientData.getIngredientName());
 				Ingredient existIngredient = ingreRepo.findByIngredientName(ingredientData.getIngredientName());
 				if (existIngredient != null) {
 					ingredientData = existIngredient;
@@ -214,11 +217,12 @@ public class RecipeService {
 			if (cDto.getRecipe().getCookingTime() == null) {
 				cDto.getRecipe().setCookingTime(0);
 			}
-//			System.out.println(cDto.getRecipe().getId()); //持久化前沒有id
-			Recipes save = recipeRepo.save(cDto.getRecipe());
-//			System.out.println(cDto.getRecipe().getId()); //持久化後能取得id
+			System.out.println(cDto.getRecipe().getId()); //持久化前沒有id
+			recipeRepo.save(cDto.getRecipe());
+			System.out.println(cDto.getRecipe().getId()); //持久化後能取得id
 //			List<RecipeCategory> recipecategories = new ArrayList<>();
-			List<Category> categories = cDto.getCategories();
+			/*--------------------------------------------儲存食譜類別區塊-----------------------------------------------------*/
+//			List<Category> categories = cDto.getCategories();
 //			System.out.println("before for");
 //			for (int i = 0; i < categories.size(); i++) {
 ////				System.out.println("for");
@@ -236,6 +240,8 @@ public class RecipeService {
 ////					System.out.println(" after save");
 //				}
 //			}
+		/*--------------------------------------------儲存食譜類別區塊-----------------------------------------------------*/
+
 			return true;
 		}
 		return false;
