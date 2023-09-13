@@ -75,6 +75,13 @@ public class CourseService {
 	public Course insert(Course course) {
 		return cRepo.save(course);
 	}
+	//新增課程
+//	public Boolean addCourse(Integer id,CourseCreateDTO cDTO) {
+//		Optional<Member> optional = mRepo.findById(id);
+//		if(optional.isPresent()) {
+//			
+//		}
+//	}
 	
 	//修改單筆課程
 	public Course updateById(Integer id,Course course) {
@@ -137,7 +144,7 @@ public class CourseService {
 			cDTO.setCoursePlace(course.getCoursePlace());
 			cDTO.setRecipeIntroduction(course.getRecipes().getRecipeIntroduction());
 			cDTO.setCoursePrice(course.getCoursePrice());
-//			cDTO.setCoursePictureList(course.getCoursePictureList());
+			cDTO.setCoursePictureList(course.getCoursePictureList());
 			cDTOs.add(cDTO);
 		}
 		return cDTOs;
@@ -187,7 +194,7 @@ public class CourseService {
 			Join<Course, Teacher> join = root.join("teacher");
 
 			// 決定查詢 column
-			cq.multiselect(root.get("id"), join.get("teacherName"),root.get("courseName")
+			cq.multiselect(root.get("id"), join.get("teacherName"),root.get("courseName"),root.get("courseDate"),root.get("closeDate"),root.get("coursePlace"),root.get("remainPlaces"),root.get("coursePrice"),root.get("courseStatus")
 					);
 
 			// 加入查詢條件
