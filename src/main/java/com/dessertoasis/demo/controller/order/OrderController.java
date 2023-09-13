@@ -1,6 +1,9 @@
 package com.dessertoasis.demo.controller.order;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -19,6 +22,7 @@ import com.dessertoasis.demo.model.member.Member;
 import com.dessertoasis.demo.model.member.MemberAccess;
 import com.dessertoasis.demo.model.order.Order;
 import com.dessertoasis.demo.model.order.OrderCmsTable;
+import com.dessertoasis.demo.model.order.OrderDTO;
 import com.dessertoasis.demo.model.sort.SortCondition;
 import com.dessertoasis.demo.service.cart.CartService;
 import com.dessertoasis.demo.service.order.OrderService;
@@ -42,12 +46,20 @@ public class OrderController {
 	
 	// 取得會員的訂單
 	@GetMapping("/order/member/page/{pageNum}")
-	public Page<Order> getOrdersByMember(@PathVariable("pageNum") Integer pageNum, HttpSession session) {
+	public Map<String, Object> getOrdersByMember(@PathVariable("pageNum") Integer pageNum, HttpSession session) {
 		Member member = (Member) session.getAttribute("loggedInMember");
 		
 		Integer pageSize = 5;
 		Page<Order> page = orderService.getPageByMemberId(member.getId(), pageNum, pageSize, Sort.Direction.DESC, "ordDate");
-		return page;
+		List<OrderDTO> orderDTOs = new ArrayList<>();
+		for (Order order : page.getContent()) {
+			orderDTOs.add(new OrderDTO(order));
+		}
+		
+		Map<String, Object> response = new HashMap<>();
+		response.put("totalPages", page.getTotalPages());
+		response.put("orders", orderDTOs);
+		return response;
 	}
 
 	// 新增訂單
