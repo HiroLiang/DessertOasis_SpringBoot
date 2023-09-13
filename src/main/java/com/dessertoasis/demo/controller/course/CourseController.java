@@ -213,45 +213,45 @@ public class CourseController {
 //		return "Fail";//新增失敗
 //	}
 	
-//	@PostMapping("/criteria")
-//    public ResponseEntity<Page<Course>> searchProducts(
-//            @RequestBody CourseSearchDTO criteria,
-//            Pageable pageable) {
-//    	
-//        Page<Course> products = cService.searchCourses(criteria, pageable);
-//        return ResponseEntity.ok(products);
-//    }
-//
-//	@GetMapping("/search")
-//    public ResponseEntity<Page<Course>> searchCourses(
-//            CourseSearchDTO criteria,
-//            @PageableDefault(size = 20) Pageable pageable,
-//            @RequestParam(value = "sortBy", required = false) String sortBy,
-//            @RequestParam(value = "pageSize", required = false) Integer pageSize
-//    ) {
-//        Sort sort = Sort.unsorted();
-//
-//        if (sortBy != null && !sortBy.isEmpty()) {
-//            String[] sortParams = sortBy.split("&");
-//            for (String param : sortParams) {
-//                String[] sortField = param.split(",");
-//                if (sortField.length == 2) {
-//                    String field = sortField[0];
-//                    String direction = sortField[1].toUpperCase(); // Ensure direction is uppercase
-//                    Sort.Order order = "ASC".equals(direction) ? Sort.Order.asc(field) : Sort.Order.desc(field);
-//                    sort = sort.and(Sort.by(order));
-//                }
-//            }
-//        }
-//
-//        int adjustedPage = pageable.getPageNumber() - 1;
-//        int effectivePageSize = pageSize != null ? pageSize : 20;
-//
-//        Page<Course> courses = cService.searchCourses(criteria, PageRequest.of(adjustedPage, effectivePageSize, sort));
-//        System.out.println(courses.getContent().get(0).getCoursePictureList().get(0).getCourseImgURL());
-//        return ResponseEntity.ok(courses);
-//    }
-//	
+	@PostMapping("/criteria")
+    public ResponseEntity<Page<Course>> searchProducts(
+            @RequestBody CourseSearchDTO criteria,
+            Pageable pageable) {
+    	
+        Page<Course> products = cService.searchCourses(criteria, pageable);
+        return ResponseEntity.ok(products);
+    }
+
+	@GetMapping("/search")
+    public ResponseEntity<Page<Course>> searchCourses(
+            CourseSearchDTO criteria,
+            @PageableDefault(size = 20) Pageable pageable,
+            @RequestParam(value = "sortBy", required = false) String sortBy,
+            @RequestParam(value = "pageSize", required = false) Integer pageSize
+    ) {
+        Sort sort = Sort.unsorted();
+
+        if (sortBy != null && !sortBy.isEmpty()) {
+            String[] sortParams = sortBy.split("&");
+            for (String param : sortParams) {
+                String[] sortField = param.split(",");
+                if (sortField.length == 2) {
+                    String field = sortField[0];
+                    String direction = sortField[1].toUpperCase(); // Ensure direction is uppercase
+                    Sort.Order order = "ASC".equals(direction) ? Sort.Order.asc(field) : Sort.Order.desc(field);
+                    sort = sort.and(Sort.by(order));
+                }
+            }
+        }
+
+        int adjustedPage = pageable.getPageNumber() - 1;
+        int effectivePageSize = pageSize != null ? pageSize : 20;
+
+        Page<Course> courses = cService.searchCourses(criteria, PageRequest.of(adjustedPage, effectivePageSize, sort));
+        System.out.println(courses.getContent().get(0).getCoursePictureList().get(0).getCourseImgURL());
+        return ResponseEntity.ok(courses);
+    }
+	
 	// 課程分頁查詢
 	@PostMapping("/pagenation")
 	public List<CourseCmsTable> getCoursePage(@RequestBody SortCondition sortCon, HttpSession session) {
