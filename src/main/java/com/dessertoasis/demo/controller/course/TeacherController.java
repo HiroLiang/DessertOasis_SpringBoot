@@ -16,10 +16,13 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.dessertoasis.demo.model.course.Course;
+import com.dessertoasis.demo.model.course.CourseCmsTable;
 import com.dessertoasis.demo.model.course.Teacher;
+import com.dessertoasis.demo.model.course.TeacherCmsTable;
 import com.dessertoasis.demo.model.course.TeacherDemo;
 import com.dessertoasis.demo.model.course.TeacherRepository;
 import com.dessertoasis.demo.model.member.Member;
+import com.dessertoasis.demo.model.member.MemberAccess;
 import com.dessertoasis.demo.model.sort.SortCondition;
 import com.dessertoasis.demo.service.course.CourseService;
 import com.dessertoasis.demo.service.course.TeacherService;
@@ -127,4 +130,35 @@ public class TeacherController {
 
 		return ResponseEntity.ok("Teacher cookie set successfully.");
 	}
+	
+	// 課程分頁查詢
+		@PostMapping("/pagenation")
+		public List<TeacherCmsTable> getTeacherPage(@RequestBody SortCondition sortCon, HttpSession session) {
+			System.out.println(sortCon);
+			// 判斷 user 存在且為 ADMIN
+//			Member user = (Member) session.getAttribute("loggedInMember");
+//			if (user == null || !user.getAccess().equals(MemberAccess.ADMIN)) {
+//				return null;
+//			}
+			// 送出查詢條件給service，若有結果則回傳list
+			List<TeacherCmsTable> result = tService.getTeacherPagenation(sortCon);
+			if (result != null) {
+				System.out.println(result);
+				return result;
+			}
+			return null;
+		}
+
+		@PostMapping("/pages")
+		public Integer getPages(@RequestBody SortCondition sortCon, HttpSession session) {
+			System.out.println(sortCon);
+			// 判斷 user 存在且為 ADMIN
+			Member user = (Member) session.getAttribute("loggedInMember");
+			if (user == null || !user.getAccess().equals(MemberAccess.ADMIN)) {
+				return null;
+			}
+			// 送出條件查詢總頁數
+			Integer pages = tService.getPages(sortCon);
+			return pages;
+		}
 }
