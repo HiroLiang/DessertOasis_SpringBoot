@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -65,8 +66,8 @@ public class MemberController {
 	        return new MemberDetail(); // 或者返回 null，視情況而定
 	    }
 	}
-
-    
+	
+	
 	
 	@GetMapping("/{id}/access")
 	public ResponseEntity<MemberAccess> getMemberaccessById(@PathVariable Integer id) {
@@ -80,6 +81,30 @@ public class MemberController {
 	}
 	
 	
+	@PutMapping("/update")
+    public ResponseEntity<MemberDetail> updateMemberDetail(
+            @PathVariable("id") Integer id,
+            @RequestBody MemberDetail updatedMemberDetail
+    ) {
+      
+        MemberDetail memberDetail = mdService.getMemberDetailByMemberId(id);
+
+        if (memberDetail == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+       
+        memberDetail.setIdNumber(updatedMemberDetail.getIdNumber());
+        memberDetail.setBirthday(updatedMemberDetail.getBirthday());
+        memberDetail.setDeliveryAddress(updatedMemberDetail.getDeliveryAddress());
+        memberDetail.setPic(updatedMemberDetail.getPic());
+        memberDetail.setFolderURL(updatedMemberDetail.getFolderURL());
+
+        
+        MemberDetail updatedMemberDetai = mdService.getMemberDetailByMemberId(id);
+
+        return ResponseEntity.ok(updatedMemberDetai);
+    }
 	
 	//更新密碼
 	@PostMapping("/changepassword")
@@ -90,7 +115,7 @@ public class MemberController {
 	    Member member = (Member) session.getAttribute("loggedInMember");
 	    if (member != null) {
 	        try {
-	            // 处理密码更改逻辑
+	            
 	            mService.updateMemberPassword(member.getId(), oldPassword, newPassword);
 	            return ResponseEntity.ok("密碼已更改");
 	        } catch (IllegalArgumentException e) {

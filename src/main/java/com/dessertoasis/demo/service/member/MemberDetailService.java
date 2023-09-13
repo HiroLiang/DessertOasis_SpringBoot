@@ -11,9 +11,13 @@ public class MemberDetailService {
 	@Autowired
 	private MemberDetailRepository memberDetailRepository;
 	
+	//查詢
 	public MemberDetail getMemberDetailByMemberId(Integer memberId) {
 		
 		return memberDetailRepository.findByMemberId(memberId);
 	}
-	
+	//更新
+	 public MemberDetail createMemberDetail(MemberDetail memberDetail) {
+	        return memberDetailRepository.save(memberDetail);
+	    }
 }

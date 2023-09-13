@@ -3,6 +3,8 @@ package com.dessertoasis.demo.controller.member;
 import java.util.Date;
 import java.util.UUID;
 
+import javax.crypto.SecretKey;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -12,6 +14,7 @@ import com.dessertoasis.demo.model.member.Member;
 import com.dessertoasis.demo.model.member.MemberAccess;
 import com.dessertoasis.demo.model.member.MemberState;
 import com.dessertoasis.demo.service.member.MemberService;
+import com.dessertoasis.demo.service.member.TokenEncryptionUtil;
 
 
 @RestController
@@ -23,7 +26,7 @@ public class RegisterController {
     private MemberService mService;
 
     @PostMapping("/memberRegister")
-    public String register(@RequestBody Member member) {
+    public String register(@RequestBody Member member){
     	
     	// 驗證註冊資訊，檢查是否有相同的帳號
         if (mService.checkIfAccountExist(member.getAccount())) {
@@ -36,14 +39,14 @@ public class RegisterController {
         newMember.setEmail(member.getEmail());
         newMember.setPasswords(member.getPasswords());
         
-        //創立新帳，產生驗證token
-//        String verificationToken = UUID.randomUUID().toString();
+////        創立新帳，產生驗證token
+//        String verificationToken = TokenEncryptionUtil.setEncryptedToken(member.getAccount(), member.getEmail(), secretKey);
 //        newMember.setVerificationToken(verificationToken);
-//        
-//        //產生此會員的驗證信連結
+////        
+////        //產生此會員的驗證信連結
 //        String verificationLink ="http://localhost:5173/#/"+verificationToken;
 //        mService.sendVerificationEmail(newMember.getEmail(),verificationLink);
-        
+//        
         
         //創立新帳號為不活耀狀態
         member.getMemberStatus();
