@@ -16,14 +16,14 @@ public class MyHandshakeHandler extends DefaultHandshakeHandler {
 	@Override
 	protected Principal determineUser(ServerHttpRequest request, WebSocketHandler wsHandler,
 			Map<String, Object> attributes) {
-		 Integer id=null;
-	        if (request instanceof ServletServerHttpRequest) {
-	            ServletServerHttpRequest serverRequest = (ServletServerHttpRequest) request;
-	            Member user = (Member) serverRequest.getServletRequest().getSession().getAttribute("loggedInMember");
-	            id = user.getId();
-	            System.out.printf("this is " + id);
-
-	        }
+		 Integer id=5;
+//	        if (request instanceof ServletServerHttpRequest) {
+//	            ServletServerHttpRequest serverRequest = (ServletServerHttpRequest) request;
+//	            Member user = (Member) serverRequest.getServletRequest().getSession().getAttribute("loggedInMember");
+//	            id = user.getId();
+//	            System.out.printf("this is " + id);
+//
+//	        }
 
 	        Principal principal =new MyPrincipal();
 	        ((MyPrincipal) principal).setName(id+"");

@@ -235,25 +235,24 @@ public class ProductService {
 		return totalPages;
 	}
 
-	public void addImageToProduct(Integer id, String imagePath) {
-        Product product = findProductById(id);
-        if (product != null) {
-           
-            List<ProductPicture> pictures = product.getPictures();
-            if (pictures == null) {
-                pictures = new ArrayList<>();
-            }
-            
-            ProductPicture productPicture = new ProductPicture();
-            productPicture.setPictureURL(imagePath);
-            
-            pictures.add(productPicture);
-            
-            product.setPictures(pictures);
-           
-            update(product);
-        }
-    }
+//	public void addImageToProduct(Integer productId, String imagePath, String thumbnailPath) {
+//	    Product product = findProductById(productId);
+//	    if (product != null) {
+//	        List<ProductPicture> pictures = product.getPictures();
+//	        if (pictures == null) {
+//	            pictures = new ArrayList<>();
+//	        }
+//
+//	        ProductPicture productPicture = new ProductPicture();
+//	        productPicture.setPictureURL(imagePath); // 设置商品圖片路径
+//	        productPicture.setThumbnailURL(thumbnailPath); // 设置縮圖路径
+//	        productPicture.setProduct(product);
+//	        pictures.add(productPicture);
+//
+//	        product.setPictures(pictures);
+//	    }
+//	
+//	}
 
 	
 }

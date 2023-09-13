@@ -39,6 +39,15 @@ public class LoginController {
 	        String keyBase64 = Base64.getEncoder().encodeToString(secretKey.getEncoded());
 	        return ResponseEntity.ok(keyBase64);
 	    }
+		
+		@GetMapping("/member/loggedInUserId")
+		public Integer getLoggedInUserId(HttpSession session) {
+			Member user = (Member) session.getAttribute("loggedInMember");
+			if(user != null)
+				return user.getId();
+			return 0;
+			
+		}
 	
 	
 		@PostMapping("/memberLogin")
@@ -70,7 +79,7 @@ public class LoginController {
 //		             response.addCookie(cookie);
 		             
 		             
-		         } else if (access == MemberAccess.USER && state ==MemberState.ACTIVE) {
+		         } else if (access == MemberAccess.USER) {
 		        	 String cookieName = "isLogin";
 		    		 String cookieValue = "user";
 		    		 CookieEncryptionUtil.setEncryptedCookie(response, cookieName, cookieValue, secretKey);
