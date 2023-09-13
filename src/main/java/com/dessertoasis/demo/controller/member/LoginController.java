@@ -39,6 +39,15 @@ public class LoginController {
 	        String keyBase64 = Base64.getEncoder().encodeToString(secretKey.getEncoded());
 	        return ResponseEntity.ok(keyBase64);
 	    }
+		
+		@GetMapping("/member/loggedInUserId")
+		public Integer getLoggedInUserId(HttpSession session) {
+			Member user = (Member) session.getAttribute("loggedInMember");
+			if(user != null)
+				return user.getId();
+			return 0;
+			
+		}
 	
 	
 		@PostMapping("/memberLogin")
