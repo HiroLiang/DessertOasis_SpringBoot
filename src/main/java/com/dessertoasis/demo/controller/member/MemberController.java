@@ -2,8 +2,10 @@ package com.dessertoasis.demo.controller.member;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -76,27 +78,41 @@ public class MemberController {
 			return ResponseEntity.notFound().build();
 		}
 	}
-
+	
+	//更新詳細資料
 	@PutMapping("/update")
-	public ResponseEntity<MemberDetail> updateMemberDetail(@PathVariable("id") Integer id,
-			@RequestBody MemberDetail updatedMemberDetail) {
+	public ResponseEntity<MemberDetail> updateMemberDetail(@RequestBody MemberDetail updatedMemberDetail, HttpSession session) {
+	    try {
+	        // 從會話中獲取已登入的 Member
+	        Member member = (Member) session.getAttribute("loggedInMember");
+	        
+	        // 確認用戶已登入
+	        if (member != null) {
+	            // 設置更新後的屬性
+	        	member.getMemberDetail().setIdNumber(updatedMemberDetail.getIdNumber());
+	        	member.getMemberDetail().setBirthday(updatedMemberDetail.getBirthday());
+	        	member.getMemberDetail().setDeliveryAddress(updatedMemberDetail.getDeliveryAddress());
+	        	member.getMemberDetail().setFolderURL(updatedMemberDetail.getFolderURL());
+	        	member.getMemberDetail().setPic(updatedMemberDetail.getPic());
 
-		MemberDetail memberDetail = mdService.getMemberDetailByMemberId(id);
-
-		if (memberDetail == null) {
-			return ResponseEntity.notFound().build();
-		}
-
-		memberDetail.setIdNumber(updatedMemberDetail.getIdNumber());
-		memberDetail.setBirthday(updatedMemberDetail.getBirthday());
-		memberDetail.setDeliveryAddress(updatedMemberDetail.getDeliveryAddress());
-		memberDetail.setPic(updatedMemberDetail.getPic());
-		memberDetail.setFolderURL(updatedMemberDetail.getFolderURL());
-
-		MemberDetail updatedMemberDetai = mdService.getMemberDetailByMemberId(id);
-
-		return ResponseEntity.ok(updatedMemberDetai);
+	            // 調用服務層方法更新 MemberDetail
+	            MemberDetail updatedDetail = mdService.updateMemberDetail(member.getId(), member.getMemberDetail());
+	            
+	            // 返回更新後的 MemberDetail
+	            return ResponseEntity.ok(updatedDetail);
+	        } else {
+	            // 未登入，返回未授權狀態碼
+	            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
+	        }
+	    } catch (ResourceNotFoundException e) {
+	        // MemberDetail 未找到，返回 404 Not Found
+	        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+	    } catch (Exception e) {
+	        // 其他錯誤處理，返回 500 Internal Server Error 或其他錯誤訊息
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+	    }
 	}
+
 
 	// 更新密碼
 	@PostMapping("/changepassword")
