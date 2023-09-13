@@ -57,6 +57,8 @@ public class ImageUploadUtil {
 
 	}
 
+	
+	//回傳base64字串  以及  header字串(透過headers.setContentType傳給前端判斷)
 	public List<String> getPicture(String userPath, String pictureUrl) {
 
 		List<String> base64Content = new ArrayList<>();
