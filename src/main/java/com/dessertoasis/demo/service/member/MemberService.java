@@ -110,19 +110,24 @@ public class MemberService {
     }
 
     //更新密碼
-    public void updateMemberPassword(Member member, String Password, String newPassword) {
+    public void updateMemberPassword(Integer memberId, String oldPassword, String newPassword) {
         try {
-            
-        	if (member != null) {
-                // 獲取 Member 對象的密碼，進行舊密碼驗證
-                String storedPassword = member.getPasswords();
+        	
+        	Optional<Member> optional = mRepo.findById(memberId);
+        	
+        	if (optional.isPresent()) {
+                // member不為空，進行舊密碼驗證
+        		Member member = optional.get();
+                String oldEncodedPassword = member.getPasswords();
                 
                 // 驗證舊密碼
-                if (passwordEncoder.matches(Password, storedPassword)) {
+                if (passwordEncoder.matches(oldPassword, oldEncodedPassword)) {
                     // 舊密碼驗證通過，加密新密碼並更新
-                    String encodedNewPassword = passwordEncoder.encode(newPassword);
-                    member.setPasswords(encodedNewPassword);
+                    String newEncodedPassword = passwordEncoder.encode(newPassword);
+                    member.setPasswords(newEncodedPassword);
                     mRepo.save(member);
+                    
+                    
                 } else {
                     // 密碼驗證失敗
                     throw new IllegalArgumentException("舊密碼不正確，請重新輸入。");
