@@ -22,26 +22,20 @@ public class ChatMessage {
 	private Integer  sender;
 	@Column(name = "CATCHER" , columnDefinition = "INT")
 	private Integer catcher;
-	@Column(name = "MESSAGE" , columnDefinition = "NVARCHAR(255)")
-	private String message;
+	@Column(name = "CHATMESSAGE" , columnDefinition = "NVARCHAR(255)")
+	private String chatMessage;
 	@Column(name = "SENDTIME" , columnDefinition = "DATETIME2")
 	private LocalDateTime sendTime;
-	@Column(name = "MESSAGESTATE" , columnDefinition = "NVARCHAR(25)")
-	private MessageState messageState;
-	
-	public enum MessageState {
-		UNSENDED,
-		UNREAD,
-		READED
-	}
+	@Column(name = "MESSAGESTATE" , columnDefinition = "NVARCHAR(50)")
+	private String messageState;
 
-	public ChatMessage( Integer sender, Integer catcher, String message, LocalDateTime sendTime,
-			MessageState messageState) {
+	public ChatMessage( Integer sender, Integer catcher, String chatMessage, LocalDateTime sendTime,
+			String messageState) {
 		super();
 //		this.id = id;
 		this.sender = sender;
 		this.catcher = catcher;
-		this.message = message;
+		this.chatMessage = chatMessage;
 		this.sendTime = sendTime;
 		this.messageState = messageState;
 	}
