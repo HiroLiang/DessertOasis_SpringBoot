@@ -3,7 +3,8 @@ package com.dessertoasis.demo.controller.order;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -38,13 +39,23 @@ public class OrderController {
 	public Order getOrderById(@PathVariable("ordId") Integer ordId) {
 		return orderService.getByOrdId(ordId);
 	}
+	
+	// 取得會員的訂單
+	@GetMapping("/order/member/page/{pageNum}")
+	public Page<Order> getOrdersByMember(@PathVariable("pageNum") Integer pageNum, HttpSession session) {
+		Member member = (Member) session.getAttribute("loggedInMember");
+		
+		Integer pageSize = 5;
+		Page<Order> page = orderService.getPageByMemberId(member.getId(), pageNum, pageSize, Sort.Direction.DESC, "ordDate");
+		return page;
+	}
 
 	// 新增訂單
 	@PostMapping("/order")
-	public ResponseEntity<?> insertOrder(@RequestBody CartListDTO cartList, HttpSession session) {
+	public String insertOrder(@RequestBody CartListDTO cartList, HttpSession session) {
 		Member member = (Member) session.getAttribute("loggedInMember");
 		if (member == null)
-			return ResponseEntity.ok("沒有會員");
+			return "沒有會員";
 
 		List<ProductCartDTO> productCartDTOs = cartList.getProductCartDTOs();
 		List<CourseCartDTO> courseCartDTOs = cartList.getCourseCartDTOs();
@@ -53,7 +64,7 @@ public class OrderController {
 		// 檢查教室是否已被預約
 		String rsvCheckResult = orderService.checkReservation(rsvCartDTOs);
 		if (rsvCheckResult != null) {
-			return ResponseEntity.ok(rsvCheckResult);
+			return rsvCheckResult;
 		}
 
 		Order order = new Order();
@@ -72,7 +83,7 @@ public class OrderController {
 		// 清掉購物車
 		cartService.deleteCarts(productCartDTOs, courseCartDTOs, rsvCartDTOs);
 
-		return ResponseEntity.ok(order);
+		return "1";
 	}
 
 	/*-----------------------------------------v v v 範例 v v v---------------------------------------------------*/

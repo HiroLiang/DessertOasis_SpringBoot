@@ -1,5 +1,7 @@
 package com.dessertoasis.demo.controller;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,6 +10,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,7 +20,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
+import com.dessertoasis.demo.model.category.Category;
 import com.dessertoasis.demo.model.member.Member;
 import com.dessertoasis.demo.model.member.MemberAccess;
 import com.dessertoasis.demo.model.order.OrderCmsTable;
@@ -53,12 +58,53 @@ public class ProductController {
             return ResponseEntity.notFound().build();
         }
     }
-
     @PostMapping("/add")
-    public ResponseEntity<Product> addProduct(@RequestBody Product product) {
-        pService.insert(product);
-        return ResponseEntity.ok(product);
+    public ResponseEntity<Integer> addProduct(@RequestBody Product product) {
+        Product savedProduct = pService.insert(product); // 插入并获取新创建的产品对象
+        Integer productId = savedProduct.getId(); // 获取新创建的产品的ID
+
+        return ResponseEntity.ok(productId); // 返回产品ID
     }
+//    @PostMapping("/add")
+//    public ResponseEntity<Product> addProduct(@RequestBody Product product) {
+//        // 处理产品的其他数据（不包括图像）
+//        Product savedProduct = pService.insert(product);
+//        return ResponseEntity.ok(savedProduct);
+//    }
+    @PostMapping("/uploadImage")
+    public ResponseEntity<String> uploadImage(@RequestParam("productId") Integer productId, @RequestParam("image") MultipartFile image) {
+        try {
+            String baseDir = "C:/workspace/dessertoasis-vue/public/images/product/";
+            String productDir = baseDir + productId;
+            String thumbnailDir = productDir + "/thumbnail"; // 创建thumbnail子文件夹
+
+            File productFolder = new File(productDir);
+            if (!productFolder.exists()) {
+                productFolder.mkdirs();
+            }
+
+            File thumbnailFolder = new File(thumbnailDir);
+            if (!thumbnailFolder.exists()) {
+                thumbnailFolder.mkdirs();
+            }
+
+            String imagePath = productDir + "/" + image.getOriginalFilename();
+            String thumbnailPath = thumbnailDir + "/" + "thumbnail_" + image.getOriginalFilename(); // 修改縮圖路径
+
+            File destination = new File(imagePath);
+            image.transferTo(destination);
+
+            // 处理縮圖逻辑，将縮圖存储在thumbnailPath中
+
+            //pService.addImageToProduct(productId, imagePath);
+
+            return ResponseEntity.ok("Image uploaded successfully.");
+        } catch (IOException e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Image upload failed.");
+        }
+    }
+
 
     @PostMapping("/edit/{id}")
     public ResponseEntity<Product> editProduct(@PathVariable Integer id, @RequestBody Product product) {

@@ -1,11 +1,16 @@
 package com.dessertoasis.demo.controller.member;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -15,6 +20,8 @@ import com.dessertoasis.demo.model.member.MemberAccess;
 import com.dessertoasis.demo.model.member.MemberDetail;
 import com.dessertoasis.demo.service.member.MemberDetailService;
 import com.dessertoasis.demo.service.member.MemberService;
+
+import jakarta.servlet.http.HttpSession;
 
 @RestController
 @RequestMapping("/member")
@@ -69,4 +76,48 @@ public class MemberController {
 			return ResponseEntity.notFound().build();
 		}
 	}
+
+	@PutMapping("/update")
+	public ResponseEntity<MemberDetail> updateMemberDetail(@PathVariable("id") Integer id,
+			@RequestBody MemberDetail updatedMemberDetail) {
+
+		MemberDetail memberDetail = mdService.getMemberDetailByMemberId(id);
+
+		if (memberDetail == null) {
+			return ResponseEntity.notFound().build();
+		}
+
+		memberDetail.setIdNumber(updatedMemberDetail.getIdNumber());
+		memberDetail.setBirthday(updatedMemberDetail.getBirthday());
+		memberDetail.setDeliveryAddress(updatedMemberDetail.getDeliveryAddress());
+		memberDetail.setPic(updatedMemberDetail.getPic());
+		memberDetail.setFolderURL(updatedMemberDetail.getFolderURL());
+
+		MemberDetail updatedMemberDetai = mdService.getMemberDetailByMemberId(id);
+
+		return ResponseEntity.ok(updatedMemberDetai);
+	}
+
+	// 更新密碼
+	@PostMapping("/changepassword")
+	public ResponseEntity<String> changePassword(@RequestBody Map<String, String> requestBody, HttpSession session) {
+		String oldPassword = requestBody.get("oldPassword");
+		String newPassword = requestBody.get("newPassword");
+
+		Member member = (Member) session.getAttribute("loggedInMember");
+		if (member != null) {
+			try {
+
+				mService.updateMemberPassword(member.getId(), oldPassword, newPassword);
+				return ResponseEntity.ok("密碼已更改");
+			} catch (IllegalArgumentException e) {
+				return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+			} catch (RuntimeException e) {
+				return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("密碼更新失敗。");
+			}
+		} else {
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("未授权访问，请登录后再试。");
+		}
+	}
+
 }

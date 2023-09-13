@@ -1,5 +1,7 @@
 package com.dessertoasis.demo.controller.recipe;
 
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -12,7 +14,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import javax.imageio.ImageIO;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -166,7 +173,7 @@ public class RecipeController {
 	@ResponseBody
 	public String addRecipe(@RequestBody RecipeCreateDTO createDto, HttpSession session) {
 		Member member = (Member) session.getAttribute("loggedInMember");
-		if (member != null) {
+//		if (member != null) {
 			Boolean add = recipeService.addRecipe(4, createDto);
 		/*-------------------------------使用ImageUploadUtil儲存圖片並接收回傳儲存位置區塊--------------------------------------*/
 //			Recipes recipe = new Recipes();
@@ -221,8 +228,8 @@ public class RecipeController {
 			}
 		return "F";// 新增失敗 recipebean資料不符或是找不到對應使用者
 		/*-------------------------------使用ImageUploadUtil儲存圖片並接收回傳儲存位置區塊--------------------------------------*/
-		}
-		return "N";//新增失敗 找不到session中的使用者資料
+//		}
+//		return "N";//新增失敗 找不到session中的使用者資料
 	}
 
 	/*----------------------------------------------圖檔處理回傳儲存路徑Controller------------------------------------------------------------------*/
@@ -230,8 +237,8 @@ public class RecipeController {
 	@PostMapping(path = "test/uploadimg")
 	public List<String> sendPic(@RequestBody List<PicturesDTO> pictures) {
 		/*---------設定儲存路徑---------*/
-		final String uploadPath = "D:/dessertoasis-vue/public/images/";
-//		final String uploadPath = "C:/Users/iSpan/Documents/dessertoasis-vue/public/images/";
+//		final String uploadPath = "D:/dessertoasis-vue/public/images/";
+		final String uploadPath = "C:/Users/iSpan/Documents/dessertoasis-vue/public/";
 //		Member member = (Member) session.getAttribute("loggedInMember");
 //		Recipes recipe = (Recipes) session.getAttribute("recipeId");
 
@@ -245,7 +252,10 @@ public class RecipeController {
 			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmssSSS");
 			String timestamp = LocalDateTime.now().format(formatter);
 //		if (member != null) {
-			String userFolder = uploadPath + "recipe" + "/" + 1 + "/";
+			//調整存入資料庫的路徑位置
+			String sqlPath = "images/recipe" + "/" + 1 + "/";
+			String userFolder = uploadPath + sqlPath;
+			
 			File folder = new File(userFolder);
 			if (!folder.exists()) {
 				folder.mkdirs();
@@ -277,7 +287,7 @@ public class RecipeController {
 
 					/*----------將儲存位置準備回傳前端----------*/
 					msg.add("-1");
-					msg.add(userFolder + mainUniqueName);
+					msg.add(sqlPath + mainUniqueName);
 					/*----------將儲存位置準備回傳前端----------*/
 				} catch (FileNotFoundException e) {
 					e.printStackTrace();
@@ -327,7 +337,7 @@ public class RecipeController {
 						/*----------寫入檔案及儲存位置串接字串----------*/
 
 						/*----------將儲存位置準備回傳前端----------*/
-						msg.add(userFolder + uniqueName);
+						msg.add(sqlPath + uniqueName);
 						/*----------將儲存位置準備回傳前端----------*/
 
 					} catch (FileNotFoundException e) {
@@ -358,6 +368,49 @@ public class RecipeController {
 	}
 
 	/*----------------------------------------------圖檔處理回傳儲存路徑Controller------------------------------------------------------------------*/
+	/*----------------------------------------------處理前端請求回傳base64給前端顯示Controller------------------------------------------------------------------*/
+	
+	@PostMapping("recipe/getPic")
+	@ResponseBody
+	public ResponseEntity<String> getPic(@RequestBody Integer recipeId) {
+		Optional<Recipes> findById = recipeRepo.findById(recipeId);
+		if(findById.isPresent()) {
+			String userPath= "C:\\Users\\iSpan\\Documents\\dessertoasis-vue\\public\\";
+			Recipes recipe = findById.get();
+			String pictureURL = recipe.getPictureURL();
+			try {
+				BufferedImage read = ImageIO.read(new File(userPath+pictureURL));
+				
+				if(read != null) {
+					ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+					int lastDotIndex = pictureURL.lastIndexOf(".");
+					if(lastDotIndex>0) {
+						String formatName = pictureURL.substring(lastDotIndex+1);
+						ImageIO.write(read, formatName, byteArrayOutputStream);
+						byte[] img = byteArrayOutputStream.toByteArray();
+						String base64Img = Base64.getEncoder().encodeToString(img);
+						
+						 HttpHeaders headers = new HttpHeaders();
+					        headers.setContentType(MediaType.parseMediaType("image/" + formatName));
+						
+						return ResponseEntity.ok().headers(headers).body(base64Img);
+					}
+					
+				}else {
+					ResponseEntity.ok("Image not found");
+				}
+				
+			} catch (IOException e) {
+				e.printStackTrace();
+				ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("F");	
+			}
+		}
+		return ResponseEntity.ok("recipe not found");
+	}
+	
+	
+	/*----------------------------------------------處理前端請求回傳base64給前端顯示Controller------------------------------------------------------------------*/
+
 
 	// 更新食譜
 	@PutMapping("recipe/updaterecipe")

@@ -15,6 +15,7 @@ import com.dessertoasis.demo.model.order.Order;
 import com.dessertoasis.demo.model.order.OrderCmsTable;
 import com.dessertoasis.demo.model.product.ProdSearchDTO;
 import com.dessertoasis.demo.model.product.Product;
+import com.dessertoasis.demo.model.product.ProductPicture;
 import com.dessertoasis.demo.model.product.ProductRepository;
 import com.dessertoasis.demo.model.sort.DateRules;
 import com.dessertoasis.demo.model.sort.SearchRules;
@@ -56,8 +57,8 @@ public class ProductService {
     }
     
 
-    public void insert(Product product) {
-    	prodRepo.save(product);
+    public Product insert(Product product) {
+        return prodRepo.save(product);
     }
 
     public void update(Product product) {
@@ -233,5 +234,25 @@ public class ProductService {
 		
 		return totalPages;
 	}
+
+//	public void addImageToProduct(Integer productId, String imagePath, String thumbnailPath) {
+//	    Product product = findProductById(productId);
+//	    if (product != null) {
+//	        List<ProductPicture> pictures = product.getPictures();
+//	        if (pictures == null) {
+//	            pictures = new ArrayList<>();
+//	        }
+//
+//	        ProductPicture productPicture = new ProductPicture();
+//	        productPicture.setPictureURL(imagePath); // 设置商品圖片路径
+//	        productPicture.setThumbnailURL(thumbnailPath); // 设置縮圖路径
+//	        productPicture.setProduct(product);
+//	        pictures.add(productPicture);
+//
+//	        product.setPictures(pictures);
+//	    }
+//	
+//	}
+
 	
 }

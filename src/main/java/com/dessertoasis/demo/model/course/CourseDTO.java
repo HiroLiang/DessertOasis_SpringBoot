@@ -66,7 +66,7 @@ public class CourseDTO {
 		this.remainPlaces = course.getRemainPlaces();
 		this.coursePrice = course.getCoursePrice();
 //		this.tag = course.getCourseList().get(0);
-//		this.coursePictureList = course.getCoursePictureList();
+		this.coursePictureList = course.getCoursePictureList();
 	}
 	
 	

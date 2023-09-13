@@ -9,6 +9,7 @@ import com.dessertoasis.demo.model.category.Category;
 import com.dessertoasis.demo.model.order.CourseOrderItem;
 import com.dessertoasis.demo.model.recipe.Recipes;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -115,8 +116,8 @@ public class Course {
 //    private List<CourseCtag> courseTags;
 	
 	
-	@OneToMany(mappedBy = "course")
-	@JsonIgnore
+	@OneToMany(mappedBy = "course",cascade = CascadeType.ALL)
+	@JsonIgnoreProperties("course")
 	private List<CoursePicture> coursePictureList;
 	
 	@JsonIgnore
@@ -129,7 +130,7 @@ public class Course {
 	public Course(Integer id, Teacher teacher, Recipes recipes, Category category, String courseName,
 			String courseIntroduction, String courseFeature, String courseDestination, String serviceTarget,
 			Date closeDate, Date updateDate,Date courseDate, String coursePlace, String courseStatus, Integer remainPlaces,
-			Integer coursePrice) {
+			Integer coursePrice,List<CoursePicture> coursePictureList) {
 		super();
 		this.id = id;
 		this.teacher = teacher;
@@ -147,6 +148,7 @@ public class Course {
 		this.courseStatus = courseStatus;
 		this.remainPlaces = remainPlaces;
 		this.coursePrice = coursePrice;
+		this.coursePictureList = coursePictureList;
 	}
 
 }

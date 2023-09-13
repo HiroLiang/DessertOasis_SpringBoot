@@ -83,13 +83,44 @@ public class MemberService {
 		Member loginAccount = mRepo.findByAccount(account);
 		if (loginAccount != null) {
 			if (passwordEncoder.matches(password, loginAccount.getPasswords())) {
-
 				// 登入成功，將會員物件存入 Session
 				session.setAttribute("loggedInMember", loginAccount);
 				return loginAccount;
 			}
 		}
 		return null;
+	}
+
+	// 更新密碼
+	public void updateMemberPassword(Integer memberId, String oldPassword, String newPassword) {
+		try {
+
+			Optional<Member> optional = mRepo.findById(memberId);
+
+			if (optional.isPresent()) {
+				// member不為空，進行舊密碼驗證
+				Member member = optional.get();
+				String oldEncodedPassword = member.getPasswords();
+
+				// 驗證舊密碼
+				if (passwordEncoder.matches(oldPassword, oldEncodedPassword)) {
+					// 舊密碼驗證通過，加密新密碼並更新
+					String newEncodedPassword = passwordEncoder.encode(newPassword);
+					member.setPasswords(newEncodedPassword);
+					mRepo.save(member);
+
+				} else {
+					// 密碼驗證失敗
+					throw new IllegalArgumentException("舊密碼不正確，請重新輸入。");
+				}
+			} else {
+				// 如果傳入的 Member 對象為空
+				throw new IllegalArgumentException("會員不存在。");
+			}
+		} catch (Exception e) {
+			// 處理潛在的異常，如數據庫連接問題
+			throw new RuntimeException("密碼更新失敗，請稍後重試。", e);
+		}
 	}
 
 	// 寄驗證信
@@ -102,10 +133,10 @@ public class MemberService {
 		mailMessage.setText("點擊連結進行驗證" + verificationLink);
 		javaMailSender.send(mailMessage);
 	}
-	
-	public List<Member> getAllAdmin(Integer id){
+
+	public List<Member> getAllAdmin(Integer id) {
 		List<Member> list = mRepo.findByAccessExcept(id);
-		if(list!=null)
+		if (list != null)
 			return list;
 		return null;
 	}

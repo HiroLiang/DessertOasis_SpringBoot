@@ -1,4 +1,6 @@
 package com.dessertoasis.demo.model.product;
+import java.io.File;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;

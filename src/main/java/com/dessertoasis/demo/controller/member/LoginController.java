@@ -79,7 +79,7 @@ public class LoginController {
 //		             response.addCookie(cookie);
 		             
 		             
-		         } else if (access == MemberAccess.USER && state ==MemberState.ACTIVE) {
+		         } else if (access == MemberAccess.USER) {
 		        	 String cookieName = "isLogin";
 		    		 String cookieValue = "user";
 		    		 CookieEncryptionUtil.setEncryptedCookie(response, cookieName, cookieValue, secretKey);
