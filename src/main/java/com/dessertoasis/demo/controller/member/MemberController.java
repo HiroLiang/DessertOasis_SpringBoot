@@ -18,6 +18,8 @@ import com.dessertoasis.demo.model.member.MemberDetail;
 import com.dessertoasis.demo.service.member.MemberDetailService;
 import com.dessertoasis.demo.service.member.MemberService;
 
+import jakarta.servlet.http.HttpSession;
+
 @RestController
 @RequestMapping("/member")
 public class MemberController {
@@ -76,39 +78,30 @@ public class MemberController {
 	}
 	
 	
-	@PostMapping("/{id}/changepassword")
+	
+	//更新密碼
+	@PostMapping("/changepassword")
 	public ResponseEntity<String> changePassword(
-	        @PathVariable Integer id,
-	        @RequestParam("oldPassword") String Password,
-	        @RequestParam("newPassword") String newPassword) {
-
-	    try {
-	        mService.updateMemberPassword(mService.findByMemberId(id), Password, newPassword);
-	        return ResponseEntity.ok("密碼已更改");
-	    } catch (IllegalArgumentException e) {
-	        // 捕獲 IllegalArgumentException 異常，這是密碼驗證失敗的情況
-	        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
-	    } catch (RuntimeException e) {
-	        // 捕獲其他可能的運行時異常，例如數據庫連接問題
-	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("密碼更新失敗，請稍後重試。");
+	        @RequestParam("oldPassword") String oldPassword,
+	        @RequestParam("newPassword") String newPassword,HttpSession session) {
+		Member member = (Member) session.getAttribute("loggedInMember");
+		if(member != null) {
+			try { mService.updateMemberPassword(member.getId(), oldPassword, newPassword);
+		     return ResponseEntity.ok("密碼已更改");
+			} catch (IllegalArgumentException e) {
+	            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+	        } catch (RuntimeException e) {
+	            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("密碼更新失敗。");
+	        }
+	    } else {
+	        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("未授權訪問，請登錄後再試。");
 	    }
-	}
+
+	   
 	
-
-
-
-
-
-
-	    
-	 
-	 
-	 
+}
 	
-	 
-	}
-	
-
+}
 
 
 
