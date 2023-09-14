@@ -125,6 +125,20 @@ public class RecipeController {
 		return recipeRepo.findRecipeByDifficulty(difficulty);
 	}
 
+	
+	//測試取得食譜
+	@GetMapping("recipe/getRecipe")
+	@ResponseBody
+	public Recipes getRecipeById(@RequestParam String recipeId) {
+		System.out.println(recipeId);
+		Optional<Recipes> findById = recipeRepo.findById(Integer.parseInt(recipeId));
+
+		if (findById.isPresent()) {
+			return findById.get();
+		}
+		return null;
+	}
+
 	/*--------------------------------------------食譜主頁使用controller ------------------------------------------------*/
 
 	// 取得最新的10筆食譜
@@ -174,7 +188,7 @@ public class RecipeController {
 	public String addRecipe(@RequestBody RecipeCreateDTO createDto, HttpSession session) {
 		Member member = (Member) session.getAttribute("loggedInMember");
 //		if (member != null) {
-		Boolean add = recipeService.addRecipe(4, createDto);
+		String add = recipeService.addRecipe(4, createDto);
 		/*-------------------------------使用ImageUploadUtil儲存圖片並接收回傳儲存位置區塊--------------------------------------*/
 //			Recipes recipe = new Recipes();
 //			recipe.setRecipeTitle(recipeTitle);
@@ -223,8 +237,8 @@ public class RecipeController {
 //			}
 //
 //			Boolean add = recipeService.addRecipe(1, recipe);
-		if (add) {
-			return "Y"; // 新增成功
+		if (add != null) {
+			return add; // 新增成功,回傳食譜id
 		}
 		return "F";// 新增失敗 recipebean資料不符或是找不到對應使用者
 		/*-------------------------------使用ImageUploadUtil儲存圖片並接收回傳儲存位置區塊--------------------------------------*/
@@ -237,7 +251,7 @@ public class RecipeController {
 	@PostMapping(path = "test/uploadimg")
 	public List<String> sendPic(@RequestBody List<PicturesDTO> pictures) {
 		/*---------設定儲存路徑---------*/
-		final String uploadPath = "D:/dessertoasis-vue/public/images/";
+		final String uploadPath = "D:/dessertoasis-vue/public/";
 //		final String uploadPath = "C:/Users/iSpan/Documents/dessertoasis-vue/public/";
 //		Member member = (Member) session.getAttribute("loggedInMember");
 //		Recipes recipe = (Recipes) session.getAttribute("recipeId");
@@ -413,21 +427,19 @@ public class RecipeController {
 	@ResponseBody
 	public ResponseEntity<String> getPicByGetPicture(@RequestBody Integer recipeId) {
 		Optional<Recipes> findById = recipeRepo.findById(recipeId);
-		System.out.println("start");
 		if (findById.isPresent()) {
-			System.out.println("if");
-			String userPath ="D:/dessertoasis-vue/public/images/";
+			String userPath ="D:/dessertoasis-vue/public/";
 //			String userPath = "C:\\Users\\iSpan\\Documents\\dessertoasis-vue\\public\\";
 			Recipes recipe = findById.get();
 			String pictureURL = recipe.getPictureURL();
-			
+
 			/*-------------------getPicture方法   第一個參數接收自己的儲存路徑， 第二個參數接收存於資料庫的路徑(範例: images/recipe/1/3584160_20230914005256937.jpg  等等)---------------------*/
 			List<String> picture = imgUtil.getPicture(userPath, pictureURL);
-	
+
 			HttpHeaders headers = new HttpHeaders();
 			/*-------------------getPicture回傳值[0]為檔案MIME字串(如image/png 等)  將其設定到 headers中----------------------------*/
 			headers.setContentType(MediaType.parseMediaType(picture.get(0)));
-			
+
 			/*-------------------getPicture回傳值[1]為檔案base64字串  將其設定到body中----------------------------*/
 			return ResponseEntity.ok().headers(headers).body(picture.get(1));
 			/*------------------------------------前端接收圖片方式請看vue專案 OneRecipePage.vue 中的getImg函式------------------------------------*/
@@ -435,7 +447,29 @@ public class RecipeController {
 		return ResponseEntity.ok("recipe not found");
 	}
 	/*----------------------﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀發送base64給前端範例﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀--------------------------*/
-	
+	@PostMapping("recipe/getStepPics")
+	@ResponseBody
+	public List<String> getStepPicture(@RequestBody Integer recipeId){
+		Optional<Recipes> findById = recipeRepo.findById(recipeId);
+		List<String> pictureDatas = new ArrayList<>();
+		if (findById.isPresent()) {
+			String userPath ="D:/dessertoasis-vue/public/";
+//			String userPath = "C:\\Users\\iSpan\\Documents\\dessertoasis-vue\\public\\";
+			Recipes recipe = findById.get();
+			for (int i = 0; i < recipe.getRecipeSteps().size(); i++) {
+				String stepPicPath = recipe.getRecipeSteps().get(i).getStepPicture();
+				List<String> StepPictures = imgUtil.getPicture(userPath, stepPicPath);
+				for (int j = 0; j < StepPictures.size(); j++) {
+					pictureDatas.add(StepPictures.get(j));
+				}
+			}
+			System.out.println(pictureDatas.size());
+			return pictureDatas;
+			
+		}
+		pictureDatas.add("recipe not found");
+		return pictureDatas;
+	}
 	
 
 	/*----------------------------------------------處理前端請求回傳base64給前端顯示Controller------------------------------------------------------------------*/

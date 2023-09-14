@@ -7,8 +7,8 @@ import javax.crypto.SecretKey;
 
 public class TokenEncryptionUtil {
 
-	public static String setEncryptedToken(String account,String email,SecretKey secretKey) throws Exception {
-		String accAddEmail = account+email;
+	public static String setEncryptedToken(String account,SecretKey secretKey) throws Exception {
+		String accAddEmail = account;
 		
 		Cipher cipher = Cipher.getInstance("AES");
         cipher.init(Cipher.ENCRYPT_MODE, secretKey);
