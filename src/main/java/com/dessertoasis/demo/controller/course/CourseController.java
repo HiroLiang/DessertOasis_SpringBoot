@@ -1,5 +1,7 @@
 package com.dessertoasis.demo.controller.course;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -22,6 +24,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.dessertoasis.demo.ImageUploadUtil;
 import com.dessertoasis.demo.model.category.Category;
@@ -114,7 +117,7 @@ public class CourseController {
 	
 	//新增單筆課程
 	@PostMapping("/add")
-    public ResponseEntity<String> addCourse(@RequestBody Course course, HttpServletRequest request) {
+    public ResponseEntity<Integer> addCourse(@RequestBody Course course, HttpServletRequest request) {
         // 從請求的Cookie中獲得user 是老師的身分
 //        Cookie[] cookies = request.getCookies();
 //        if (cookies != null) {
@@ -122,10 +125,13 @@ public class CourseController {
 //            	// 老師身分，允許添加課程
 //                if ("userType".equals(cookie.getName()) && "teacher".equals(cookie.getValue())) {
                 	// 假设你使用Spring Data JPA进行数据访问
-                	Teacher teacher = tService.getTeacherById(course.getTeacher().getId()); // 获取ID为3的教师
-                	 Optional<Recipes> recipes = rRepo.findById(course.getRecipes().getId());
+//                	Teacher teacher = tService.getTeacherById(course.getTeacher().getId()); // 获取ID为3的教师
+		Teacher teacher = tService.getTeacherById(1);
+//		Optional<Recipes> recipes = rRepo.findById(course.getRecipes().getId());
+		Optional<Recipes> recipes = rRepo.findById(1);
                 	  Recipes recipe = recipes.get();
-                	  Optional<Category> categorys = cRepo.findById(course.getCategory().getId());
+//                	  Optional<Category> categorys = cRepo.findById(course.getCategory().getId());
+                	  Optional<Category> categorys = cRepo.findById(2);
                 	  Category category = categorys.get();
 
 //                	if (teacher != null) {
@@ -136,8 +142,9 @@ public class CourseController {
                 	
                 	// 將課程資料存到資料庫
                 	    Course savedCourse = cService.insert(course);
-                	System.out.println("新增課程成功");
-                    return ResponseEntity.ok("課程已添加");}
+                	    Integer courseId = savedCourse.getId();
+                	System.out.println(courseId );
+                    return ResponseEntity.ok(courseId );}
 //                	else {
 //                		// 处理教师不存在的情况	
 //                	}
@@ -149,6 +156,40 @@ public class CourseController {
 //        return ResponseEntity.status(HttpStatus.FORBIDDEN).body("您没有權限執行此操作");
 //    }
 
+	
+	@PostMapping("/uploadImage")
+    public ResponseEntity<String> uploadImage(@RequestParam("courseId") Integer courseId, @RequestParam("image") MultipartFile image) {
+        try {
+            String baseDir = "C:/dessertoasis-vue/public/images/course/";
+            String courseDir = baseDir + courseId;
+            String thumbnailDir = courseDir + "/thumbnail"; // 创建thumbnail子文件夹
+
+            File courseFolder = new File(courseDir);
+            if (!courseFolder.exists()) {
+                courseFolder.mkdirs();
+            }
+
+            File thumbnailFolder = new File(thumbnailDir);
+            if (!thumbnailFolder.exists()) {
+                thumbnailFolder.mkdirs();
+            }
+
+            String imagePath = courseDir + "/" + image.getOriginalFilename();
+            String thumbnailPath = thumbnailDir + "/" + "thumbnail_" + image.getOriginalFilename(); // 修改縮圖路径
+
+            File destination = new File(imagePath);
+            image.transferTo(destination);
+
+            // 处理縮圖逻辑，将縮圖存储在thumbnailPath中
+
+            //pService.addImageToProduct(productId, imagePath);
+
+            return ResponseEntity.ok("Image uploaded successfully.");
+        } catch (IOException e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Image upload failed.");
+        }
+	}
 	
 	//修改單筆課程
 	@Transactional
