@@ -53,6 +53,11 @@ public class CartService {
 	@Autowired
 	private ClassroomRepository roomRepo;
 	
+	public Integer getCountByMemberId(Integer memberId) {
+		Member member = memberRepo.findById(memberId).get();
+		return member.getCarts().size();
+	}
+	
 	public List<ProductCartDTO> getProductCartDTOs(Integer memberId){
 		Member member = memberRepo.findById(memberId).get();
 		List<Cart> cartList = member.getCarts();

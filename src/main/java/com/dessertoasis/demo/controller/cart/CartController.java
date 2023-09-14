@@ -26,6 +26,16 @@ public class CartController {
 	@Autowired
 	private CartService cartService;
 	
+	// 取出會員的購物車物品數量
+	@GetMapping("/cart/count")
+	public Integer getCountByMember(HttpSession session) {
+		Member user = (Member) session.getAttribute("loggedInMember");
+		if (user == null) {
+			return null;
+		}
+		return cartService.getCountByMemberId(user.getId());
+	}
+	
 	// 取出會員之購物車的所有商品
 	@GetMapping("/cart/product")
 	public List<ProductCartDTO> getProductCart(HttpSession session) {
