@@ -7,9 +7,11 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -17,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.dessertoasis.demo.model.course.Course;
 import com.dessertoasis.demo.model.course.CourseCmsTable;
+import com.dessertoasis.demo.model.course.CourseDTO;
 import com.dessertoasis.demo.model.course.Teacher;
 import com.dessertoasis.demo.model.course.TeacherCmsTable;
 import com.dessertoasis.demo.model.course.TeacherDemo;
@@ -80,56 +83,90 @@ public class TeacherController {
     }
 	
 	//查詢老師個人資料by id
-	@GetMapping("/{teacherId}")
-    public Teacher getTeacherById(@PathVariable Integer teacherId,HttpSession session) {
-		Member member = (Member)session.getAttribute("loggedInMember");
+	@GetMapping("/{id}")
+    public ResponseEntity<Teacher> getTeacherById(@PathVariable Integer id,HttpSession session) {
 		
-//		if(member.getAccess())
+		// 判斷 user 存在且為 TEACHER
+//				Member user = (Member) session.getAttribute("loggedInMember");
+//				if (user == null || !user.getAccess().equals(MemberAccess.TEACHER)) {
+//					return null;
+//				}
 		
-		Teacher result = tService.getTeacherById(teacherId);
-		return result;
+		Teacher teacher = tService.getTeacherById(id);
+		return ResponseEntity.ok(teacher);
+	}
+	
+	//列出所有老師
+	@GetMapping("/all")
+	public ResponseEntity<List<Teacher>> findAllTeachers(){
+		List<Teacher> teachers = tService.findAllTeachers();
+		return ResponseEntity.ok(teachers);
 	}
 
 	// 依照老師編號列出該教師所有課程
-//	@GetMapping("/{teacherId}/courses")
-//    public List<Course> getTeacherCourses(@PathVariable Integer teacherId) {
-//		Teacher teacher = tService.findById(teacherId);
-//		if (teacher != null) {
-//            return cService.getCoursesByTeacher(teacher);
-//        }
-//        return Collections.emptyList();
-//    }
-
-	@GetMapping("/check-teacher")
-	public ResponseEntity<String> checkTeacher(HttpServletRequest request) {
-		// 從Cookie中獲得身份訊息
-		Cookie[] cookies = request.getCookies();
-		if (cookies != null) {
-			for (Cookie cookie : cookies) {
-				if ("userType".equals(cookie.getName()) && "teacher".equals(cookie.getValue())) {
-					// 是教師身分
-					return ResponseEntity.ok("You are a teacher.");
-				}
-			}
+	@GetMapping("/{id}/courses")
+    public List<CourseDTO> getTeacherCourses(@PathVariable Integer id) {
+		Teacher teacher = tService.getTeacherById(id);
+		if (teacher != null) {
+            return cService.getCoursesByTeacherId(id);
+        }
+        return Collections.emptyList();
+    }
+	
+	//admin才可刪除老師
+	@DeleteMapping("/delete/{id}")
+    public ResponseEntity<String> deleteTeacher(@PathVariable Integer id,HttpSession session) {
+		// 判斷 user 存在且為 ADMIN
+//		Member user = (Member) session.getAttribute("loggedInMember");
+//		if (user == null || !user.getAccess().equals(MemberAccess.ADMIN)) {
+//			return null;
+//		}
+		tService.deleteTeacherById(id);
+        return ResponseEntity.ok("已成功刪除");
+    }
+	
+	@PutMapping("/edit/{id}")
+	public ResponseEntity<Teacher> editTeacher(@PathVariable Integer id,@RequestBody Teacher teacher){
+		Teacher existingTeacher = tService.getTeacherById(id);
+		if(existingTeacher != null) {
+			tService.update(teacher);
+			return ResponseEntity.ok(teacher);
+		}else {
+			return ResponseEntity.notFound().build();
 		}
-
-		// 不是教師身分
-		return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Access denied.");
+		
 	}
 
-	@GetMapping("/set-teacher-cookie")
-	public ResponseEntity<String> setTeacherCookie(HttpServletResponse response) {
-		// 創建一個名為"userType"的Cookie，並將值設置為"teacher"
-		Cookie userTypeCookie = new Cookie("userType", "teacher");
+//	@GetMapping("/check-teacher")
+//	public ResponseEntity<String> checkTeacher(HttpServletRequest request) {
+//		// 從Cookie中獲得身份訊息
+//		Cookie[] cookies = request.getCookies();
+//		if (cookies != null) {
+//			for (Cookie cookie : cookies) {
+//				if ("userType".equals(cookie.getName()) && "teacher".equals(cookie.getValue())) {
+//					// 是教師身分
+//					return ResponseEntity.ok("You are a teacher.");
+//				}
+//			}
+//		}
+//
+//		// 不是教師身分
+//		return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Access denied.");
+//	}
 
-		// 可以設置Cookie的其他屬性，如過期時間、域等
-		// userTypeCookie.setMaxAge(3600); // 過期时間設為1小時
-
-		// 添加Cookie到response
-		response.addCookie(userTypeCookie);
-
-		return ResponseEntity.ok("Teacher cookie set successfully.");
-	}
+//	@GetMapping("/set-teacher-cookie")
+//	public ResponseEntity<String> setTeacherCookie(HttpServletResponse response) {
+//		// 創建一個名為"userType"的Cookie，並將值設置為"teacher"
+//		Cookie userTypeCookie = new Cookie("userType", "teacher");
+//
+//		// 可以設置Cookie的其他屬性，如過期時間、域等
+//		// userTypeCookie.setMaxAge(3600); // 過期时間設為1小時
+//
+//		// 添加Cookie到response
+//		response.addCookie(userTypeCookie);
+//
+//		return ResponseEntity.ok("Teacher cookie set successfully.");
+//	}
 	
 	// 課程分頁查詢
 		@PostMapping("/pagenation")

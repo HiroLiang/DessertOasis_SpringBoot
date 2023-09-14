@@ -68,6 +68,9 @@ public class Teacher {
 	@JsonIgnore
 	@OneToMany(mappedBy="teacher", cascade = CascadeType.ALL)
 	private List<TeacherExpertise> expertiseList;
+	
+//	@OneToMany(mappedBy="teacher")
+//	private List<TeacherPicture> teacherPicture;
 
 	public Teacher() {
 	}
