@@ -53,6 +53,11 @@ public class CartService {
 	@Autowired
 	private ClassroomRepository roomRepo;
 	
+	public Integer getCountByMemberId(Integer memberId) {
+		Member member = memberRepo.findById(memberId).get();
+		return member.getCarts().size();
+	}
+	
 	public List<ProductCartDTO> getProductCartDTOs(Integer memberId){
 		Member member = memberRepo.findById(memberId).get();
 		List<Cart> cartList = member.getCarts();
@@ -96,6 +101,8 @@ public class CartService {
 	}
 	
 	public Cart insert(CartDTO cartDTO, Integer memberId) {
+		Member member = memberRepo.findById(memberId).get();
+		
 		// 調整 categoryId 為最上層之 categoryId
 		Integer categoryId = cartDTO.getCategoryId();
 		Category category = categoryRepo.findById(categoryId).get();
@@ -106,10 +113,10 @@ public class CartService {
 		
 		// 若購物車內已經有此商品，更新商品 quantity
 		if (cartDTO.getCategoryId() == productCategoryId &&
-				cartRepo.findByCategoryIdAndInterestedId(productCategoryId,cartDTO.getInterestedId()) != null) {
+				cartRepo.findByMemberAndCategoryIdAndInterestedId(member, productCategoryId, cartDTO.getInterestedId()) != null) {
 			
 			Integer prodQuantity = cartDTO.getProdQuantity();
-			Cart prodCart = cartRepo.findByCategoryIdAndInterestedId(productCategoryId, cartDTO.getInterestedId());
+			Cart prodCart = cartRepo.findByMemberAndCategoryIdAndInterestedId(member, productCategoryId, cartDTO.getInterestedId());
 			prodQuantity += prodCart.getProdQuantity();
 			return this.updateProdQuantity(prodCart, prodQuantity);
 		}
@@ -122,7 +129,6 @@ public class CartService {
 			cartDTO.setInterestedId(rsvCart.getId());
 		}
 		
-		Member member = memberRepo.findById(memberId).get();
 		Cart cart = new Cart(cartDTO, member);
 		
 		return cartRepo.save(cart);

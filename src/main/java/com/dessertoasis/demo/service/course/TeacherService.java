@@ -10,7 +10,10 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.dessertoasis.demo.model.course.Course;
+import com.dessertoasis.demo.model.course.CourseCmsTable;
 import com.dessertoasis.demo.model.course.Teacher;
+import com.dessertoasis.demo.model.course.TeacherCmsTable;
 import com.dessertoasis.demo.model.course.TeacherDemo;
 import com.dessertoasis.demo.model.course.TeacherRepository;
 import com.dessertoasis.demo.model.member.Member;
@@ -206,5 +209,90 @@ public class TeacherService {
 		return result;
 	}
 
+	// Order table範例
+			public List<TeacherCmsTable> getTeacherPagenation(SortCondition sortCon) {
+				CriteriaBuilder cb = em.getCriteriaBuilder();
+
+				// 決定輸出表格型態
+				CriteriaQuery<TeacherCmsTable> cq = cb.createQuery(TeacherCmsTable.class);
+
+				// 決定select.join表格
+				Root<Teacher> root = cq.from(Teacher.class);
+				Join<Teacher, Member> join = root.join("member");
+
+				// 決定查詢 column
+//				cq.multiselect(root.get("id"), join.get("teacherName"),root.get("courseName"),root.get("courseDate"),root.get("closeDate"),root.get("coursePlace"),root.get("remainPlaces"),root.get("coursePrice"),root.get("courseStatus"),root.get("courseIntroduction")
+//						);
+				cq.multiselect(root.get("id"), join.get("fullName"),root.get("teacherName"),root.get("teacherProfilePic"),root.get("teacherTel"),root.get("teacherMail"),root.get("teacherProfile")
+						);
+
+
+				// 加入查詢條件
+				Predicate predicate = cb.conjunction();
+				Teacher teacher = new Teacher();
+//				Predicate pre = pService.checkCourseCondition(root, join, predicate, sortCon, cb, course);
+				Predicate pre = pService.checkTeacherCondition(root,join, predicate, sortCon, cb, teacher);
+				
+				// 填入 where 條件
+				cq.where(pre);
+
+				// 排序條件
+				if (sortCon.getSortBy() != null) {
+					System.out.println("sort");
+					if (pService.hasProperty(teacher, sortCon.getSortBy())) {
+						if (sortCon.getSortBy() != null && sortCon.getSortWay().equals(SortWay.ASC)) {
+							cq.orderBy(cb.asc(root.get(sortCon.getSortBy())));
+						} else if (sortCon.getSortBy() != null && sortCon.getSortWay().equals(SortWay.DESC)) {
+							cq.orderBy(cb.desc(root.get(sortCon.getSortBy())));
+						}
+					}
+					} else {
+						if (sortCon.getSortBy() != null && sortCon.getSortWay().equals(SortWay.ASC)) {
+							cq.orderBy(cb.asc(join.get(sortCon.getSortBy())));
+						} else if (sortCon.getSortBy() != null && sortCon.getSortWay().equals(SortWay.DESC)) {
+							cq.orderBy(cb.desc(join.get(sortCon.getSortBy())));
+						}
+					}
+				
+
+				// 分頁
+				TypedQuery<TeacherCmsTable> query = em.createQuery(cq);
+				query.setFirstResult((sortCon.getPage() - 1) * sortCon.getPageSize());
+				query.setMaxResults(sortCon.getPageSize());
+
+				// 送出請求
+				List<TeacherCmsTable> list = query.getResultList();
+				if (list != null) 
+					return list;
+				return null;
+			}
+
+			public Integer getPages(SortCondition sortCon) {
+				CriteriaBuilder cb = em.getCriteriaBuilder();
+
+				// 決定輸出表格型態
+				CriteriaQuery<Long> cq = cb.createQuery(Long.class);
+
+				// 決定select.join表格
+				Root<Teacher> root = cq.from(Teacher.class);
+				Join< Teacher,Member> join = root.join("member");
+
+				// 決定查詢 column
+				cq.select(cb.count(root));
+
+				// 加入查詢條件
+				Predicate predicate = cb.conjunction();
+				Teacher teacher = new Teacher();
+//				Predicate pre = pService.checkCourseCondition(root, join, predicate, sortCon, cb, course);
+				Predicate pre = pService.checkTeacherCondition(root, join, predicate, sortCon, cb, teacher);
+				cq.where(pre);
+				
+				//查詢傯頁數
+				Long totalRecords = em.createQuery(cq).getSingleResult();
+				Integer totalPages = (int) Math.ceil((double) totalRecords / sortCon.getPageSize());
+				
+				return totalPages;
+			}
+	
 	
 }

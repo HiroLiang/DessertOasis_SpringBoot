@@ -174,7 +174,7 @@ public class RecipeController {
 	public String addRecipe(@RequestBody RecipeCreateDTO createDto, HttpSession session) {
 		Member member = (Member) session.getAttribute("loggedInMember");
 //		if (member != null) {
-			Boolean add = recipeService.addRecipe(4, createDto);
+		Boolean add = recipeService.addRecipe(4, createDto);
 		/*-------------------------------使用ImageUploadUtil儲存圖片並接收回傳儲存位置區塊--------------------------------------*/
 //			Recipes recipe = new Recipes();
 //			recipe.setRecipeTitle(recipeTitle);
@@ -223,9 +223,9 @@ public class RecipeController {
 //			}
 //
 //			Boolean add = recipeService.addRecipe(1, recipe);
-			if (add) {
-				return "Y"; //新增成功
-			}
+		if (add) {
+			return "Y"; // 新增成功
+		}
 		return "F";// 新增失敗 recipebean資料不符或是找不到對應使用者
 		/*-------------------------------使用ImageUploadUtil儲存圖片並接收回傳儲存位置區塊--------------------------------------*/
 //		}
@@ -237,8 +237,8 @@ public class RecipeController {
 	@PostMapping(path = "test/uploadimg")
 	public List<String> sendPic(@RequestBody List<PicturesDTO> pictures) {
 		/*---------設定儲存路徑---------*/
-//		final String uploadPath = "D:/dessertoasis-vue/public/images/";
-		final String uploadPath = "C:/Users/iSpan/Documents/dessertoasis-vue/public/";
+		final String uploadPath = "D:/dessertoasis-vue/public/images/";
+//		final String uploadPath = "C:/Users/iSpan/Documents/dessertoasis-vue/public/";
 //		Member member = (Member) session.getAttribute("loggedInMember");
 //		Recipes recipe = (Recipes) session.getAttribute("recipeId");
 
@@ -252,10 +252,10 @@ public class RecipeController {
 			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmssSSS");
 			String timestamp = LocalDateTime.now().format(formatter);
 //		if (member != null) {
-			//調整存入資料庫的路徑位置
+			// 調整存入資料庫的路徑位置
 			String sqlPath = "images/recipe" + "/" + 1 + "/";
 			String userFolder = uploadPath + sqlPath;
-			
+
 			File folder = new File(userFolder);
 			if (!folder.exists()) {
 				folder.mkdirs();
@@ -369,48 +369,76 @@ public class RecipeController {
 
 	/*----------------------------------------------圖檔處理回傳儲存路徑Controller------------------------------------------------------------------*/
 	/*----------------------------------------------處理前端請求回傳base64給前端顯示Controller------------------------------------------------------------------*/
-	
-	@PostMapping("recipe/getPic")
-	@ResponseBody
+
+//	@PostMapping("recipe/getPic")
+//	@ResponseBody
 	public ResponseEntity<String> getPic(@RequestBody Integer recipeId) {
 		Optional<Recipes> findById = recipeRepo.findById(recipeId);
-		if(findById.isPresent()) {
-			String userPath= "C:\\Users\\iSpan\\Documents\\dessertoasis-vue\\public\\";
+		if (findById.isPresent()) {
+			String userPath = "C:\\Users\\iSpan\\Documents\\dessertoasis-vue\\public\\";
 			Recipes recipe = findById.get();
 			String pictureURL = recipe.getPictureURL();
 			try {
-				BufferedImage read = ImageIO.read(new File(userPath+pictureURL));
-				
-				if(read != null) {
+				BufferedImage read = ImageIO.read(new File(userPath + pictureURL));
+
+				if (read != null) {
 					ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
 					int lastDotIndex = pictureURL.lastIndexOf(".");
-					if(lastDotIndex>0) {
-						String formatName = pictureURL.substring(lastDotIndex+1);
+					if (lastDotIndex > 0) {
+						String formatName = pictureURL.substring(lastDotIndex + 1);
 						ImageIO.write(read, formatName, byteArrayOutputStream);
 						byte[] img = byteArrayOutputStream.toByteArray();
 						String base64Img = Base64.getEncoder().encodeToString(img);
-						
-						 HttpHeaders headers = new HttpHeaders();
-					        headers.setContentType(MediaType.parseMediaType("image/" + formatName));
-						
+
+						HttpHeaders headers = new HttpHeaders();
+						headers.setContentType(MediaType.parseMediaType("image/" + formatName));
+
 						return ResponseEntity.ok().headers(headers).body(base64Img);
 					}
-					
-				}else {
+
+				} else {
 					ResponseEntity.ok("Image not found");
 				}
-				
+
 			} catch (IOException e) {
 				e.printStackTrace();
-				ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("F");	
+				ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("F");
 			}
 		}
 		return ResponseEntity.ok("recipe not found");
 	}
-	
-	
-	/*----------------------------------------------處理前端請求回傳base64給前端顯示Controller------------------------------------------------------------------*/
 
+	/*----------------------﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀發送base64給前端範例﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀--------------------------*/
+	@PostMapping("recipe/getPic")
+	@ResponseBody
+	public ResponseEntity<String> getPicByGetPicture(@RequestBody Integer recipeId) {
+		Optional<Recipes> findById = recipeRepo.findById(recipeId);
+		System.out.println("start");
+		if (findById.isPresent()) {
+			System.out.println("if");
+			String userPath ="D:/dessertoasis-vue/public/images/";
+//			String userPath = "C:\\Users\\iSpan\\Documents\\dessertoasis-vue\\public\\";
+			Recipes recipe = findById.get();
+			String pictureURL = recipe.getPictureURL();
+			
+			/*-------------------getPicture方法   第一個參數接收自己的儲存路徑， 第二個參數接收存於資料庫的路徑(範例: images/recipe/1/3584160_20230914005256937.jpg  等等)---------------------*/
+			List<String> picture = imgUtil.getPicture(userPath, pictureURL);
+	
+			HttpHeaders headers = new HttpHeaders();
+			/*-------------------getPicture回傳值[0]為檔案MIME字串(如image/png 等)  將其設定到 headers中----------------------------*/
+			headers.setContentType(MediaType.parseMediaType(picture.get(0)));
+			
+			/*-------------------getPicture回傳值[1]為檔案base64字串  將其設定到body中----------------------------*/
+			return ResponseEntity.ok().headers(headers).body(picture.get(1));
+			/*------------------------------------前端接收圖片方式請看vue專案 OneRecipePage.vue 中的getImg函式------------------------------------*/
+		}
+		return ResponseEntity.ok("recipe not found");
+	}
+	/*----------------------﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀發送base64給前端範例﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀--------------------------*/
+	
+	
+
+	/*----------------------------------------------處理前端請求回傳base64給前端顯示Controller------------------------------------------------------------------*/
 
 	// 更新食譜
 	@PutMapping("recipe/updaterecipe")
@@ -429,7 +457,7 @@ public class RecipeController {
 	// 刪除食譜
 	@DeleteMapping()
 	public String deleteRecipe(@RequestParam("id") Integer id, HttpSession session) {
-		
+
 		Member member = (Member) session.getAttribute("loggedInMember");
 		if (member != null) {
 			Boolean delete = recipeService.deleteById(id, member.getId());
@@ -440,6 +468,7 @@ public class RecipeController {
 		}
 		return "N";
 	}
+
 	/*----------------------------------------------處理食譜總頁數Controller------------------------------------------------------------------*/
 	@PostMapping("/recipe/pages")
 	public Integer getPages(@RequestBody SortCondition sortCon, HttpSession session) {
@@ -453,9 +482,10 @@ public class RecipeController {
 		Integer pages = recipeService.getPages(sortCon);
 		return pages;
 	}
+
 	/*----------------------------------------------後台資料查詢Controller------------------------------------------------------------------*/
 	@PostMapping("/recipe/pagenation")
-	public List<RecipeCmsTable> getRecipePage(@RequestBody SortCondition sortCon, HttpSession session){
+	public List<RecipeCmsTable> getRecipePage(@RequestBody SortCondition sortCon, HttpSession session) {
 		System.out.println(sortCon);
 		// 判斷 user 存在且為 ADMIN
 //		Member user = (Member) session.getAttribute("loggedInMember");
@@ -464,17 +494,17 @@ public class RecipeController {
 //		}
 		// 送出查詢條件給service，若有結果則回傳list
 		List<RecipeCmsTable> result = recipeService.getRecipePagenation(sortCon);
-		if(result != null) {
+		if (result != null) {
 			System.out.println(result);
 			return result;
 		}
 		return null;
 	}
-	
+
 	/*----------------------------------------------前台資料查詢Controller------------------------------------------------------------------*/
 
 	@PostMapping("/recipe/recipeFrontPagenation")
-	public List<RecipeFrontDTO> getFrontRecipePage(@RequestBody SortCondition sortCon, HttpSession session){
+	public List<RecipeFrontDTO> getFrontRecipePage(@RequestBody SortCondition sortCon, HttpSession session) {
 		System.out.println(sortCon);
 		// 判斷 user 存在且為 ADMIN
 //		Member user = (Member) session.getAttribute("loggedInMember");
@@ -483,7 +513,7 @@ public class RecipeController {
 //		}
 		// 送出查詢條件給service，若有結果則回傳list
 		List<RecipeFrontDTO> result = recipeService.getFrontRecipePagenation(sortCon);
-		if(result != null) {
+		if (result != null) {
 			System.out.println(result);
 			return result;
 		}

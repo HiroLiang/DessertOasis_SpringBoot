@@ -194,7 +194,7 @@ public class CourseService {
 			Join<Course, Teacher> join = root.join("teacher");
 
 			// 決定查詢 column
-			cq.multiselect(root.get("id"), join.get("teacherName"),root.get("courseName"),root.get("courseDate"),root.get("closeDate"),root.get("coursePlace"),root.get("remainPlaces"),root.get("coursePrice"),root.get("courseStatus")
+			cq.multiselect(root.get("id"), join.get("teacherName"),root.get("courseName"),root.get("courseDate"),root.get("closeDate"),root.get("coursePlace"),root.get("remainPlaces"),root.get("coursePrice"),root.get("courseStatus"),root.get("courseIntroduction")
 					);
 
 			// 加入查詢條件

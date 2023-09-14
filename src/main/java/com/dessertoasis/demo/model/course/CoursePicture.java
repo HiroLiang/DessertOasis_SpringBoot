@@ -25,7 +25,7 @@ public class CoursePicture {
 	
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name="courseId", referencedColumnName = "id")
-	@JsonIgnoreProperties({"coursePictureList"})
+	@JsonIgnoreProperties("coursePictureList")
 	private Course course;
 	
 	@Column(columnDefinition = "nvarchar(max)")

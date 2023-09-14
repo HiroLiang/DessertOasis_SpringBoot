@@ -16,6 +16,7 @@ public class CourseCmsTable {
 	private Integer coursePrice;
 	private String categoryName;
 	private String courseStatus;
+	private String courseIntroduction;
 	
 
 	public CourseCmsTable() {
@@ -24,7 +25,8 @@ public class CourseCmsTable {
 
 
 	public CourseCmsTable(Integer id, String teacherName, String courseName, Date courseDate, Date closeDate,
-			String coursePlace, Integer remainPlaces, Integer coursePrice, String courseStatus) {
+			String coursePlace, Integer remainPlaces, Integer coursePrice, String courseStatus,
+			String courseIntroduction) {
 		super();
 		this.id = id;
 		this.teacherName = teacherName;
@@ -34,8 +36,25 @@ public class CourseCmsTable {
 		this.coursePlace = coursePlace;
 		this.remainPlaces = remainPlaces;
 		this.coursePrice = coursePrice;
+//		this.categoryName = categoryName;
 		this.courseStatus = courseStatus;
+		this.courseIntroduction = courseIntroduction;
 	}
+
+
+//	public CourseCmsTable(Integer id, String teacherName, String courseName, Date courseDate, Date closeDate,
+//			String coursePlace, Integer remainPlaces, Integer coursePrice, String courseStatus) {
+//		super();
+//		this.id = id;
+//		this.teacherName = teacherName;
+//		this.courseName = courseName;
+//		this.courseDate = courseDate;
+//		this.closeDate = closeDate;
+//		this.coursePlace = coursePlace;
+//		this.remainPlaces = remainPlaces;
+//		this.coursePrice = coursePrice;
+//		this.courseStatus = courseStatus;
+//	}
 
 
 //	public CourseCmsTable(Integer id, String teacherName, String courseName, Date courseDate, Date closeDate,
