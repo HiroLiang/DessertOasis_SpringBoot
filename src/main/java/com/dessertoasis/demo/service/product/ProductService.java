@@ -8,17 +8,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.dessertoasis.demo.model.category.Category;
-import com.dessertoasis.demo.model.member.Member;
-import com.dessertoasis.demo.model.order.Order;
-import com.dessertoasis.demo.model.order.OrderCmsTable;
 import com.dessertoasis.demo.model.product.ProdSearchDTO;
 import com.dessertoasis.demo.model.product.Product;
 import com.dessertoasis.demo.model.product.ProductPicture;
 import com.dessertoasis.demo.model.product.ProductRepository;
-import com.dessertoasis.demo.model.sort.DateRules;
-import com.dessertoasis.demo.model.sort.SearchRules;
 import com.dessertoasis.demo.model.sort.SortCondition;
 import com.dessertoasis.demo.model.sort.SortCondition.SortWay;
 import com.dessertoasis.demo.service.PageSortService;
@@ -31,8 +27,6 @@ import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Join;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
-
-import org.springframework.data.jpa.domain.Specification;
 @Service
 public class ProductService {
 	@PersistenceContext
@@ -47,6 +41,7 @@ public class ProductService {
     @Autowired
 	private PageSortService ppService;
     
+   
     public Product findProductById(Integer id) {
         Optional<Product> optional = prodRepo.findById(id);
         return optional.orElse(null);
@@ -234,25 +229,31 @@ public class ProductService {
 		
 		return totalPages;
 	}
+	@Transactional
+	public void addImageToProduct(Integer productId, String sqlPath) {
+        Product product = findProductById(productId);
+        if (product != null) {
+            List<ProductPicture> pictures = product.getPictures();
+            if (pictures == null) {
+                pictures = new ArrayList<>();
+            }
 
-//	public void addImageToProduct(Integer productId, String imagePath, String thumbnailPath) {
-//	    Product product = findProductById(productId);
-//	    if (product != null) {
-//	        List<ProductPicture> pictures = product.getPictures();
-//	        if (pictures == null) {
-//	            pictures = new ArrayList<>();
-//	        }
-//
-//	        ProductPicture productPicture = new ProductPicture();
-//	        productPicture.setPictureURL(imagePath); // 设置商品圖片路径
-//	        productPicture.setThumbnailURL(thumbnailPath); // 设置縮圖路径
-//	        productPicture.setProduct(product);
-//	        pictures.add(productPicture);
-//
-//	        product.setPictures(pictures);
-//	    }
-//	
-//	}
+            ProductPicture productPicture = new ProductPicture();
+            System.out.println(sqlPath);
+            productPicture.setPictureURL(sqlPath); // 设置商品圖片路径
+            //productPicture.setThumbnailURL(thumbnailPath); // 设置縮圖路径
+            System.out.println(product);
+
+            // 正确设置ProductPicture的product属性
+            productPicture.setProduct(product);
+
+            pictures.add(productPicture);
+            product.setPictures(pictures);
+
+            // 使用EntityManager将新的ProductPicture对象保存到数据库
+           em.persist(productPicture);
+        }
+	}
 
 	
 }
