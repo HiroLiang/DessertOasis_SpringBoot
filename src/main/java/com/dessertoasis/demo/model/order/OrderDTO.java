@@ -23,6 +23,7 @@ public class OrderDTO {
 	private List<ReservationCartDTO> reservations;
 	private List<ProductCartDTO> prodOrderItems;
 	private List<CourseCartDTO> courseOrderItems;
+	private Integer total;
 	
 	public OrderDTO() {
 		
@@ -36,11 +37,13 @@ public class OrderDTO {
 		this.updateDate = order.getUpdateDate();
 		this.prodOrderAddress = order.getProdOrderAddress();
 		
+		Integer total = 0;
 		if (order.getProdOrderItems() != null) {
 			List<ProductCartDTO> prodOrderItems	= new ArrayList<>();
 			for (ProdOrderItem prodOrderItem : order.getProdOrderItems()) {
 				ProductCartDTO itemDto = new ProductCartDTO(prodOrderItem.getProduct(), prodOrderItem.getQuantity());
 				prodOrderItems.add(itemDto);
+				total += itemDto.getProdPrice() * itemDto.getProdQuantity();
 			}
 			this.prodOrderItems = prodOrderItems;
 		}
@@ -50,6 +53,7 @@ public class OrderDTO {
 			for (CourseOrderItem courseOrderItem : order.getCourseOrderItems()) {
 				CourseCartDTO itemDto = new CourseCartDTO(courseOrderItem.getCourse());
 				courseOrderItems.add(itemDto);
+				total += itemDto.getCoursePrice();
 			}
 			this.courseOrderItems = courseOrderItems;
 		}
@@ -59,8 +63,10 @@ public class OrderDTO {
 			for (Reservation rsv : order.getReservations()) {
 				ReservationCartDTO itemDto = new ReservationCartDTO(rsv);
 				reservations.add(itemDto);
+				total += itemDto.getPrice();
 			}
 			this.reservations = reservations;
-		}	
+		}
+		this.total = total;
 	}
 }
