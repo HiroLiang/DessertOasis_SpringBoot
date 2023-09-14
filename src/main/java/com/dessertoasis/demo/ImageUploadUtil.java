@@ -27,13 +27,13 @@ public class ImageUploadUtil {
 
 	// 請將上傳圖檔路徑請改為自己裝置上的路徑, 由於用方法封裝起來tomcat會塞入預設字串導致抓不到正確路徑,別人的路徑先註解掉複製改為自己的
 
-	private static final String userRoot = "C:\\Users\\iSpan\\Documents\\dessertoasis-vue\\public\\images";
+//	private static final String userRoot = "C:\\Users\\iSpan\\Documents\\dessertoasis-vue\\public\\images";
 
-	public String savePicture(MultipartFile file, Integer memberId, String folderName, String projectName) {
+	public String savePicture(MultipartFile file, String userPath,Integer memberId, String folderName, String projectName) {
 		if (!file.isEmpty()) {
 			String originalFilename = file.getOriginalFilename();
 			String uniqueFileName = generateUniqueFileName(originalFilename);
-			String memberFolderPath = userRoot + "/" + folderName + "/" + memberId + "/" + projectName;
+			String memberFolderPath = userPath + "images/" + folderName + "/" + memberId + "/" + projectName;
 			File folder = new File(memberFolderPath);
 
 			// 檢查資料夾是否存在 不存在則建立資料夾
@@ -51,7 +51,7 @@ public class ImageUploadUtil {
 				e.printStackTrace();
 			}
 
-			return folderName + "/" + memberId + "/" + projectName + "/" + uniqueFileName;
+			return "images/" +folderName + "/" + memberId + "/" + projectName + "/" + uniqueFileName;
 		}
 		return "N";
 

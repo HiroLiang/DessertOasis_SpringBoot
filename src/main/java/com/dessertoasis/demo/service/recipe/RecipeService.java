@@ -192,7 +192,7 @@ public class RecipeService {
 	/*--------------------------------------------食譜建立頁使用service ------------------------------------------------*/
 
 	// 新增食譜
-	public Boolean addRecipe(Integer id, RecipeCreateDTO cDto) {
+	public String addRecipe(Integer id, RecipeCreateDTO cDto) {
 		Optional<Member> optional = memberRepo.findById(id);
 		if (optional.isPresent()) {
 
@@ -218,7 +218,7 @@ public class RecipeService {
 				cDto.getRecipe().setCookingTime(0);
 			}
 			System.out.println(cDto.getRecipe().getId()); //持久化前沒有id
-			recipeRepo.save(cDto.getRecipe());
+			Recipes save = recipeRepo.save(cDto.getRecipe());
 			System.out.println(cDto.getRecipe().getId()); //持久化後能取得id
 //			List<RecipeCategory> recipecategories = new ArrayList<>();
 			/*--------------------------------------------儲存食譜類別區塊-----------------------------------------------------*/
@@ -242,9 +242,9 @@ public class RecipeService {
 //			}
 		/*--------------------------------------------儲存食譜類別區塊-----------------------------------------------------*/
 
-			return true;
+			return save.getId().toString();
 		}
-		return false;
+		return null;
 	}
 
 	// 修改食譜
