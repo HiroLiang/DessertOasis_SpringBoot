@@ -67,6 +67,9 @@ public class Recipes {
 	@Column(name = "recipeIntroduction",nullable=true,columnDefinition = "nvarchar(MAX)")
 	private String recipeIntroduction;
 	
+	//食譜份量(幾人份)
+	
+	
 	//製作時間
 	@Column(name = "cookingTime",nullable=true,columnDefinition = "int")
 	private Integer cookingTime;
