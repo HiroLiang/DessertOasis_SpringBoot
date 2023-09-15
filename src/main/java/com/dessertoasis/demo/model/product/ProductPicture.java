@@ -1,6 +1,8 @@
 package com.dessertoasis.demo.model.product;
 import java.io.File;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -25,6 +27,7 @@ public class ProductPicture {
 	
 	@ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "productId", referencedColumnName = "id")
+	//@JsonIgnoreProperties({"prodPicture"})
 	private Product product;
 	
 	@Column(name = "pictureURL",columnDefinition = "nvarchar(max)")

@@ -18,6 +18,7 @@ import com.dessertoasis.demo.model.course.TeacherDemo;
 import com.dessertoasis.demo.model.course.TeacherRepository;
 import com.dessertoasis.demo.model.member.Member;
 import com.dessertoasis.demo.model.member.MemberRepository;
+import com.dessertoasis.demo.model.recipe.Recipes;
 import com.dessertoasis.demo.model.sort.DateRules;
 import com.dessertoasis.demo.model.sort.SearchRules;
 import com.dessertoasis.demo.model.sort.SortCondition;
@@ -41,6 +42,9 @@ public class TeacherService {
 	private TeacherRepository tRepo;
 	
 	@Autowired
+	private MemberRepository mRepo;
+	
+	@Autowired
 	private MemberService mService;
 
 	@Autowired
@@ -49,19 +53,15 @@ public class TeacherService {
 	@PersistenceContext
 	private EntityManager em;
 
-	public Optional<Teacher> getCourseByTeacherId(Integer id) {
-		Optional<Teacher> data = tRepo.findById(id);
-		return data;
-	}
-	
-	public Teacher getTeacherById(Integer teacherId) {
-         Optional<Teacher> teacherInfo = tRepo.findById(teacherId);
-          Teacher result = teacherInfo.get();
-          return result;
-        
-    }
+//	public Optional<Teacher> getCourseByTeacherId(Integer id) {
+//		Optional<Teacher> optional = tRepo.findById(id);
+//		if(optional.isPresent()) {
+//			Teacher teacher = optional.get();
+//		return teacher;}
+//	}
+//	
 
-	public List<Teacher> getAllTeachers(){
+	public List<Teacher> findAllTeachers(){
 		return tRepo.findAll();
 	}
 	
@@ -99,7 +99,8 @@ public class TeacherService {
         }
     }
     
-	public Teacher findById(Integer id) {
+	//利用teacherId查單筆資料
+	public Teacher getTeacherById(Integer id) {
 		Optional<Teacher> result = tRepo.findById(id);
 		if(result != null) {
 			Teacher teacher = result.get();
@@ -118,6 +119,36 @@ public class TeacherService {
         // 调用Repository保存老师数据
         return tRepo.save(teacher);
     }	
+	
+	//刪除老師
+	public Boolean deleteTeacherById(Integer id) {
+		Optional<Teacher> optional = tRepo.findById(id);
+		if(optional.isPresent()) {
+			tRepo.deleteById(id);
+			return true;
+		}
+		return false;
+	}
+	
+	// 修改老師
+//		public Boolean updateTeacher(Integer id, Teacher teacher) {
+//			Optional<Member> member = mRepo.findById(id);
+//			Optional<Teacher> optional = tRepo.findById(teacher.getId());
+//
+//			if (optional.isPresent()) {
+//				Teacher teacherData = optional.get();
+//				if (teacherData.getId().equals(member.get().getId())) {
+//					tRepo.save(teacher);
+//				}
+//			
+//				return true;
+//			}
+//			return false;
+//		}
+	
+	public void update(Teacher teacher) {
+		tRepo.save(teacher);
+	}
 
 	//動態條件搜索
 	public List<TeacherDemo> getTeacherPage(SortCondition sortCod) {

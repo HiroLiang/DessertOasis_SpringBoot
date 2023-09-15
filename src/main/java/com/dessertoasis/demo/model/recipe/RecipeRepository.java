@@ -26,7 +26,7 @@ public interface RecipeRepository extends JpaRepository<Recipes, Integer> {
 	/*--------------------------------------------食譜主頁使用query ------------------------------------------------*/
 	
 	//取得最新的10筆食譜
-	@Query(value="select top 10 * from Recipes order by recipeCreateDate ASC", nativeQuery = true)
+	@Query(value="select top 10 * from Recipes order by recipeCreateDate DESC", nativeQuery = true)
 	List<Recipes> findTop10RecipeByCreateTime();
 	
 	//取得訪問數最高的10筆食譜

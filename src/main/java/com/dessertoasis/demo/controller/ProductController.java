@@ -73,30 +73,21 @@ public class ProductController {
 //    }
     @PostMapping("/uploadImage")
     public ResponseEntity<String> uploadImage(@RequestParam("productId") Integer productId, @RequestParam("image") MultipartFile image) {
+       
         try {
-            String baseDir = "C:/workspace/dessertoasis-vue/public/images/product/";
-            String productDir = baseDir + productId;
-            String thumbnailDir = productDir + "/thumbnail"; // 创建thumbnail子文件夹
-
-            File productFolder = new File(productDir);
-            if (!productFolder.exists()) {
-                productFolder.mkdirs();
+            String uploadDir = "C:/workspace/dessertoasis-vue/public/images/product/" +productId;
+            File dir = new File(uploadDir);
+            if (!dir.exists()) {
+                dir.mkdirs();
             }
 
-            File thumbnailFolder = new File(thumbnailDir);
-            if (!thumbnailFolder.exists()) {
-                thumbnailFolder.mkdirs();
-            }
-
-            String imagePath = productDir + "/" + image.getOriginalFilename();
-            String thumbnailPath = thumbnailDir + "/" + "thumbnail_" + image.getOriginalFilename(); // 修改縮圖路径
-
+            String imagePath = uploadDir + "/" + image.getOriginalFilename();
+            String sqlPath = "images/product/"+productId+ "/" + image.getOriginalFilename();
             File destination = new File(imagePath);
             image.transferTo(destination);
-
-            // 处理縮圖逻辑，将縮圖存储在thumbnailPath中
-
-            //pService.addImageToProduct(productId, imagePath);
+System.out.println(imagePath);
+           
+            pService.addImageToProduct(productId, sqlPath);
 
             return ResponseEntity.ok("Image uploaded successfully.");
         } catch (IOException e) {

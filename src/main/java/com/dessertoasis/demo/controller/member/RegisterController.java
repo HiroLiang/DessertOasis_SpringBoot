@@ -6,8 +6,11 @@ import java.util.UUID;
 import javax.crypto.SecretKey;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.dessertoasis.demo.model.member.Member;
@@ -24,6 +27,8 @@ public class RegisterController {
 	
     @Autowired
     private MemberService mService;
+    @Autowired
+    private SecretKey secretKey;
 
     @PostMapping("/memberRegister")
     public String register(@RequestBody Member member){
@@ -39,14 +44,18 @@ public class RegisterController {
         newMember.setEmail(member.getEmail());
         newMember.setPasswords(member.getPasswords());
         
-////        創立新帳，產生驗證token
-//        String verificationToken = TokenEncryptionUtil.setEncryptedToken(member.getAccount(), member.getEmail(), secretKey);
-//        newMember.setVerificationToken(verificationToken);
-////        
-////        //產生此會員的驗證信連結
-//        String verificationLink ="http://localhost:5173/#/"+verificationToken;
-//        mService.sendVerificationEmail(newMember.getEmail(),verificationLink);
+//        創立新帳，產生驗證token
+		try {
+			String verificationToken = TokenEncryptionUtil.setEncryptedToken(member.getAccount(), secretKey);
+			newMember.setVerificationToken(verificationToken);
 //        
+			//產生此會員的驗證信連結
+			String verificationLink ="http://localhost:5173/#/verify?token="+verificationToken;
+			mService.sendVerificationEmail(newMember.getEmail(),verificationLink);
+			System.out.println("我是verificationToken:"+verificationToken);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
         
         //創立新帳號為不活耀狀態
         member.getMemberStatus();
@@ -64,4 +73,29 @@ public class RegisterController {
        
         return "Y";
     }
+    
+    @PostMapping("/verify")
+    public ResponseEntity<String> verifyToken(@RequestBody String token) {
+    	try {
+			
+    		String decryptedToken = TokenEncryptionUtil.decryptToken(token, secretKey);
+    		String[] parts = decryptedToken.split("-"); // 假設用 "-" 分隔帳戶和電子郵件
+            if (parts.length != 2) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("令牌格式無效");
+            }
+            
+            String account = parts[0];
+            if(mService.isValidAccount(account)) {
+            	return ResponseEntity.ok("驗證成功");
+            }else {
+            	 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("驗證失敗");
+            }
+            
+    	} catch (Exception e) {
+			e.printStackTrace();
+			 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("連線失敗");
+    	}
+    	
+    }
+      
 }

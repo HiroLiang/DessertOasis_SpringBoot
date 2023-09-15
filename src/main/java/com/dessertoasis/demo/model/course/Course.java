@@ -70,7 +70,7 @@ public class Course {
 	@Column(name="courseDestination",columnDefinition = "nvarchar(max)")
 	private String courseDestination;
 	
-	//課程目標
+	//課程對象
 	@Column(name="serviceTarget",columnDefinition = "nvarchar(max)")
 	private String serviceTarget;
 	

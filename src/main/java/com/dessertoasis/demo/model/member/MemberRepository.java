@@ -11,5 +11,6 @@ public interface MemberRepository extends JpaRepository<Member, Integer> {
 	
 	@Query("FROM Member WHERE access = 'ADMIN' AND id != :id ")
 	List<Member> findByAccessExcept(Integer id);
+
 	
 }
