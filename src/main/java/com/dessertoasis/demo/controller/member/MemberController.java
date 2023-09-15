@@ -1,5 +1,12 @@
 package com.dessertoasis.demo.controller.member;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.Base64;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -14,11 +21,15 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
+import com.dessertoasis.demo.ImageUploadUtil;
 import com.dessertoasis.demo.model.member.Member;
 import com.dessertoasis.demo.model.member.MemberAccess;
 import com.dessertoasis.demo.model.member.MemberDetail;
+import com.dessertoasis.demo.model.recipe.PicturesDTO;
 import com.dessertoasis.demo.service.member.MemberDetailService;
 import com.dessertoasis.demo.service.member.MemberService;
 
@@ -82,12 +93,13 @@ public class MemberController {
 	@PutMapping("/update")
 	public ResponseEntity<MemberDetail> updateMemberDetail(@RequestBody MemberDetail updatedMemberDetail, HttpSession session) {
 	    try {
-	        // 從會話中獲取已登入的 Member
+	        // 獲取已登入的 Member
 	        Member member = (Member) session.getAttribute("loggedInMember");
 	        
 	        // 確認用戶已登入
 	        if (member != null) {
 	            // 設置更新後的屬性
+	        	
 	        	member.getMemberDetail().setIdNumber(updatedMemberDetail.getIdNumber());
 	        	member.getMemberDetail().setBirthday(updatedMemberDetail.getBirthday());
 	        	member.getMemberDetail().setDeliveryAddress(updatedMemberDetail.getDeliveryAddress());
@@ -134,5 +146,55 @@ public class MemberController {
 			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("未授权访问，请登录后再试。");
 		}
 	}
+	
+	@PostMapping("/uploadMemberImg")
+	public String memberPic(@RequestBody List<PicturesDTO> pictures,HttpSession session){
+		
+		Member member = (Member) session.getAttribute("loggedInMember");
+		if (member != null) {
+			final String uploadPath = "D:/dessertoasis-vue/public/";
+			if (!pictures.isEmpty() && pictures != null) {
+				DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmssSSS");
+				String timestamp = LocalDateTime.now().format(formatter);
+				
+				Integer memId = member.getId();
+				
+				String sqlPath = "images/member" + "/" + memId + "/";
+				String userFolder = uploadPath + sqlPath;
+	
+				File folder = new File(userFolder);
+				if (!folder.exists()) {
+					folder.mkdirs();
+				}
+				if (pictures.get(0) != null) {
+					/*----------取得前端傳來的圖檔字串----------*/
+					String mainPic = pictures.get(0).getBase64Content();
+					String mainPicName = pictures.get(0).getFileName();
+					/*----------取得前端傳來的圖檔字串----------*/
 
+					/*----------寫入檔案及儲存位置串接字串----------*/
+					String mainFileName = mainPicName.substring(0, mainPicName.lastIndexOf("."));// 將副檔名與檔名拆開 取得檔名
+					String mainExtension = mainPicName.substring(mainPicName.lastIndexOf("."));// 將副檔名與檔名拆開 取得副檔名
+					String mainUniqueName = mainFileName + "_" + timestamp + mainExtension;// 將時間串入檔名
+
+					byte[] mainDecode = Base64.getDecoder().decode(mainPic);
+					File mainfile = new File(userFolder + mainUniqueName);
+					
+					try (FileOutputStream mainfileOutputStream = new FileOutputStream(mainfile)) {
+						mainfileOutputStream.write(mainDecode);
+						mainfileOutputStream.flush();
+						
+						return userFolder;
+						
+					} catch (IOException e) {
+						e.printStackTrace();
+						System.out.println(e);
+					}
+			}
+			
+		}
+		
+	}
+		return null;
+}
 }

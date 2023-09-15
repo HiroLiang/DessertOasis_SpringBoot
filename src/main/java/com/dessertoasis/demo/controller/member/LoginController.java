@@ -143,7 +143,7 @@ public class LoginController {
 	}
 	
 	//從session 拿出member資料
-	  @GetMapping("/memberSession")
+	  @PostMapping("/memberSession")
 	    public Member getSessionMember(HttpServletRequest request) {
 	        
 	        HttpSession session = request.getSession();
