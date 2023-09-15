@@ -40,6 +40,7 @@ public class Recipes {
 //	@JsonProperty(access = JsonProperty.Access.READ_ONLY)
 	@JsonIgnoreProperties({"account","email","passwords","emailForCode","code","access","memberStatus","signDate","verificationToken","memberDetail","teacher"})
 	@ManyToOne
+//	@JsonIgnoreProperties({"passwords"})
 	@JoinColumn(name="memberId", nullable = true)
 	private Member recipeAuthor;
 	
