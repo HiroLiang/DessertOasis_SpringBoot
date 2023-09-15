@@ -7,6 +7,7 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -14,12 +15,14 @@ import com.dessertoasis.demo.model.category.Category;
 import com.dessertoasis.demo.model.product.ProdSearchDTO;
 import com.dessertoasis.demo.model.product.Product;
 import com.dessertoasis.demo.model.product.ProductPicture;
+import com.dessertoasis.demo.model.product.ProductPictureRepository;
 import com.dessertoasis.demo.model.product.ProductRepository;
 import com.dessertoasis.demo.model.sort.SortCondition;
 import com.dessertoasis.demo.model.sort.SortCondition.SortWay;
 import com.dessertoasis.demo.service.PageSortService;
 
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.TypedQuery;
 import jakarta.persistence.criteria.CriteriaBuilder;
@@ -40,6 +43,9 @@ public class ProductService {
     
     @Autowired
 	private PageSortService ppService;
+    
+    @Autowired
+	private ProductPictureRepository ProdPicRepo;
     
    
     public Product findProductById(Integer id) {
@@ -254,6 +260,25 @@ public class ProductService {
            em.persist(productPicture);
         }
 	}
-
 	
-}
+	public Product findById(Integer id) {
+		Optional<Product> result = prodRepo.findById(id);
+		if(result.isPresent()) {
+			return result.get();
+		}
+		return null;
+	}
+	
+	public List<ProductPicture> getProductPicturesByProductId(Integer id) {
+        Optional<Product> productOptional = prodRepo.findById(id);
+
+        if (productOptional.isPresent()) {
+            Product product = productOptional.get();
+            List<ProductPicture> productPictures = product.getPictures();
+            return productPictures;
+        } else {
+            throw new EntityNotFoundException("Product with ID " + id + " not found.");
+        }
+    }
+	
+	}
