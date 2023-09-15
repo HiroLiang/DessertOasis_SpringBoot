@@ -28,6 +28,7 @@ import jakarta.persistence.TypedQuery;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Join;
+import jakarta.persistence.criteria.JoinType;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
 @Service
@@ -167,19 +168,50 @@ public class ProductService {
 
 		// 決定select.join表格
 		Root<Product> root = cq.from(Product.class);
-		Join<Product,Category> join = root.join("category");
+		Join<Product,Category> joinCategory = root.join("category", JoinType.LEFT);
+		Join<Product, ProductPicture> joinPicture = root.join("pictures", JoinType.LEFT);
 
 		// 決定查詢 column
-		cq.multiselect(root.get("id"),join.get("categoryName"),root.get("prodPrice"),root.get("prodPurchase"),root.get("prodRemark"),root.get("prodStock"),root.get("productStatus"),root.get("saleAfterUpdate"),root.get("updateTime"),root.get("prodName"));
+		cq.multiselect(root.get("id"),joinCategory.get("categoryName"),root.get("prodPrice"),root.get("prodPurchase"),root.get("prodRemark"),root.get("prodStock"),root.get("productStatus"),root.get("saleAfterUpdate"),root.get("updateTime"),root.get("prodName"),joinPicture.get("pictureURL"));
 		
 		// 加入查詢條件
 		Predicate predicate = cb.conjunction();
 		Product product = new Product();
-		Predicate pre = ppService.checkCondition(root, join, predicate, sortCon, cb, product);
+		Predicate pre = ppService.checkCondition(root, joinCategory,predicate, sortCon, cb, product);
 		
 		// 填入 where 條件
 		cq.where(pre);
+		cq.groupBy(
+			    root.get("id"),
+			    joinCategory.get("categoryName"),
+			    root.get("prodPrice"),
+			    root.get("prodPurchase"),
+			    root.get("prodRemark"),
+			    root.get("prodStock"),
+			    root.get("productStatus"),
+			    root.get("saleAfterUpdate"),
+			    root.get("updateTime"),
+			    root.get("prodName")
+			);
 
+			cq.multiselect(
+			    root.get("id"),
+			    joinCategory.get("categoryName"),
+			    root.get("prodPrice"),
+			    root.get("prodPurchase"),
+			    root.get("prodRemark"),
+			    root.get("prodStock"),
+			    root.get("productStatus"),
+			    root.get("saleAfterUpdate"),
+			    root.get("updateTime"),
+			    root.get("prodName"),
+			    cb.function(
+			        "STRING_AGG", 
+			        String.class, 
+			        joinPicture.get("pictureURL"),
+			        cb.literal(", ") // 定义分隔符，例如逗号和空格
+			    )
+			);
 		// 排序條件
 		if (sortCon.getSortBy() != null) {
 			System.out.println("sort");
@@ -191,13 +223,13 @@ public class ProductService {
 				}
 			} else {
 				if (sortCon.getSortBy() != null && sortCon.getSortWay().equals(SortWay.ASC)) {
-					cq.orderBy(cb.asc(join.get(sortCon.getSortBy())));
+					cq.orderBy(cb.asc(joinCategory.get(sortCon.getSortBy())));
 				} else if (sortCon.getSortBy() != null && sortCon.getSortWay().equals(SortWay.DESC)) {
-					cq.orderBy(cb.desc(join.get(sortCon.getSortBy())));
+					cq.orderBy(cb.desc(joinCategory.get(sortCon.getSortBy())));
 				}
 			}
 		}
-
+		//cq.distinct(true);
 		// 分頁
 		TypedQuery<ProdSearchDTO> query = em.createQuery(cq);
 		query.setFirstResult((sortCon.getPage() - 1) * sortCon.getPageSize());
@@ -218,15 +250,15 @@ public class ProductService {
 
 		// 決定select.join表格
 		Root<Product> root = cq.from(Product.class);
-		Join<Product,Category> join = root.join("category");
-
+		Join<Product,Category> joinCategory = root.join("category", JoinType.LEFT);
+		Join<Product, ProductPicture> joinPicture = root.join("pictures", JoinType.LEFT);
 		// 決定查詢 column
 		cq.select(cb.count(root));
 
 		// 加入查詢條件
 		Predicate predicate = cb.conjunction();
 		Product product = new Product();
-		Predicate pre = ppService.checkCondition(root, join, predicate, sortCon, cb, product);
+		Predicate pre = ppService.checkCondition(root, joinCategory,predicate,sortCon,cb,product);
 		cq.where(pre);
 		
 		//查詢總頁數
