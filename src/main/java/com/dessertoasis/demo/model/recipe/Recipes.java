@@ -39,6 +39,7 @@ public class Recipes {
 	//撰寫者ID(連結Member id)
 //	@JsonProperty(access = JsonProperty.Access.READ_ONLY)
 	@ManyToOne
+	@JsonIgnoreProperties({"passwords"})
 	@JoinColumn(name="memberId", nullable = true)
 	private Member recipeAuthor;
 	

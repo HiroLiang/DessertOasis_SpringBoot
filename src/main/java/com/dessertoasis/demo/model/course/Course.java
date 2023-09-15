@@ -10,6 +10,7 @@ import com.dessertoasis.demo.model.order.CourseOrderItem;
 import com.dessertoasis.demo.model.recipe.Recipes;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -43,11 +44,13 @@ public class Course {
 	
 	//食譜ID FK(連接食譜ID)
 	@ManyToOne
+	@JsonIgnoreProperties({"recipeCategories","recipeSteps","ingredientList","course"})
 	@JoinColumn(name = "recipesId")
 	private Recipes recipes;
 	
 	//分類ID FK(連接分類ID)
 	@ManyToOne
+	@JsonIgnoreProperties({"parent","children","recipeCategories","products","courses"})
     @JoinColumn(name = "categoryId")
     private Category category;
 	
@@ -107,7 +110,7 @@ public class Course {
 	@Column(name="coursePrice",columnDefinition = "int")
 	private Integer coursePrice;
 	
-	@JsonIgnore
+	@JsonIgnoreProperties({"course"})
 	@OneToMany(mappedBy="course",cascade = CascadeType.ALL)
 	private List<CourseCtag> courseList;
 	
