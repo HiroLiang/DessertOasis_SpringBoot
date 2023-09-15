@@ -1,6 +1,8 @@
 package com.dessertoasis.demo.model.product;
 import java.io.File;
+import java.util.Optional;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import jakarta.persistence.Column;
@@ -25,13 +27,27 @@ public class ProductPicture {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
 	
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne
     @JoinColumn(name = "productId", referencedColumnName = "id")
-	//@JsonIgnoreProperties({"prodPicture"})
+	@JsonIgnoreProperties({"prodPicture"})
+	//@JsonIgnore
 	private Product product;
 	
 	@Column(name = "pictureURL",columnDefinition = "nvarchar(max)")
 	private String pictureURL;
+
+	public ProductPicture(Integer id, Product product, String pictureURL) {
+		super();
+		this.id = id;
+		this.product = product;
+		this.pictureURL = pictureURL;
+	}
+
+	public ProductPicture() {
+		super();
+	}
+
+	
 	
 	
 	

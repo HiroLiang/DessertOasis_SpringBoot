@@ -23,7 +23,6 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.Data;
 
-@Data	
 @Entity 
 @Table(name = "product")
 
@@ -80,11 +79,11 @@ public class Product {
 	@Column(name = "prodRemark",columnDefinition = "nvarchar(500)")
 	private String prodRemark;
 	
-	
+	@JsonIgnoreProperties({"product"})
 	 @OneToMany(mappedBy = "product")
-	    private List<ProductPicture> pictures;
+	   private List<ProductPicture> pictures;
 	 
-	 @JsonIgnore
+	@JsonIgnoreProperties({"product"})
 	 @OneToMany(mappedBy = "product")
 	 private List<ProdOrderItem> prodOrderItems;
 
@@ -110,6 +109,110 @@ public class Product {
 		this.productStatus = productStatus;
 		this.prodRemark = prodRemark;
 		this.pictures = pictures;
+		this.prodOrderItems = prodOrderItems;
+	}
+
+	public Integer getId() {
+		return id;
+	}
+
+	public void setId(Integer id) {
+		this.id = id;
+	}
+
+	public Category getCategory() {
+		return category;
+	}
+
+	public void setCategory(Category category) {
+		this.category = category;
+	}
+
+	public String getProdName() {
+		return prodName;
+	}
+
+	public void setProdName(String prodName) {
+		this.prodName = prodName;
+	}
+
+	public String getProdDescription() {
+		return prodDescription;
+	}
+
+	public void setProdDescription(String prodDescription) {
+		this.prodDescription = prodDescription;
+	}
+
+	public Integer getProdStock() {
+		return prodStock;
+	}
+
+	public void setProdStock(Integer prodStock) {
+		this.prodStock = prodStock;
+	}
+
+	public Integer getProdPrice() {
+		return prodPrice;
+	}
+
+	public void setProdPrice(Integer prodPrice) {
+		this.prodPrice = prodPrice;
+	}
+
+	public Integer getProdPurchase() {
+		return prodPurchase;
+	}
+
+	public void setProdPurchase(Integer prodPurchase) {
+		this.prodPurchase = prodPurchase;
+	}
+
+	public Timestamp getUpdateTime() {
+		return updateTime;
+	}
+
+	public void setUpdateTime(Timestamp updateTime) {
+		this.updateTime = updateTime;
+	}
+
+	public Integer getSaleAfterUpdate() {
+		return saleAfterUpdate;
+	}
+
+	public void setSaleAfterUpdate(Integer saleAfterUpdate) {
+		this.saleAfterUpdate = saleAfterUpdate;
+	}
+
+	public String getProductStatus() {
+		return productStatus;
+	}
+
+	public void setProductStatus(String productStatus) {
+		this.productStatus = productStatus;
+	}
+
+	public String getProdRemark() {
+		return prodRemark;
+	}
+
+	public void setProdRemark(String prodRemark) {
+		this.prodRemark = prodRemark;
+	}
+
+	public List<ProductPicture> getPictures() {
+		return pictures;
+	}
+
+	public void setPictures(List<ProductPicture> pictures) {
+		this.pictures = pictures;
+	}
+
+	public List<ProdOrderItem> getProdOrderItems() {
+		return prodOrderItems;
+	}
+
+	public void setProdOrderItems(List<ProdOrderItem> prodOrderItems) {
 		this.prodOrderItems = prodOrderItems;
 	}
 

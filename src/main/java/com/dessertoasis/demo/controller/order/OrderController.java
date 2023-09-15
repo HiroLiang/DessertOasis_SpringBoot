@@ -23,6 +23,7 @@ import com.dessertoasis.demo.model.member.MemberAccess;
 import com.dessertoasis.demo.model.order.Order;
 import com.dessertoasis.demo.model.order.OrderCmsTable;
 import com.dessertoasis.demo.model.order.OrderDTO;
+import com.dessertoasis.demo.model.order.Reservation;
 import com.dessertoasis.demo.model.sort.SortCondition;
 import com.dessertoasis.demo.service.cart.CartService;
 import com.dessertoasis.demo.service.order.OrderService;
@@ -96,6 +97,13 @@ public class OrderController {
 		cartService.deleteCarts(productCartDTOs, courseCartDTOs, rsvCartDTOs);
 
 		return "1";
+	}
+	
+	// 取出會員的所有預約
+	@GetMapping("/order/reservation")
+	public List<Reservation> getReservatedClassroom(HttpSession session) {
+		Member user = (Member) session.getAttribute("loggedInMember");
+		return orderService.getReservationsByMemberId(user.getId());
 	}
 
 	/*-----------------------------------------v v v 範例 v v v---------------------------------------------------*/

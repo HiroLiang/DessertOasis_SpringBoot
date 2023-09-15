@@ -2,6 +2,8 @@ package com.dessertoasis.demo.model.course;
 
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -27,6 +29,7 @@ public class CTag {
 	@Column(columnDefinition = "nvarchar(max)")
 	private String courseTagDescription;
 	
+	@JsonIgnoreProperties({"ctag"})
 	@OneToMany(mappedBy = "ctag",cascade = CascadeType.ALL)
 	private List<CourseCtag> coursetagList;
 	

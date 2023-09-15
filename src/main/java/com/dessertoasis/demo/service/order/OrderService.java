@@ -149,6 +149,21 @@ public class OrderService {
 		}
 		return null;
 	}
+	
+	// 取出會員預約的教室
+	public List<Reservation> getReservationsByMemberId(Integer memberId) {
+		Member member = memberRepo.findById(memberId).get();
+		List<Order> orders = member.getOrders();
+		
+		List<Reservation> reservations = new ArrayList<>();
+		for (Order order : orders) {
+			if (order.getReservations() != null) {
+				reservations.addAll(order.getReservations());
+			}
+		}
+		
+		return reservations;
+	}
 
 	/*-----------------------------------------v v v 範例 v v v---------------------------------------------------*/
 	// Order table範例

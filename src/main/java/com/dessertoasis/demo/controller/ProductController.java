@@ -3,6 +3,7 @@ package com.dessertoasis.demo.controller;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -10,7 +11,9 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,16 +22,24 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.dessertoasis.demo.ImageUploadUtil;
 import com.dessertoasis.demo.model.category.Category;
 import com.dessertoasis.demo.model.member.Member;
 import com.dessertoasis.demo.model.member.MemberAccess;
 import com.dessertoasis.demo.model.order.OrderCmsTable;
 import com.dessertoasis.demo.model.product.ProdSearchDTO;
 import com.dessertoasis.demo.model.product.Product;
+import com.dessertoasis.demo.model.product.ProductPicture;
+import com.dessertoasis.demo.model.product.ProductPictureRepository;
+import com.dessertoasis.demo.model.product.ProductRepository;
+import com.dessertoasis.demo.model.recipe.RecipeRepository;
+import com.dessertoasis.demo.model.recipe.Recipes;
 import com.dessertoasis.demo.model.sort.SortCondition;
+import com.dessertoasis.demo.service.product.ProductPictureService;
 import com.dessertoasis.demo.service.product.ProductService;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -41,6 +52,14 @@ public class ProductController {
 
     @Autowired
     private ProductService pService;
+    @Autowired
+	private ProductPictureRepository ProdPicRepo;
+    
+    @Autowired
+	private ImageUploadUtil imgUtil;
+    
+    @Autowired
+    private ProductPictureService ppService;
 
     @GetMapping("/list")
     public ResponseEntity<List<Product>> listProducts() {
@@ -82,7 +101,7 @@ public class ProductController {
             }
 
             String imagePath = uploadDir + "/" + image.getOriginalFilename();
-            String sqlPath = "images/product/"+productId+ "/" + image.getOriginalFilename();
+            String sqlPath = "/"+"images/product/"+productId+ "/" + image.getOriginalFilename();
             File destination = new File(imagePath);
             image.transferTo(destination);
 System.out.println(imagePath);
@@ -96,8 +115,42 @@ System.out.println(imagePath);
         }
     }
 
-
-    @PostMapping("/edit/{id}")
+    /*----------------------﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀發送base64給前端範例﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀--------------------------*/
+	@PostMapping("/getImage")
+	@ResponseBody
+	public List<String> getPicByGetPicture(@RequestBody Integer id) {
+		System.out.println(id);
+		Product productPictures = pService.findById(id);
+		 System.out.println(productPictures.getPictures().get(0).getPictureURL());
+		System.out.println("start");
+		 if (!productPictures.getPictures().isEmpty()) {
+		        System.out.println("if");
+		        String userPath = "C:\\workspace\\dessertoasis-vue\\public";
+		        // String userPath = "C:\\Users\\iSpan\\Documents\\dessertoasis-vue\\public\\";
+		        
+		       
+		        for (ProductPicture productPicture : productPictures.getPictures()) {
+		            String pictureURL = productPicture.getPictureURL();
+		            
+		            /*-------------------getPicture方法   第一個參數接收自己的儲存路徑， 第二個參數接收存於資料庫的路徑(範例: images/recipe/1/3584160_20230914005256937.jpg  等等)---------------------*/
+		            List<String> picture = imgUtil.getPicture(userPath, pictureURL);
+		            System.out.println(userPath);
+		            System.out.println(pictureURL);
+		            HttpHeaders headers = new HttpHeaders();
+		            /*-------------------getPicture回傳值[0]為檔案MIME字串(如image/png 等)  將其設定到 headers中----------------------------*/
+		            headers.setContentType(MediaType.parseMediaType(picture.get(0)));
+		            
+		            /*-------------------getPicture回傳值[1]為檔案base64字串  將其設定到body中----------------------------*/
+		            return picture;
+		        }
+		    }
+		    
+		    return null;
+		}
+	/*----------------------﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀發送base64給前端範例﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀--------------------------*/
+    
+	
+	@PostMapping("/edit/{id}")
     public ResponseEntity<Product> editProduct(@PathVariable Integer id, @RequestBody Product product) {
         Product existingProduct = pService.findProductById(id);
         if (existingProduct != null) {

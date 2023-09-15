@@ -1,5 +1,7 @@
 package com.dessertoasis.demo.model.course;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -20,10 +22,12 @@ public class CourseCtag {
 	private Integer id;
 	
 	@ManyToOne
+	@JsonIgnoreProperties({"coursetagList"})
 	@JoinColumn(name="courseId")//FK
 	private Course course;
 	
 	@ManyToOne
+	@JsonIgnoreProperties({"coursetagList"})
 	@JoinColumn(name="cTagId")//FK
 	private CTag ctag;
 	

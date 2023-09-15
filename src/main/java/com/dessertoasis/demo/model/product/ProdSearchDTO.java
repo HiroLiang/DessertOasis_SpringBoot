@@ -16,7 +16,6 @@ public class ProdSearchDTO {
 	private Integer saleAfterUpdate;
 	private Timestamp updateTime;
 	private String prodName;
-	
 	public ProdSearchDTO(Integer id, String categoryName, Integer prodPrice, Integer prodPurchase, String prodRemark,
 			Integer prodStock, String productStatus, Integer saleAfterUpdate, Timestamp updateTime, String prodName) {
 		super();

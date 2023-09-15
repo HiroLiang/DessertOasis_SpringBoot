@@ -293,6 +293,15 @@ public class CourseController {
         return ResponseEntity.ok(courses);
     }
 	
+	@GetMapping("/course-desplay")
+	public Course getCourseDetail(@RequestParam Integer id) {
+		System.out.println(id);
+		Course course = cService.findById(id);
+		if(course!=null)
+			return course;
+		return null;
+	}
+	
 	// 課程分頁查詢
 	@PostMapping("/pagenation")
 	public List<CourseCmsTable> getCoursePage(@RequestBody SortCondition sortCon, HttpSession session) {
