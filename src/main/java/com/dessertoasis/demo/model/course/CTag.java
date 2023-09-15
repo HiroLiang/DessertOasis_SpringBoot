@@ -30,7 +30,7 @@ public class CTag {
 	private String courseTagDescription;
 	
 	@JsonIgnoreProperties({"ctag"})
-	@OneToMany(mappedBy = "ctag",cascade = CascadeType.ALL)
+	@OneToMany(mappedBy = "ctag",cascade = CascadeType.DETACH)
 	private List<CourseCtag> coursetagList;
 	
 	public CTag() {
