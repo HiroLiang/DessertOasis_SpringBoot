@@ -17,6 +17,7 @@ import com.dessertoasis.demo.model.category.Category;
 import com.dessertoasis.demo.model.member.Member;
 import com.dessertoasis.demo.model.order.Order;
 import com.dessertoasis.demo.model.product.Product;
+import com.dessertoasis.demo.model.product.ProductPicture;
 import com.dessertoasis.demo.model.recipe.Recipes;
 import com.dessertoasis.demo.model.sort.DateRules;
 import com.dessertoasis.demo.model.sort.SearchRules;
@@ -137,7 +138,7 @@ public class PageSortService {
 
 
 	/*-----------------------------------------商品測試---------------------------------------------------*/
-	 	public Predicate checkCondition(Root<Product> root, Join<Product,Category> join, Predicate predicate,
+	 	public Predicate checkCondition(Root<Product> root, Join<Product,Category> joinCategory,Predicate predicate,
 	 			SortCondition sortCon, CriteriaBuilder cb, Product product) {
 	 		// 模糊搜索
 	 		if (sortCon.getSearchRules() != null && sortCon.getSearchRules().size() != 0) {
@@ -146,7 +147,7 @@ public class PageSortService {
 	 				if (hasProperty(product, rule.getKey())) {
 						predicate = cb.and(predicate, cb.like(root.get(rule.getKey()), "%"+rule.getInput()+"%"));
 					} else {
-						predicate = cb.and(predicate, cb.like(join.get(rule.getKey()), "%"+rule.getInput()+"%"));
+						predicate = cb.and(predicate, cb.like(joinCategory.get(rule.getKey()), "%"+rule.getInput()+"%"));
 					}
 				}
 	 		}
@@ -157,7 +158,7 @@ public class PageSortService {
 	 				if (hasProperty(product, rule.getKey())) {
 	 					predicate = cb.and(predicate, cb.between(root.get(rule.getKey()), rule.getStart(), rule.getEnd()));
 	 				} else {
-	 					predicate = cb.and(predicate, cb.between(join.get(rule.getKey()), rule.getStart(), rule.getEnd()));
+	 					predicate = cb.and(predicate, cb.between(joinCategory.get(rule.getKey()), rule.getStart(), rule.getEnd()));
 	 				}
 	 			}
 	 		}
@@ -169,7 +170,7 @@ public class PageSortService {
 	 						cb.between(root.get(sortCon.getNumKey()), sortCon.getNumStart(), sortCon.getNumEnd()));
 	 			} else {
 	 				predicate = cb.and(predicate,
-	 						cb.between(join.get(sortCon.getNumKey()), sortCon.getNumStart(), sortCon.getNumEnd()));
+	 						cb.between(joinCategory.get(sortCon.getNumKey()), sortCon.getNumStart(), sortCon.getNumEnd()));
 	 			}
 	 		}
 	 		return predicate;

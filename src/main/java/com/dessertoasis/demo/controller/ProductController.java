@@ -2,6 +2,7 @@ package com.dessertoasis.demo.controller;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -39,6 +40,7 @@ import com.dessertoasis.demo.model.product.ProductRepository;
 import com.dessertoasis.demo.model.recipe.RecipeRepository;
 import com.dessertoasis.demo.model.recipe.Recipes;
 import com.dessertoasis.demo.model.sort.SortCondition;
+import com.dessertoasis.demo.service.CategoryService;
 import com.dessertoasis.demo.service.product.ProductPictureService;
 import com.dessertoasis.demo.service.product.ProductService;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -60,6 +62,9 @@ public class ProductController {
     
     @Autowired
     private ProductPictureService ppService;
+    
+    @Autowired
+    private CategoryService cService;
 
     @GetMapping("/list")
     public ResponseEntity<List<Product>> listProducts() {
@@ -84,12 +89,30 @@ public class ProductController {
 
         return ResponseEntity.ok(productId); // 返回产品ID
     }
+    
 //    @PostMapping("/add")
-//    public ResponseEntity<Product> addProduct(@RequestBody Product product) {
-//        // 处理产品的其他数据（不包括图像）
+//    public ResponseEntity<Integer> addProduct(@RequestBody Product product) {
+//        Integer categoryId = product.getCategory().getId();
+//
+//        // 查询或检索 Category 对象
+//        Category category = cService.findById(categoryId); // 假设您有一个名为 categoryService 的服务类来处理 Category 的相关操作
+//
+//        if (category == null) {
+//            return ResponseEntity.badRequest().build();
+//        }
+//
+//        product.setCategory(category);
+//
 //        Product savedProduct = pService.insert(product);
-//        return ResponseEntity.ok(savedProduct);
+//
+//        Integer productId = savedProduct.getId(); // 获取新创建的产品的ID
+//
+//        return ResponseEntity.ok(productId); // 返回产品ID
 //    }
+
+   
+    
+   
     @PostMapping("/uploadImage")
     public ResponseEntity<String> uploadImage(@RequestParam("productId") Integer productId, @RequestParam("image") MultipartFile image) {
        
@@ -147,6 +170,43 @@ System.out.println(imagePath);
 		    
 		    return null;
 		}
+	
+	
+	@PostMapping("/getAllImage")
+	@ResponseBody
+	public List<List<String>> getAllPicByGetPicture(@RequestBody Integer id) {
+	    System.out.println(id);
+	    Product productPictures = pService.findById(id);
+	    System.out.println("start");
+	    List<List<String>> allPictures = new ArrayList<>(); // 創建用於存儲所有圖片資訊的列表
+
+	    if (!productPictures.getPictures().isEmpty()) {
+	        String userPath = "C:\\workspace\\dessertoasis-vue\\public";
+	        // String userPath = "C:\\Users\\iSpan\\Documents\\dessertoasis-vue\\public\\";
+
+	        for (ProductPicture productPicture : productPictures.getPictures()) {
+	            String pictureURL = productPicture.getPictureURL();
+
+	            /*-------------------getPicture方法   第一個參數接收自己的儲存路徑， 第二個參數接收存於資料庫的路徑(範例: images/recipe/1/3584160_20230914005256937.jpg  等等)---------------------*/
+	            List<String> pictureInfo = imgUtil.getPicture(userPath, pictureURL);
+	            System.out.println(userPath);
+	            System.out.println(pictureURL);
+
+	            if (!pictureInfo.isEmpty()) {
+	                allPictures.add(pictureInfo); // 添加圖片資訊到列表中
+	            }
+	        }
+
+	        if (!allPictures.isEmpty()) {
+	            HttpHeaders headers = new HttpHeaders();
+	            /*-------------------設定 headers，這裡使用第一張圖片的 MIME 類型---------------------*/
+	            headers.setContentType(MediaType.parseMediaType(allPictures.get(0).get(0)));
+	            return allPictures; 
+	        }
+	    }
+
+	    return null;
+	}
 	/*----------------------﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀發送base64給前端範例﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀--------------------------*/
     
 	
