@@ -79,6 +79,9 @@ public class CourseController {
 
 	@Autowired
 	private CategoryRepository cRepo;
+	
+	@Autowired
+	private ImageUploadUtil imgUtil;
 
 	// 查詢單筆課程(用課程id)
 //	@GetMapping("/{id}")
@@ -324,28 +327,19 @@ public class CourseController {
 			for(int i = 0 ; i < course.getCoursePictureList().size();i++) {
 				CoursePicture picture = course.getCoursePictureList().get(i);
 				String pictureUrl = picture.getCourseImgURL();
-				try {
-					//讀出圖片
-					BufferedImage read = ImageIO.read(new File(pictureUrl));
-					if (read != null) {
-						ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-						int lastDotIndex = pictureUrl.lastIndexOf(".");
-						if (lastDotIndex > 0) {
-							String formatName = pictureUrl.substring(lastDotIndex + 1);
-							ImageIO.write(read, formatName, byteArrayOutputStream);
-							byte[] img = byteArrayOutputStream.toByteArray();
-							String base64Img = Base64.getEncoder().encodeToString(img);
-							String picUrl = "data:image/" + formatName+";base64,"+base64Img;
-							//將圖片寫入物件
-							course.getCoursePictureList().get(i).setCourseImgURL(picUrl);
-						}
-					}
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
+				String picUrl = imgUtil.writeImageToString(pictureUrl);
+				course.getCoursePictureList().get(i).setCourseImgURL(picUrl);
 			}
 			return course;
 		}
+		return null;
+	}
+	
+	@GetMapping("/base64/image")
+	public String getPictureUrlByPath(@RequestParam("path") String path) {
+		String picUrl = imgUtil.writeImageToString(path);
+		if(picUrl!=null)
+			return picUrl;
 		return null;
 	}
 
@@ -361,6 +355,14 @@ public class CourseController {
 		// 送出查詢條件給service，若有結果則回傳list
 		List<CourseCmsTable> result = cService.getCoursePagenation(sortCon);
 		if (result != null) {
+			for(int j = 0 ; j < result.size() ; j ++) {
+				CourseCmsTable table = result.get(j);
+				Course course = cService.findById(table.getId());
+				if(course.getCoursePictureList()!=null && course.getCoursePictureList().size()>0) {
+					String url = course.getCoursePictureList().get(0).getCourseImgURL();
+					table.setCourseImgURL(url);
+				}
+			}
 			System.out.println(result);
 			return result;
 		}
@@ -371,10 +373,10 @@ public class CourseController {
 	public Integer getPages(@RequestBody SortCondition sortCon, HttpSession session) {
 		System.out.println(sortCon);
 		// 判斷 user 存在且為 ADMIN
-		Member user = (Member) session.getAttribute("loggedInMember");
-		if (user == null || !user.getAccess().equals(MemberAccess.ADMIN)) {
-			return null;
-		}
+//		Member user = (Member) session.getAttribute("loggedInMember");
+//		if (user == null || !user.getAccess().equals(MemberAccess.ADMIN)) {
+//			return null;
+//		}
 		// 送出條件查詢總頁數
 		Integer pages = cService.getPages(sortCon);
 		return pages;
