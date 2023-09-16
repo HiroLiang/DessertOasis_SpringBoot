@@ -166,28 +166,34 @@ public class RecipeService {
 		return hottest10RecipeDTO;
 	}
 
-	public List<RecipeCarouselDTO> find10RecipeByCategory(Category category) {
-		List<Recipes> recipes = recipeRepo.findRecipesByCategory(category);
-		List<RecipeCarouselDTO> categoryRecipeDTO = new ArrayList<>();
-		if (recipes != null && !recipes.isEmpty()) {
-			for (int i = 0; i < Math.min(10, recipes.size()); i++) {
-				Recipes recipe = recipes.get(i);
-				RecipeCarouselDTO rcDto = new RecipeCarouselDTO();
-				rcDto.setId(recipe.getId());
-				rcDto.setRecipeTitle(recipe.getRecipeTitle());
-				List<RecipeCategory> recipeCategories = recipe.getRecipeCategories();
-				List<Integer> categoryIds = new ArrayList<>();
-				for (RecipeCategory rc : recipeCategories) {
-					categoryIds.add(rc.getCategory().getId());
-				}
-				rcDto.setRecipeCategoryIds(categoryIds);
-				rcDto.setPictureURL(recipe.getPictureURL());
-				rcDto.setRecipeIntroduction(recipe.getRecipeIntroduction());
+	public List<RecipeCarouselDTO> find10RecipeByCategory(Integer categoryId) {
+		Optional<Category> categories = cateRepo.findById(categoryId);
+		if (categories.isPresent()) {
+			Category category = categories.get();
 
-				categoryRecipeDTO.add(rcDto);
+			List<Recipes> recipes = recipeRepo.findRecipesByCategory(category);
+			List<RecipeCarouselDTO> categoryRecipeDTO = new ArrayList<>();
+			if (recipes != null && !recipes.isEmpty()) {
+				for (int i = 0; i < Math.min(10, recipes.size()); i++) {
+					Recipes recipe = recipes.get(i);
+					RecipeCarouselDTO rcDto = new RecipeCarouselDTO();
+					rcDto.setId(recipe.getId());
+					rcDto.setRecipeTitle(recipe.getRecipeTitle());
+					List<RecipeCategory> recipeCategories = recipe.getRecipeCategories();
+					List<Integer> categoryIds = new ArrayList<>();
+					for (RecipeCategory rc : recipeCategories) {
+						categoryIds.add(rc.getCategory().getId());
+					}
+					rcDto.setRecipeCategoryIds(categoryIds);
+					rcDto.setPictureURL(recipe.getPictureURL());
+					rcDto.setRecipeIntroduction(recipe.getRecipeIntroduction());
+
+					categoryRecipeDTO.add(rcDto);
+				}
 			}
+			return categoryRecipeDTO;
 		}
-		return categoryRecipeDTO;
+		return null;
 	}
 	/*--------------------------------------------食譜建立頁使用service ------------------------------------------------*/
 
@@ -232,7 +238,7 @@ public class RecipeService {
 			defualtCategory.setRecipe(save);
 			/*------無論有無設定分類一律設定為食譜分類---------*/
 			System.out.println("before for");
-			
+
 			/*------有設定分類則將分類逐一設定---------*/
 			if (!categories.isEmpty()) {
 				System.out.println("in if");
