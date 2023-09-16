@@ -4,20 +4,27 @@ import java.beans.BeanInfo;
 import java.beans.IntrospectionException;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.dessertoasis.demo.model.course.Course;
 import com.dessertoasis.demo.model.course.CourseCmsTable;
 import com.dessertoasis.demo.model.course.Teacher;
 import com.dessertoasis.demo.model.course.TeacherCmsTable;
 import com.dessertoasis.demo.model.course.TeacherDemo;
+import com.dessertoasis.demo.model.course.TeacherPicture;
+import com.dessertoasis.demo.model.course.TeacherPictureRepository;
 import com.dessertoasis.demo.model.course.TeacherRepository;
 import com.dessertoasis.demo.model.member.Member;
 import com.dessertoasis.demo.model.member.MemberRepository;
+import com.dessertoasis.demo.model.product.Product;
+import com.dessertoasis.demo.model.product.ProductPicture;
+import com.dessertoasis.demo.model.product.ProductPictureRepository;
 import com.dessertoasis.demo.model.recipe.Recipes;
 import com.dessertoasis.demo.model.sort.DateRules;
 import com.dessertoasis.demo.model.sort.SearchRules;
@@ -27,6 +34,7 @@ import com.dessertoasis.demo.service.PageSortService;
 import com.dessertoasis.demo.service.member.MemberService;
 
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.TypedQuery;
 import jakarta.persistence.criteria.CriteriaBuilder;
@@ -52,6 +60,9 @@ public class TeacherService {
 	
 	@PersistenceContext
 	private EntityManager em;
+	
+	@Autowired
+	private TeacherPictureRepository TrPicRepo;
 
 //	public Optional<Teacher> getCourseByTeacherId(Integer id) {
 //		Optional<Teacher> optional = tRepo.findById(id);
@@ -254,8 +265,8 @@ public class TeacherService {
 				// 決定查詢 column
 //				cq.multiselect(root.get("id"), join.get("teacherName"),root.get("courseName"),root.get("courseDate"),root.get("closeDate"),root.get("coursePlace"),root.get("remainPlaces"),root.get("coursePrice"),root.get("courseStatus"),root.get("courseIntroduction")
 //						);
-				cq.multiselect(root.get("id"), join.get("fullName"),root.get("teacherName"),root.get("teacherProfilePic"),root.get("teacherTel"),root.get("teacherMail"),root.get("teacherProfile")
-						);
+				cq.multiselect(root.get("id"), join.get("fullName"),root.get("teacherName"),root.get("teacherTel"),root.get("teacherMail"),root.get("teacherProfile"))
+						;
 
 
 				// 加入查詢條件
@@ -324,6 +335,44 @@ public class TeacherService {
 				
 				return totalPages;
 			}
+			
+			public List<TeacherPicture> getTeacherPicturesByTeacherId(Integer id) {
+		        Optional<Teacher> optional = tRepo.findById(id);
+
+		        if (optional.isPresent()) {
+		            Teacher teacher = optional.get();
+		            List<TeacherPicture> teacherPictures = teacher.getPictures();
+		            return teacherPictures;
+		        } else {
+		            throw new EntityNotFoundException("Product with ID " + id + " not found.");
+		        }
+		    }
 	
+			
+			@Transactional
+			public void addImageToTeacher(Integer teacherId, String sqlPath) {
+		        Teacher teacher = getTeacherById(teacherId);
+		        if (teacher != null) {
+		            List<TeacherPicture> pictures = teacher.getPictures();
+		            if (pictures == null) {
+		                pictures = new ArrayList<>();
+		            }
+
+		            TeacherPicture teacherPicture = new TeacherPicture();
+		            System.out.println(sqlPath);
+		            teacherPicture.setPictureURL(sqlPath); // 设置商品圖片路径
+		            //productPicture.setThumbnailURL(thumbnailPath); // 设置縮圖路径
+		            System.out.println(teacher);
+
+		            // 正确设置ProductPicture的product属性
+		            teacherPicture.setTeacher(teacher);
+
+		            pictures.add(teacherPicture);
+		            teacher.setPictures(pictures);
+
+		            // 使用EntityManager将新的ProductPicture对象保存到数据库
+		           em.persist(teacherPicture);
+		        }
+			}
 	
 }

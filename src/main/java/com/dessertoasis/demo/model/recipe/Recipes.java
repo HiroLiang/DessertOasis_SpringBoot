@@ -45,6 +45,7 @@ public class Recipes {
 	private Member recipeAuthor;
 	
 	//分類Id  OneToMany
+	@JsonIgnoreProperties("recipe")
 	@OneToMany(mappedBy = "recipe")
 	private List<RecipeCategory> recipeCategories;
 	
@@ -69,7 +70,8 @@ public class Recipes {
 	private String recipeIntroduction;
 	
 	//食譜份量(幾人份)
-	
+	@Column(name = "ingredientPersons",nullable=true,columnDefinition = "nvarchar(20)")
+	private String ingredientPersons;
 	
 	//製作時間
 	@Column(name = "cookingTime",nullable=true,columnDefinition = "int")
