@@ -111,7 +111,7 @@ public class Course {
 	private Integer coursePrice;
 	
 	@JsonIgnoreProperties({"course"})
-	@OneToMany(mappedBy="course",cascade = CascadeType.DETACH)
+	@OneToMany(mappedBy="course",cascade = CascadeType.ALL)
 	private List<CourseCtag> courseList;
 	
 //	@ManyToMany
@@ -119,7 +119,7 @@ public class Course {
 //    private List<CourseCtag> courseTags;
 	
 	
-	@OneToMany(mappedBy = "course",cascade = CascadeType.DETACH)
+	@OneToMany(mappedBy = "course",cascade = CascadeType.ALL)
 	@JsonIgnoreProperties("course")
 	private List<CoursePicture> coursePictureList;
 	

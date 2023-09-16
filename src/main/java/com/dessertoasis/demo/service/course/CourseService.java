@@ -1,6 +1,8 @@
 package com.dessertoasis.demo.service.course;
 
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 
@@ -9,6 +11,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import com.dessertoasis.demo.ImageUploadUtil;
 import com.dessertoasis.demo.model.course.CTag;
 import com.dessertoasis.demo.model.course.CTagRepository;
 import com.dessertoasis.demo.model.course.Course;
@@ -56,6 +59,9 @@ public class CourseService {
 	private CourseCtagRepository ccRepo;
 
 	@Autowired
+	private ImageUploadUtil imgUtil;
+
+	@Autowired
 	private TeacherRepository tRepo;
 
 	@Autowired
@@ -93,22 +99,8 @@ public class CourseService {
 //			
 //		}
 //	}
-	//
-	public CTag createNewTag(CTag tag) {
-		CTag cTag = cTagRepo.save(tag);
-		if (cTag != null)
-			return cTag;
-		return null;
-	}
 
-	//
-	public CoursePicture createNewPic(CoursePicture pic) {
-		CoursePicture picture = cpRepo.save(pic);
-		if (picture != null)
-			return picture;
-		return null;
-	}
-
+	// 更新課程
 	@Transactional
 	public Course updateCourse(Course course) {
 		Optional<Course> byId = cRepo.findById(course.getId());
@@ -142,6 +134,43 @@ public class CourseService {
 			}
 			if (dele) {
 				ccRepo.deleteById(oldList.get(i).getId());
+			}
+		}
+
+		List<CoursePicture> pictureList = course.getCoursePictureList();
+		for (int i = 0; i < pictureList.size(); i++) {
+			if (pictureList.get(i).getId() == null) {
+				CoursePicture coursePicture = pictureList.get(i);
+				Date date = new Date();
+				long time = date.getTime();
+				String path = "/Users/apple/Documents/PDF";
+				String img = coursePicture.getCourseImgURL();
+				String[] split = img.split(",");
+				System.out.println(split[0] + "---------------" + split[1]);
+				// 取得副檔名
+				String extension = "";
+				int indexOfSemicolon = img.indexOf(";");
+				int indexOfSlash = img.indexOf("/");
+				if (indexOfSemicolon != -1 && indexOfSlash != -1 && indexOfSlash < indexOfSemicolon) {
+					extension = time + "." + img.substring(indexOfSlash + 1, indexOfSemicolon);
+				}
+				String saveName = imgUtil.saveImageToFolder(path, split[1], extension);
+				pictureList.get(i).setCourseImgURL(saveName);
+				pictureList.get(i).setCourse(course);
+				cpRepo.save(pictureList.get(i));
+			}
+		}
+		List<CoursePicture> oldPictures = old.getCoursePictureList();
+
+		for (int i = 0; i < oldPictures.size(); i++) {
+			boolean dele = true;
+			for (int j = 0; j < course.getCoursePictureList().size(); j++) {
+				if (oldPictures.get(i).getId() == course.getCoursePictureList().get(j).getId()) {
+					dele = false;
+				}
+			}
+			if (dele) {
+				cpRepo.deleteById(oldPictures.get(i).getId());
 			}
 		}
 

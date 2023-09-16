@@ -7,6 +7,7 @@ import lombok.Data;
 @Data
 public class CourseCmsTable {
 	private Integer id;
+	private String courseImgURL;
 	private String teacherName;
 	private String courseName;
 	private Date courseDate;

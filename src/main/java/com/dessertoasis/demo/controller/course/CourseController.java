@@ -1,11 +1,16 @@
 package com.dessertoasis.demo.controller.course;
 
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+
+import javax.imageio.ImageIO;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -74,7 +79,7 @@ public class CourseController {
 
 	@Autowired
 	private CategoryRepository cRepo;
-
+	
 	@Autowired
 	private ImageUploadUtil imgUtil;
 
@@ -164,9 +169,7 @@ public class CourseController {
 	// 修改課程
 	@PostMapping("/updateCourse")
 	public Course updateCourse(@RequestBody Course courseData, HttpSession session) {
-//		System.out.println(courseData.getCoursePictureList().get(1).getCourseImgURL());
-//		System.out.println(courseData.getCourseDate());
-//		System.out.println(courseData.getTeacher().getMemberId());
+
 		// 身份判斷
 //		Member user = (Member) session.getAttribute("loggedInMember");
 //		if (user == null || !user.getAccess().equals(MemberAccess.TEACHER) || !user.getId().equals(courseData.getTeacher().getMemberId())) {
@@ -177,32 +180,6 @@ public class CourseController {
 		if(course!=null)
 			return course;
 
-		// 整理圖片
-//		for (CoursePicture coursePicture : courseData.getCoursePictureList()) {
-//			if (coursePicture.getId() == null) {
-//				Date date = new Date();
-//				long time = date.getTime();
-//				String path = "/Users/apple/Documents/PDF";
-//				String img = coursePicture.getCourseImgURL();
-//				String[] split = img.split(",");
-//				// 取得副檔名
-//				String extension = "";
-//				int indexOfSemicolon = img.indexOf(";");
-//				int indexOfSlash = img.indexOf("/");
-//				if (indexOfSemicolon != -1 && indexOfSlash != -1 && indexOfSlash < indexOfSemicolon) {
-//					extension = time + "." + img.substring(indexOfSlash + 1, indexOfSemicolon);
-//				}
-//				String saveName = imgUtil.saveImageToFolder(path, split[1], extension);
-//				CoursePicture picture = new CoursePicture();
-//				picture.setCourseImgURL(saveName);
-//				CoursePicture newPic = cService.createNewPic(picture);
-//			}
-//		}
-
-//		// 保存課程
-//		Course updateCourse = cService.updateCourse(courseData);
-//		if (updateCourse != null)
-//			return updateCourse;
 		return null;
 
 	}
@@ -269,6 +246,7 @@ public class CourseController {
 //		return "不是會員，請登入";
 //	}
 
+	//刪除圖片
 	@DeleteMapping("/{courseId}")
 	public String deleteCourseById(@PathVariable Integer courseId) {
 
@@ -339,12 +317,29 @@ public class CourseController {
 		return ResponseEntity.ok(courses);
 	}
 
+	//ID查詢課程,並輸出圖片
 	@GetMapping("/course-desplay")
-	public Course getCourseDetail(@RequestParam Integer id) {
-		System.out.println(id);
+	public Course getCourseDetail(@RequestParam Integer id)  {
+		//取得課程資料
 		Course course = cService.findById(id);
-		if (course != null)
+		if (course != null) {
+			//處理圖片路徑
+			for(int i = 0 ; i < course.getCoursePictureList().size();i++) {
+				CoursePicture picture = course.getCoursePictureList().get(i);
+				String pictureUrl = picture.getCourseImgURL();
+				String picUrl = imgUtil.writeImageToString(pictureUrl);
+				course.getCoursePictureList().get(i).setCourseImgURL(picUrl);
+			}
 			return course;
+		}
+		return null;
+	}
+	
+	@GetMapping("/base64/image")
+	public String getPictureUrlByPath(@RequestParam("path") String path) {
+		String picUrl = imgUtil.writeImageToString(path);
+		if(picUrl!=null)
+			return picUrl;
 		return null;
 	}
 
@@ -360,6 +355,14 @@ public class CourseController {
 		// 送出查詢條件給service，若有結果則回傳list
 		List<CourseCmsTable> result = cService.getCoursePagenation(sortCon);
 		if (result != null) {
+			for(int j = 0 ; j < result.size() ; j ++) {
+				CourseCmsTable table = result.get(j);
+				Course course = cService.findById(table.getId());
+				if(course.getCoursePictureList()!=null && course.getCoursePictureList().size()>0) {
+					String url = course.getCoursePictureList().get(0).getCourseImgURL();
+					table.setCourseImgURL(url);
+				}
+			}
 			System.out.println(result);
 			return result;
 		}
@@ -370,10 +373,10 @@ public class CourseController {
 	public Integer getPages(@RequestBody SortCondition sortCon, HttpSession session) {
 		System.out.println(sortCon);
 		// 判斷 user 存在且為 ADMIN
-		Member user = (Member) session.getAttribute("loggedInMember");
-		if (user == null || !user.getAccess().equals(MemberAccess.ADMIN)) {
-			return null;
-		}
+//		Member user = (Member) session.getAttribute("loggedInMember");
+//		if (user == null || !user.getAccess().equals(MemberAccess.ADMIN)) {
+//			return null;
+//		}
 		// 送出條件查詢總頁數
 		Integer pages = cService.getPages(sortCon);
 		return pages;

@@ -96,6 +96,7 @@ public class ImageUploadUtil {
 		return fileName + "_" + timestamp + extension;
 	}
 
+	//儲存圖片by base64
 	public String saveImageToFolder(String path, String base64, String fileName) {
 		try {
 			byte[] imgByte = Base64.getDecoder().decode(base64);
@@ -108,6 +109,31 @@ public class ImageUploadUtil {
 			outputStream.close();
 			return path + "/" + fileName;
 		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	public String writeImageToString(String pictureUrl) {
+		try {
+			//讀出圖片
+			System.out.println("loading picture : "+pictureUrl);
+			BufferedImage read = ImageIO.read(new File(pictureUrl));
+			if (read != null) {
+				ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+				int lastDotIndex = pictureUrl.lastIndexOf(".");
+				if (lastDotIndex > 0) {
+					String formatName = pictureUrl.substring(lastDotIndex + 1);
+					ImageIO.write(read, formatName, byteArrayOutputStream);
+					byte[] img = byteArrayOutputStream.toByteArray();
+					String base64Img = Base64.getEncoder().encodeToString(img);
+					String picUrl = "data:image/" + formatName+";base64,"+base64Img;
+					System.out.println("success");
+					return picUrl;
+				}
+			}
+		} catch (IOException e) {
+			System.out.println("faild");
 			e.printStackTrace();
 		}
 		return null;
