@@ -96,6 +96,7 @@ public class ImageUploadUtil {
 		return fileName + "_" + timestamp + extension;
 	}
 
+	//儲存圖片by base64
 	public String saveImageToFolder(String path, String base64, String fileName) {
 		try {
 			byte[] imgByte = Base64.getDecoder().decode(base64);

@@ -1,11 +1,16 @@
 package com.dessertoasis.demo.controller.course;
 
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+
+import javax.imageio.ImageIO;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -74,9 +79,6 @@ public class CourseController {
 
 	@Autowired
 	private CategoryRepository cRepo;
-
-	@Autowired
-	private ImageUploadUtil imgUtil;
 
 	// 查詢單筆課程(用課程id)
 //	@GetMapping("/{id}")
@@ -164,9 +166,7 @@ public class CourseController {
 	// 修改課程
 	@PostMapping("/updateCourse")
 	public Course updateCourse(@RequestBody Course courseData, HttpSession session) {
-//		System.out.println(courseData.getCoursePictureList().get(1).getCourseImgURL());
-//		System.out.println(courseData.getCourseDate());
-//		System.out.println(courseData.getTeacher().getMemberId());
+
 		// 身份判斷
 //		Member user = (Member) session.getAttribute("loggedInMember");
 //		if (user == null || !user.getAccess().equals(MemberAccess.TEACHER) || !user.getId().equals(courseData.getTeacher().getMemberId())) {
@@ -177,32 +177,6 @@ public class CourseController {
 		if(course!=null)
 			return course;
 
-		// 整理圖片
-//		for (CoursePicture coursePicture : courseData.getCoursePictureList()) {
-//			if (coursePicture.getId() == null) {
-//				Date date = new Date();
-//				long time = date.getTime();
-//				String path = "/Users/apple/Documents/PDF";
-//				String img = coursePicture.getCourseImgURL();
-//				String[] split = img.split(",");
-//				// 取得副檔名
-//				String extension = "";
-//				int indexOfSemicolon = img.indexOf(";");
-//				int indexOfSlash = img.indexOf("/");
-//				if (indexOfSemicolon != -1 && indexOfSlash != -1 && indexOfSlash < indexOfSemicolon) {
-//					extension = time + "." + img.substring(indexOfSlash + 1, indexOfSemicolon);
-//				}
-//				String saveName = imgUtil.saveImageToFolder(path, split[1], extension);
-//				CoursePicture picture = new CoursePicture();
-//				picture.setCourseImgURL(saveName);
-//				CoursePicture newPic = cService.createNewPic(picture);
-//			}
-//		}
-
-//		// 保存課程
-//		Course updateCourse = cService.updateCourse(courseData);
-//		if (updateCourse != null)
-//			return updateCourse;
 		return null;
 
 	}
@@ -269,6 +243,7 @@ public class CourseController {
 //		return "不是會員，請登入";
 //	}
 
+	//刪除圖片
 	@DeleteMapping("/{courseId}")
 	public String deleteCourseById(@PathVariable Integer courseId) {
 
@@ -339,12 +314,38 @@ public class CourseController {
 		return ResponseEntity.ok(courses);
 	}
 
+	//ID查詢課程,並輸出圖片
 	@GetMapping("/course-desplay")
-	public Course getCourseDetail(@RequestParam Integer id) {
-		System.out.println(id);
+	public Course getCourseDetail(@RequestParam Integer id)  {
+		//取得課程資料
 		Course course = cService.findById(id);
-		if (course != null)
+		if (course != null) {
+			//處理圖片路徑
+			for(int i = 0 ; i < course.getCoursePictureList().size();i++) {
+				CoursePicture picture = course.getCoursePictureList().get(i);
+				String pictureUrl = picture.getCourseImgURL();
+				try {
+					//讀出圖片
+					BufferedImage read = ImageIO.read(new File(pictureUrl));
+					if (read != null) {
+						ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+						int lastDotIndex = pictureUrl.lastIndexOf(".");
+						if (lastDotIndex > 0) {
+							String formatName = pictureUrl.substring(lastDotIndex + 1);
+							ImageIO.write(read, formatName, byteArrayOutputStream);
+							byte[] img = byteArrayOutputStream.toByteArray();
+							String base64Img = Base64.getEncoder().encodeToString(img);
+							String picUrl = "data:image/" + formatName+";base64,"+base64Img;
+							//將圖片寫入物件
+							course.getCoursePictureList().get(i).setCourseImgURL(picUrl);
+						}
+					}
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
 			return course;
+		}
 		return null;
 	}
 
