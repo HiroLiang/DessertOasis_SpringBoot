@@ -3,6 +3,7 @@ package com.dessertoasis.demo.model.course;
 import java.util.List;
 
 import com.dessertoasis.demo.model.member.Member;
+import com.dessertoasis.demo.model.product.ProductPicture;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
@@ -31,8 +32,8 @@ public class Teacher {
 	@Column(name = "teacherName", columnDefinition = "nvarchar(50)")
 	private String teacherName;
 
-	@Column(name = "teacherProfilePic", columnDefinition = "nvarchar(max)")
-	private String teacherProfilePic;
+//	@Column(name = "teacherProfilePic", columnDefinition = "nvarchar(max)")
+//	private String teacherProfilePic;
 
 	@Column(name = "teacherContract", columnDefinition = "nvarchar(max) ")
 	private String teacherContract;
@@ -61,9 +62,13 @@ public class Teacher {
 	private Member member;
 
 	// 一個教師有多堂課(一對多)
-	@JsonIgnore
+	@JsonIgnoreProperties({"teacher"})
 	@OneToMany(mappedBy = "teacher", cascade = CascadeType.ALL)
 	private List<Course> courseList;
+	
+	@JsonIgnoreProperties({"teacher"})
+	 @OneToMany(mappedBy = "teacher")
+	   private List<TeacherPicture> pictures;
 	
 	//一個老師有多個專長
 	@JsonIgnore
@@ -103,13 +108,12 @@ public class Teacher {
 
 
 
-public Teacher(Integer id, String teacherName, String teacherProfilePic, String teacherContract, Integer teacherTel,
-		String teacherMail, String teacherProfile, String teacherAccountStatus, Member member, List<Course> courseList,
-		List<TeacherExpertise> expertiseList) {
+public Teacher(Integer id, String teacherName, String teacherContract, Integer teacherTel, String teacherMail,
+		String teacherProfile, String teacherAccountStatus, Member member, List<Course> courseList,
+		List<TeacherPicture> pictures, List<TeacherExpertise> expertiseList) {
 	super();
 	this.id = id;
 	this.teacherName = teacherName;
-	this.teacherProfilePic = teacherProfilePic;
 	this.teacherContract = teacherContract;
 	this.teacherTel = teacherTel;
 	this.teacherMail = teacherMail;
@@ -117,7 +121,28 @@ public Teacher(Integer id, String teacherName, String teacherProfilePic, String 
 	this.teacherAccountStatus = teacherAccountStatus;
 	this.member = member;
 	this.courseList = courseList;
+	this.pictures = pictures;
 	this.expertiseList = expertiseList;
 }
+
+
+
+//public Teacher(Integer id, String teacherName, String teacherProfilePic, String teacherContract, Integer teacherTel,
+//		String teacherMail, String teacherProfile, String teacherAccountStatus, Member member, List<Course> courseList,
+//		List<TeacherExpertise> expertiseList) {
+//	super();
+//	this.id = id;
+//	this.teacherName = teacherName;
+//	this.teacherProfilePic = teacherProfilePic;
+//	this.teacherContract = teacherContract;
+//	this.teacherTel = teacherTel;
+//	this.teacherMail = teacherMail;
+//	this.teacherProfile = teacherProfile;
+//	this.teacherAccountStatus = teacherAccountStatus;
+//	this.member = member;
+//	this.courseList = courseList;
+//	this.expertiseList = expertiseList;
+//}
+	
 
 }

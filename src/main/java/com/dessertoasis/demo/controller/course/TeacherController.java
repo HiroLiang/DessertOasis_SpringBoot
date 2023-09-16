@@ -1,11 +1,15 @@
 package com.dessertoasis.demo.controller.course;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,19 +19,27 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
+import com.dessertoasis.demo.ImageUploadUtil;
 import com.dessertoasis.demo.model.course.Course;
 import com.dessertoasis.demo.model.course.CourseCmsTable;
 import com.dessertoasis.demo.model.course.CourseDTO;
 import com.dessertoasis.demo.model.course.Teacher;
 import com.dessertoasis.demo.model.course.TeacherCmsTable;
 import com.dessertoasis.demo.model.course.TeacherDemo;
+import com.dessertoasis.demo.model.course.TeacherPicture;
+import com.dessertoasis.demo.model.course.TeacherPictureRepository;
 import com.dessertoasis.demo.model.course.TeacherRepository;
 import com.dessertoasis.demo.model.member.Member;
 import com.dessertoasis.demo.model.member.MemberAccess;
+import com.dessertoasis.demo.model.product.Product;
+import com.dessertoasis.demo.model.product.ProductPicture;
 import com.dessertoasis.demo.model.sort.SortCondition;
 import com.dessertoasis.demo.service.course.CourseService;
+import com.dessertoasis.demo.service.course.TeacherPictureService;
 import com.dessertoasis.demo.service.course.TeacherService;
 import com.dessertoasis.demo.service.member.MemberService;
 import com.fasterxml.jackson.annotation.JsonRawValue;
@@ -45,10 +57,19 @@ public class TeacherController {
 	private TeacherService tService;
 	
 	@Autowired
-	private MemberService mService;
+	private TeacherPictureService tpService;
 	
 	@Autowired
+    private TeacherPictureRepository tpRepo;
+
+	@Autowired
+	private MemberService mService;
+
+	@Autowired
 	private CourseService cService;
+
+	@Autowired
+	private ImageUploadUtil imgUtil;
 
 	@PostMapping("/getTeacherPage")
 	public List<TeacherDemo> getTeacherDatas(@RequestBody SortCondition sortCod) {
@@ -56,85 +77,84 @@ public class TeacherController {
 
 		return teacherPage;
 	}
-	
-	
-	//新增教師
-	@PostMapping("/becomeTeacher")
-    public ResponseEntity<String> becomeTeacher(@RequestBody Teacher teacher, @RequestParam("memberId") Integer memberId) {
-        try {
-        	// 創建一個新的 Teacher 實例，設定 memberId 和 teacherAccountStatus
-            Teacher newTeacher = tService.becomeTeacher(memberId);
-            
-         // 設定其他 Teacher 相關屬性
-            newTeacher.setTeacherName(teacher.getTeacherName());
-            newTeacher.setTeacherProfilePic(teacher.getTeacherProfilePic());
-            newTeacher.setTeacherAccountStatus("已啟用");
-            newTeacher.setTeacherContract("YES");
-            newTeacher.setTeacherProfile(teacher.getTeacherProfile());
-            newTeacher.setTeacherMail(teacher.getTeacherMail());
-            newTeacher.setTeacherTel(teacher.getTeacherTel());
-        	
-        	 tService.addTeacher(newTeacher);
 
-            return ResponseEntity.ok("教師資料已成功新增");
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("新增教師資料時發生錯誤：" + e.getMessage());
-        }
-    }
-	
-	//查詢老師個人資料by id
+	// 新增教師
+//	@PostMapping("/becomeTeacher")
+//    public ResponseEntity<String> becomeTeacher(@RequestBody Teacher teacher, @RequestParam("memberId") Integer memberId) {
+//        try {
+//        	// 創建一個新的 Teacher 實例，設定 memberId 和 teacherAccountStatus
+//            Teacher newTeacher = tService.becomeTeacher(memberId);
+//            
+//         // 設定其他 Teacher 相關屬性
+//            newTeacher.setTeacherName(teacher.getTeacherName());
+//            newTeacher.setTeacherProfilePic(teacher.getTeacherProfilePic());
+//            newTeacher.setTeacherAccountStatus("已啟用");
+//            newTeacher.setTeacherContract("YES");
+//            newTeacher.setTeacherProfile(teacher.getTeacherProfile());
+//            newTeacher.setTeacherMail(teacher.getTeacherMail());
+//            newTeacher.setTeacherTel(teacher.getTeacherTel());
+//        	
+//        	 tService.addTeacher(newTeacher);
+//
+//            return ResponseEntity.ok("教師資料已成功新增");
+//        } catch (Exception e) {
+//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("新增教師資料時發生錯誤：" + e.getMessage());
+//        }
+//    }
+
+	// 查詢老師個人資料by id
 	@GetMapping("/{id}")
-    public ResponseEntity<Teacher> getTeacherById(@PathVariable Integer id,HttpSession session) {
-		
+	public ResponseEntity<Teacher> getTeacherById(@PathVariable Integer id, HttpSession session) {
+
 		// 判斷 user 存在且為 TEACHER
 //				Member user = (Member) session.getAttribute("loggedInMember");
 //				if (user == null || !user.getAccess().equals(MemberAccess.TEACHER)) {
 //					return null;
 //				}
-		
+
 		Teacher teacher = tService.getTeacherById(id);
 		return ResponseEntity.ok(teacher);
 	}
-	
-	//列出所有老師
+
+	// 列出所有老師
 	@GetMapping("/all")
-	public ResponseEntity<List<Teacher>> findAllTeachers(){
+	public ResponseEntity<List<Teacher>> findAllTeachers() {
 		List<Teacher> teachers = tService.findAllTeachers();
 		return ResponseEntity.ok(teachers);
 	}
 
 	// 依照老師編號列出該教師所有課程
 	@GetMapping("/{id}/courses")
-    public List<CourseDTO> getTeacherCourses(@PathVariable Integer id) {
+	public List<CourseDTO> getTeacherCourses(@PathVariable Integer id) {
 		Teacher teacher = tService.getTeacherById(id);
 		if (teacher != null) {
-            return cService.getCoursesByTeacherId(id);
-        }
-        return Collections.emptyList();
-    }
-	
-	//admin才可刪除老師
+			return cService.getCoursesByTeacherId(id);
+		}
+		return Collections.emptyList();
+	}
+
+	// admin才可刪除老師
 	@DeleteMapping("/delete/{id}")
-    public ResponseEntity<String> deleteTeacher(@PathVariable Integer id,HttpSession session) {
+	public ResponseEntity<String> deleteTeacher(@PathVariable Integer id, HttpSession session) {
 		// 判斷 user 存在且為 ADMIN
 //		Member user = (Member) session.getAttribute("loggedInMember");
 //		if (user == null || !user.getAccess().equals(MemberAccess.ADMIN)) {
 //			return null;
 //		}
 		tService.deleteTeacherById(id);
-        return ResponseEntity.ok("已成功刪除");
-    }
-	
+		return ResponseEntity.ok("已成功刪除");
+	}
+
 	@PutMapping("/edit/{id}")
-	public ResponseEntity<Teacher> editTeacher(@PathVariable Integer id,@RequestBody Teacher teacher){
+	public ResponseEntity<Teacher> editTeacher(@PathVariable Integer id, @RequestBody Teacher teacher) {
 		Teacher existingTeacher = tService.getTeacherById(id);
-		if(existingTeacher != null) {
+		if (existingTeacher != null) {
 			tService.update(teacher);
 			return ResponseEntity.ok(teacher);
-		}else {
+		} else {
 			return ResponseEntity.notFound().build();
 		}
-		
+
 	}
 
 //	@GetMapping("/check-teacher")
@@ -167,35 +187,107 @@ public class TeacherController {
 //
 //		return ResponseEntity.ok("Teacher cookie set successfully.");
 //	}
-	
+
 	// 課程分頁查詢
-		@PostMapping("/pagenation")
-		public List<TeacherCmsTable> getTeacherPage(@RequestBody SortCondition sortCon, HttpSession session) {
-			System.out.println(sortCon);
-			// 判斷 user 存在且為 ADMIN
+	@PostMapping("/pagenation")
+	public List<TeacherCmsTable> getTeacherPage(@RequestBody SortCondition sortCon, HttpSession session) {
+		System.out.println(sortCon);
+		// 判斷 user 存在且為 ADMIN
 //			Member user = (Member) session.getAttribute("loggedInMember");
 //			if (user == null || !user.getAccess().equals(MemberAccess.ADMIN)) {
 //				return null;
 //			}
-			// 送出查詢條件給service，若有結果則回傳list
-			List<TeacherCmsTable> result = tService.getTeacherPagenation(sortCon);
-			if (result != null) {
-				System.out.println(result);
-				return result;
-			}
+		// 送出查詢條件給service，若有結果則回傳list
+		List<TeacherCmsTable> result = tService.getTeacherPagenation(sortCon);
+		if (result != null) {
+			System.out.println(result);
+			return result;
+		}
+		return null;
+	}
+
+	@PostMapping("/pages")
+	public Integer getPages(@RequestBody SortCondition sortCon, HttpSession session) {
+		System.out.println(sortCon);
+		// 判斷 user 存在且為 ADMIN
+		Member user = (Member) session.getAttribute("loggedInMember");
+		if (user == null || !user.getAccess().equals(MemberAccess.ADMIN)) {
 			return null;
 		}
+		// 送出條件查詢總頁數
+		Integer pages = tService.getPages(sortCon);
+		return pages;
+	}
 
-		@PostMapping("/pages")
-		public Integer getPages(@RequestBody SortCondition sortCon, HttpSession session) {
-			System.out.println(sortCon);
-			// 判斷 user 存在且為 ADMIN
-			Member user = (Member) session.getAttribute("loggedInMember");
-			if (user == null || !user.getAccess().equals(MemberAccess.ADMIN)) {
-				return null;
+	/*----------------------﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀發送base64給前端範例﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀--------------------------*/
+	@PostMapping("/getImage")
+	@ResponseBody
+	public List<String> getPicByGetPicture(@RequestBody Integer id) {
+		System.out.println(id);
+		Teacher teacherPictures = tService.getTeacherById(id);
+		System.out.println(teacherPictures.getPictures().get(0).getPictureURL());
+		System.out.println("start");
+		if (!teacherPictures.getPictures().isEmpty()) {
+			System.out.println("if");
+			String userPath = "C:/dessertoasis-vue/public";
+//			        String userPath = "C:\\workspace\\dessertoasis-vue\\public";
+			// String userPath = "C:\\Users\\iSpan\\Documents\\dessertoasis-vue\\public\\";
+
+			for (TeacherPicture teacherPicture : teacherPictures.getPictures()) {
+				String pictureURL = teacherPicture.getPictureURL();
+
+				/*-------------------getPicture方法   第一個參數接收自己的儲存路徑， 第二個參數接收存於資料庫的路徑(範例: images/recipe/1/3584160_20230914005256937.jpg  等等)---------------------*/
+				List<String> picture = imgUtil.getPicture(userPath, pictureURL);
+				System.out.println(userPath);
+				System.out.println(pictureURL);
+				HttpHeaders headers = new HttpHeaders();
+				/*-------------------getPicture回傳值[0]為檔案MIME字串(如image/png 等)  將其設定到 headers中----------------------------*/
+				headers.setContentType(MediaType.parseMediaType(picture.get(0)));
+
+				/*-------------------getPicture回傳值[1]為檔案base64字串  將其設定到body中----------------------------*/
+				return picture;
 			}
-			// 送出條件查詢總頁數
-			Integer pages = tService.getPages(sortCon);
-			return pages;
 		}
+
+		return null;
+	}
+	/*----------------------﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀發送base64給前端範例﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀--------------------------*/
+
+	@PostMapping("/uploadImage")
+	public ResponseEntity<String> uploadImage(@RequestParam("teacherName") String teacherName,
+			@RequestParam("pictureURL") MultipartFile image, @RequestParam("teacherTel") Integer teacherTel,
+			@RequestParam("email") String email, @RequestParam("teacherProfile") String teacherProfile) {
+		Teacher teacher = new Teacher();
+		teacher.setTeacherName(teacherName);
+		teacher.setTeacherTel(teacherTel);
+		teacher.setTeacherMail(email);
+		teacher.setTeacherProfile(teacherProfile);
+
+		Teacher save = tService.addTeacher(teacher);
+
+		try {
+			String uploadDir = "C:/dessertoasis-vue/public/images/teacher/" + teacherName;
+			File dir = new File(uploadDir);
+			if (!dir.exists()) {
+				dir.mkdirs();
+			}
+
+			String imagePath = uploadDir + "/" + image.getOriginalFilename();
+			String sqlPath =   "images/teacher/" + teacherName + "/" + image.getOriginalFilename();
+			File destination = new File(imagePath);
+			image.transferTo(destination);
+			System.out.println(imagePath);
+			TeacherPicture teacherPicture = new TeacherPicture();
+			teacherPicture.setTeacher(save);
+			teacherPicture.setPictureURL(sqlPath);
+			tpRepo.save(teacherPicture);
+//			tService.addImageToTeacher(1, sqlPath);
+
+			return ResponseEntity.ok("Image uploaded successfully.");
+		} catch (IOException e) {
+			e.printStackTrace();
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Image upload failed.");
+		}
+	}
+
 }
