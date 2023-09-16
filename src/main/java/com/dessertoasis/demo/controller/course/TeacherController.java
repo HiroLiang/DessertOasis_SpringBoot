@@ -2,6 +2,7 @@ package com.dessertoasis.demo.controller.course;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -29,8 +30,10 @@ import com.dessertoasis.demo.model.course.CourseCmsTable;
 import com.dessertoasis.demo.model.course.CourseDTO;
 import com.dessertoasis.demo.model.course.Teacher;
 import com.dessertoasis.demo.model.course.TeacherCmsTable;
+import com.dessertoasis.demo.model.course.TeacherDTO;
 import com.dessertoasis.demo.model.course.TeacherDemo;
 import com.dessertoasis.demo.model.course.TeacherPicture;
+import com.dessertoasis.demo.model.course.TeacherPictureDTO;
 import com.dessertoasis.demo.model.course.TeacherPictureRepository;
 import com.dessertoasis.demo.model.course.TeacherRepository;
 import com.dessertoasis.demo.model.member.Member;
@@ -78,7 +81,7 @@ public class TeacherController {
 		return teacherPage;
 	}
 
-	// 新增教師
+//	// 新增教師
 //	@PostMapping("/becomeTeacher")
 //    public ResponseEntity<String> becomeTeacher(@RequestBody Teacher teacher, @RequestParam("memberId") Integer memberId) {
 //        try {
@@ -87,7 +90,7 @@ public class TeacherController {
 //            
 //         // 設定其他 Teacher 相關屬性
 //            newTeacher.setTeacherName(teacher.getTeacherName());
-//            newTeacher.setTeacherProfilePic(teacher.getTeacherProfilePic());
+////            newTeacher.setTeacherProfilePic(teacher.getTeacherProfilePic());
 //            newTeacher.setTeacherAccountStatus("已啟用");
 //            newTeacher.setTeacherContract("YES");
 //            newTeacher.setTeacherProfile(teacher.getTeacherProfile());
@@ -101,6 +104,37 @@ public class TeacherController {
 //            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("新增教師資料時發生錯誤：" + e.getMessage());
 //        }
 //    }
+	
+	@PutMapping("/beaomeTeacher")
+	public ResponseEntity<String>  becomeTeacher(@RequestBody TeacherDTO teacherDTO,HttpSession session){
+		// 判斷 user 不存在且不為 ADMIN 且不為 TEACHER
+		Member user = (Member) session.getAttribute("loggedInMember");
+		if (user == null || !user.getAccess().equals(MemberAccess.ADMIN) || user.getAccess().equals(MemberAccess.TEACHER)) {
+			return null;
+		}
+		
+		//將TeacherDTO 資料映射到Teacher實體
+		Teacher teacher = new Teacher();
+		teacher.setTeacherName(teacherDTO.getTeacherName());
+		teacher.setTeacherContract(teacherDTO.getTeacherContract());
+		teacher.setTeacherTel(teacherDTO.getTeacherTel());
+		teacher.setTeacherMail(teacherDTO.getTeacherMail());
+		teacher.setTeacherProfile(teacherDTO.getTeacherProfile());
+		
+		teacher.setMember(user);
+		
+		List<TeacherPicture> pictures = new ArrayList<>();
+		if(teacherDTO.getPictures() != null) {
+			for (TeacherPicture pictureURL: teacherDTO.getPictures()) {
+				TeacherPicture picture = new TeacherPicture();
+				picture.setPictureURL(pictureURL.getPictureURL());
+				picture.setTeacher(teacher);
+				pictures.add(picture);
+			}
+		}
+		teacher.setPictures(pictures);
+		return ResponseEntity.ok("教師已成功新增");
+	}
 
 	// 查詢老師個人資料by id
 	@GetMapping("/{id}")
@@ -253,15 +287,36 @@ public class TeacherController {
 	}
 	/*----------------------﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀發送base64給前端範例﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀--------------------------*/
 
+	//成為老師
 	@PostMapping("/uploadImage")
 	public ResponseEntity<String> uploadImage(@RequestParam("teacherName") String teacherName,
 			@RequestParam("pictureURL") MultipartFile image, @RequestParam("teacherTel") Integer teacherTel,
-			@RequestParam("email") String email, @RequestParam("teacherProfile") String teacherProfile) {
+			@RequestParam("email") String email, @RequestParam("teacherProfile") String teacherProfile,
+			@RequestParam("teacherContract")String teacherContract,
+			@RequestParam("teacherAccountStatus")String teacherAccountStatus,HttpSession session) {
+		
+		//判斷會員有無登入
+		Member user = (Member)session.getAttribute("loggedInMember");
+		if (user == null || user.getAccess().equals(MemberAccess.ADMIN) || user.getAccess().equals(MemberAccess.ADMIN)) {
+			return ResponseEntity.status(HttpStatus.FORBIDDEN).body("未登入或非教師身分");
+		}
+		System.out.println(user.getId()+"-------------------------");
+		//拿到會員id
+		Member result = mService.findByMemberId(user.getId());
+		System.out.println(result.getAccess()+"------------------");
+		
 		Teacher teacher = new Teacher();
 		teacher.setTeacherName(teacherName);
 		teacher.setTeacherTel(teacherTel);
 		teacher.setTeacherMail(email);
 		teacher.setTeacherProfile(teacherProfile);
+		teacher.setTeacherContract(teacherContract);
+		teacher.setTeacherAccountStatus(teacherAccountStatus);
+
+		
+		teacher.setMember(result);
+		 result.setAccess(MemberAccess.TEACHER);
+		 System.out.println(result.getAccess()+"---------------------");
 
 		Teacher save = tService.addTeacher(teacher);
 
@@ -273,7 +328,7 @@ public class TeacherController {
 			}
 
 			String imagePath = uploadDir + "/" + image.getOriginalFilename();
-			String sqlPath =   "images/teacher/" + teacherName + "/" + image.getOriginalFilename();
+			String sqlPath =  "/" + "images/teacher/" + teacherName + "/" + image.getOriginalFilename();
 			File destination = new File(imagePath);
 			image.transferTo(destination);
 			System.out.println(imagePath);

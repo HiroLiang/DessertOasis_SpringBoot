@@ -58,7 +58,7 @@ public class Teacher {
 	//一個老師有一個會員id，用JsonIgnore避免無窮迴圈
 	@OneToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "memberId")
-	@JsonIgnoreProperties({"teacher"})
+	@JsonIgnoreProperties({"teacher","emailForCode","code","passwords","memberDetail"})
 	private Member member;
 
 	// 一個教師有多堂課(一對多)
@@ -66,8 +66,8 @@ public class Teacher {
 	@OneToMany(mappedBy = "teacher", cascade = CascadeType.ALL)
 	private List<Course> courseList;
 	
-	@JsonIgnoreProperties({"teacher"})
-	 @OneToMany(mappedBy = "teacher")
+	@JsonIgnoreProperties("teacher")
+	 @OneToMany(mappedBy = "teacher",cascade = CascadeType.ALL)
 	   private List<TeacherPicture> pictures;
 	
 	//一個老師有多個專長
