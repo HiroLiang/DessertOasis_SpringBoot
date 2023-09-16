@@ -16,6 +16,7 @@ public class CourseCartDTO {
 	private Integer coursePrice;
 	private Integer remainPlaces;
 	private Date closeDate;
+	private Date courseDate;
 	private String coursePlace;
 	private	List<CoursePicture> pictures;
 	
@@ -30,6 +31,7 @@ public class CourseCartDTO {
 		this.coursePrice = course.getCoursePrice();
 		this.remainPlaces = course.getRemainPlaces();
 		this.closeDate = course.getCloseDate();
+		this.courseDate = course.getCourseDate();
 		this.coursePlace = course.getCoursePlace();
 		this.pictures = course.getCoursePictureList();
 	}
@@ -40,6 +42,7 @@ public class CourseCartDTO {
 		this.coursePrice = course.getCoursePrice();
 		this.remainPlaces = course.getRemainPlaces();
 		this.closeDate = course.getCloseDate();
+		this.courseDate = course.getCourseDate();
 		this.coursePlace = course.getCoursePlace();
 		this.pictures = course.getCoursePictureList();
 	}
