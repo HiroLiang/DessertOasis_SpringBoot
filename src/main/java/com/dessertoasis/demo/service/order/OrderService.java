@@ -164,7 +164,7 @@ public class OrderService {
 		
 		return reservations;
 	}
-
+	
 	/*-----------------------------------------v v v 範例 v v v---------------------------------------------------*/
 	// Order table範例
 	public List<OrderCmsTable> getOrderPagenation(SortCondition sortCon) {

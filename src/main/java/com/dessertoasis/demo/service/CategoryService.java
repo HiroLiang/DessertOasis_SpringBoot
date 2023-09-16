@@ -16,4 +16,9 @@ public class CategoryService {
 	public Category findCategory(@RequestParam("categoryId") Integer categoryId){
 		return cRepo.findById(categoryId).get();
 	}
+
+	public Category findById(Integer categoryId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

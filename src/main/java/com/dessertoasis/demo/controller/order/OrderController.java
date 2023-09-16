@@ -41,8 +41,10 @@ public class OrderController {
 
 	// 取得單一訂單
 	@GetMapping("/order/{ordId}")
-	public Order getOrderById(@PathVariable("ordId") Integer ordId) {
-		return orderService.getByOrdId(ordId);
+	public OrderDTO getOrderById(@PathVariable("ordId") Integer ordId) {
+		Order order = orderService.getByOrdId(ordId);
+		OrderDTO orderDto = new OrderDTO(order);
+		return orderDto;
 	}
 	
 	// 取得會員的訂單

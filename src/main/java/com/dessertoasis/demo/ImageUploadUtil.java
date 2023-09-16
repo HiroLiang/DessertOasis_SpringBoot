@@ -3,12 +3,14 @@ package com.dessertoasis.demo;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
+import java.util.Base64;
 
 import javax.imageio.ImageIO;
 
@@ -29,7 +31,8 @@ public class ImageUploadUtil {
 
 //	private static final String userRoot = "C:\\Users\\iSpan\\Documents\\dessertoasis-vue\\public\\images";
 
-	public String savePicture(MultipartFile file, String userPath,Integer memberId, String folderName, String projectName) {
+	public String savePicture(MultipartFile file, String userPath, Integer memberId, String folderName,
+			String projectName) {
 		if (!file.isEmpty()) {
 			String originalFilename = file.getOriginalFilename();
 			String uniqueFileName = generateUniqueFileName(originalFilename);
@@ -51,14 +54,13 @@ public class ImageUploadUtil {
 				e.printStackTrace();
 			}
 
-			return "images/" +folderName + "/" + memberId + "/" + projectName + "/" + uniqueFileName;
+			return "images/" + folderName + "/" + memberId + "/" + projectName + "/" + uniqueFileName;
 		}
 		return "N";
 
 	}
 
-	
-	//回傳base64字串  以及  header字串(透過headers.setContentType傳給前端判斷)
+	// 回傳base64字串 以及 header字串(透過headers.setContentType傳給前端判斷)
 	public List<String> getPicture(String userPath, String pictureUrl) {
 
 		List<String> base64Content = new ArrayList<>();
@@ -92,6 +94,49 @@ public class ImageUploadUtil {
 		String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmssSSS"));
 		String extension = originalFilename.substring(originalFilename.lastIndexOf("."));
 		return fileName + "_" + timestamp + extension;
+	}
+
+	//儲存圖片by base64
+	public String saveImageToFolder(String path, String base64, String fileName) {
+		try {
+			byte[] imgByte = Base64.getDecoder().decode(base64);
+			File folder = new File(path);
+			if (!folder.exists()) {
+				folder.mkdirs();
+			}
+			FileOutputStream outputStream = new FileOutputStream(path + "/" + fileName);
+			outputStream.write(imgByte);
+			outputStream.close();
+			return path + "/" + fileName;
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	public String writeImageToString(String pictureUrl) {
+		try {
+			//讀出圖片
+			System.out.println("loading picture : "+pictureUrl);
+			BufferedImage read = ImageIO.read(new File(pictureUrl));
+			if (read != null) {
+				ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+				int lastDotIndex = pictureUrl.lastIndexOf(".");
+				if (lastDotIndex > 0) {
+					String formatName = pictureUrl.substring(lastDotIndex + 1);
+					ImageIO.write(read, formatName, byteArrayOutputStream);
+					byte[] img = byteArrayOutputStream.toByteArray();
+					String base64Img = Base64.getEncoder().encodeToString(img);
+					String picUrl = "data:image/" + formatName+";base64,"+base64Img;
+					System.out.println("success");
+					return picUrl;
+				}
+			}
+		} catch (IOException e) {
+			System.out.println("faild");
+			e.printStackTrace();
+		}
+		return null;
 	}
 
 }
