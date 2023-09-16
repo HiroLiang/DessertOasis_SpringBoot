@@ -5,6 +5,7 @@ import java.util.List;
 import com.dessertoasis.demo.model.course.Course;
 import com.dessertoasis.demo.model.product.Product;
 import com.dessertoasis.demo.model.recipe.RecipeCategory;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import jakarta.persistence.Column;
@@ -46,12 +47,12 @@ public class Category {
     @OneToMany(mappedBy = "category")
     private List<RecipeCategory> recipeCategories;
     //商品
-    @JsonIgnoreProperties({"category"})
+    @JsonIgnore
     @OneToMany(mappedBy = "category")
     private List<Product> products;
    
     //課程分類
-    @JsonIgnoreProperties({"category"})
+    @JsonIgnore
     @OneToMany(mappedBy = "category")
     private List<Course> courses;
 

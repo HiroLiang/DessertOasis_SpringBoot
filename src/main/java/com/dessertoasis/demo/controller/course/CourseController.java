@@ -381,4 +381,13 @@ public class CourseController {
 		Integer pages = cService.getPages(sortCon);
 		return pages;
 	}
+	
+	@PostMapping("/number-range")
+	public List<Integer> getNumberRange(@RequestBody SortCondition sortCon, HttpSession session){
+		 List<Integer> numberRange = cService.getNumberRange(sortCon);
+		 if(numberRange!=null) {
+			 return numberRange;
+		 }
+		return null;
+	}
 }
