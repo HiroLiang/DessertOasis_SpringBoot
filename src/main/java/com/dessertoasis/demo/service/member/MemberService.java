@@ -126,8 +126,8 @@ public class MemberService {
 
 	// 寄驗證信
 	public void sendVerificationEmail(String toEmail, String token) {
-		String verificationLink =token;
-		System.out.println("我是verificationLink:"+verificationLink);
+		String verificationLink = token;
+		System.out.println("我是verificationLink:" + verificationLink);
 		SimpleMailMessage mailMessage = new SimpleMailMessage();
 		mailMessage.setFrom("Dessert0asis@outlook.com");
 		mailMessage.setTo(toEmail);
@@ -143,26 +143,24 @@ public class MemberService {
 		return null;
 	}
 
-		//檢查account和email是否符合
-	 	public boolean isValidAccount(String account) {
-	        // 根據帳戶名稱和電子郵件地址查詢數據庫中的用戶
-	        Member member = mRepo.findByAccount(account);
+	// 檢查account和email是否符合
+	public boolean isValidAccount(String account) {
+		// 根據帳戶名稱和電子郵件地址查詢數據庫中的用戶
+		Member member = mRepo.findByAccount(account);
 
-	        // 如果找到匹配的用戶，返回true；否則返回false
-	        return member != null;
-	    }
-
-	    // 更新會員狀態
-	    public void updateMemberStatus(String account, String newStatus) {
-	        // 根據帳戶名稱查找用戶
-	        Member member = mRepo.findByAccount(account);
-
-	        // 如果找到用戶，更新其狀態
-	        if (member != null) {
-	            member.setMemberStatus(MemberState.ACTIVE);
-	            mRepo.save(member);
-	        }
-	    }
+		// 如果找到匹配的用戶，返回true；否則返回false
+		return member != null;
 	}
-	
 
+	// 更新會員狀態
+	public void updateMemberStatus(String account, String newStatus) {
+		// 根據帳戶名稱查找用戶
+		Member member = mRepo.findByAccount(account);
+
+		// 如果找到用戶，更新其狀態
+		if (member != null) {
+			member.setMemberStatus(MemberState.ACTIVE);
+			mRepo.save(member);
+		}
+	}
+}

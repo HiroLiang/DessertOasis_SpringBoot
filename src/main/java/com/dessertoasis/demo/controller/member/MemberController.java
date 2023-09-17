@@ -88,42 +88,42 @@ public class MemberController {
 			return ResponseEntity.notFound().build();
 		}
 	}
-	
-	//更新詳細資料
+
+	// 更新詳細資料
 	@PutMapping("/update")
-	public ResponseEntity<MemberDetail> updateMemberDetail(@RequestBody MemberDetail updatedMemberDetail, HttpSession session) {
-	    try {
-	        // 獲取已登入的 Member
-	        Member member = (Member) session.getAttribute("loggedInMember");
-	        
-	        // 確認用戶已登入
-	        if (member != null) {
-	            // 設置更新後的屬性
-	        	
-	        	member.getMemberDetail().setIdNumber(updatedMemberDetail.getIdNumber());
-	        	member.getMemberDetail().setBirthday(updatedMemberDetail.getBirthday());
-	        	member.getMemberDetail().setDeliveryAddress(updatedMemberDetail.getDeliveryAddress());
-	        	member.getMemberDetail().setFolderURL(updatedMemberDetail.getFolderURL());
-	        	member.getMemberDetail().setPic(updatedMemberDetail.getPic());
+	public ResponseEntity<MemberDetail> updateMemberDetail(@RequestBody MemberDetail updatedMemberDetail,
+			HttpSession session) {
+		try {
+			// 獲取已登入的 Member
+			Member member = (Member) session.getAttribute("loggedInMember");
 
-	            // 調用服務層方法更新 MemberDetail
-	            MemberDetail updatedDetail = mdService.updateMemberDetail(member.getId(), member.getMemberDetail());
-	            
-	            // 返回更新後的 MemberDetail
-	            return ResponseEntity.ok(updatedDetail);
-	        } else {
-	            // 未登入，返回未授權狀態碼
-	            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
-	        }
-	    } catch (ResourceNotFoundException e) {
-	        // MemberDetail 未找到，返回 404 Not Found
-	        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
-	    } catch (Exception e) {
-	        // 其他錯誤處理，返回 500 Internal Server Error 或其他錯誤訊息
-	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
-	    }
+			// 確認用戶已登入
+			if (member != null) {
+				// 設置更新後的屬性
+
+				member.getMemberDetail().setIdNumber(updatedMemberDetail.getIdNumber());
+				member.getMemberDetail().setBirthday(updatedMemberDetail.getBirthday());
+				member.getMemberDetail().setDeliveryAddress(updatedMemberDetail.getDeliveryAddress());
+				member.getMemberDetail().setFolderURL(updatedMemberDetail.getFolderURL());
+				member.getMemberDetail().setPic(updatedMemberDetail.getPic());
+
+				// 調用服務層方法更新 MemberDetail
+				MemberDetail updatedDetail = mdService.updateMemberDetail(member.getId(), member.getMemberDetail());
+
+				// 返回更新後的 MemberDetail
+				return ResponseEntity.ok(updatedDetail);
+			} else {
+				// 未登入，返回未授權狀態碼
+				return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
+			}
+		} catch (ResourceNotFoundException e) {
+			// MemberDetail 未找到，返回 404 Not Found
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+		} catch (Exception e) {
+			// 其他錯誤處理，返回 500 Internal Server Error 或其他錯誤訊息
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+		}
 	}
-
 
 	// 更新密碼
 	@PostMapping("/changepassword")
@@ -146,22 +146,22 @@ public class MemberController {
 			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("未授权访问，请登录后再试。");
 		}
 	}
-	
+
 	@PostMapping("/uploadMemberImg")
-	public String memberPic(@RequestBody List<PicturesDTO> pictures,HttpSession session){
-		
+	public String memberPic(@RequestBody List<PicturesDTO> pictures, HttpSession session) {
+
 		Member member = (Member) session.getAttribute("loggedInMember");
 		if (member != null) {
 			final String uploadPath = "D:/dessertoasis-vue/public/";
 			if (!pictures.isEmpty() && pictures != null) {
 				DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmssSSS");
 				String timestamp = LocalDateTime.now().format(formatter);
-				
+
 				Integer memId = member.getId();
-				
+
 				String sqlPath = "images/member" + "/" + memId + "/";
 				String userFolder = uploadPath + sqlPath;
-	
+
 				File folder = new File(userFolder);
 				if (!folder.exists()) {
 					folder.mkdirs();
@@ -179,22 +179,22 @@ public class MemberController {
 
 					byte[] mainDecode = Base64.getDecoder().decode(mainPic);
 					File mainfile = new File(userFolder + mainUniqueName);
-					
+
 					try (FileOutputStream mainfileOutputStream = new FileOutputStream(mainfile)) {
 						mainfileOutputStream.write(mainDecode);
 						mainfileOutputStream.flush();
-						
+
 						return userFolder;
-						
+
 					} catch (IOException e) {
 						e.printStackTrace();
 						System.out.println(e);
 					}
+				}
+
 			}
-			
+
 		}
-		
-	}
 		return null;
-}
+	}
 }

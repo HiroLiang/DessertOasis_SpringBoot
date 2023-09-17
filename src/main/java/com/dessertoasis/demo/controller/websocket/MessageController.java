@@ -16,7 +16,7 @@ public class MessageController {
 
 	@Autowired
 	private SimpMessagingTemplate template;
-	
+
 	@Autowired
 	private WSService wService;
 
@@ -25,9 +25,10 @@ public class MessageController {
 		System.out.println(chatMessage + "msgMap");
 		chatMessage.setMessageState("UNREAD");
 		ChatMessage message = wService.saveMessage(chatMessage);
-		if(message!=null) {			
+		if (message != null) {
 			template.convertAndSend("/topic/getResponse/user-" + message.getCatcher(), message);
-		}else {
+			template.convertAndSend("/topic/getResponse/user-" + message.getSender(), message);
+		} else {
 			chatMessage.setMessageState("UNSEND");
 			template.convertAndSend("/topic/getResponse/user-" + chatMessage.getSender(), chatMessage);
 		}
