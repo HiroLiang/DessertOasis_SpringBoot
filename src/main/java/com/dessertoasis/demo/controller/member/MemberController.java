@@ -6,10 +6,8 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Base64;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
@@ -21,14 +19,13 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.multipart.MultipartFile;
 
 import com.dessertoasis.demo.ImageUploadUtil;
 import com.dessertoasis.demo.model.member.Member;
 import com.dessertoasis.demo.model.member.MemberAccess;
 import com.dessertoasis.demo.model.member.MemberDetail;
+import com.dessertoasis.demo.model.member.MemberDetailRepository;
 import com.dessertoasis.demo.model.recipe.PicturesDTO;
 import com.dessertoasis.demo.service.member.MemberDetailService;
 import com.dessertoasis.demo.service.member.MemberService;
@@ -42,8 +39,14 @@ public class MemberController {
 	@Autowired
 	private MemberService mService;
 
+	private MemberDetailRepository mRepo;
+	
 	@Autowired
 	private MemberDetailService mdService;
+	
+	@Autowired
+	private ImageUploadUtil imgUtil;
+
 
 	// 多筆
 	@GetMapping("/all")
@@ -146,55 +149,115 @@ public class MemberController {
 			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("未授权访问，请登录后再试。");
 		}
 	}
-
+	
+	//處理圖片路近並儲存圖片路徑
 	@PostMapping("/uploadMemberImg")
 	public String memberPic(@RequestBody List<PicturesDTO> pictures, HttpSession session) {
+	    Member member = (Member) session.getAttribute("loggedInMember");
+	    if (member != null) {
+	        final String uploadPath = "C:/dessertoasis-vue/public/";
+	        if (!pictures.isEmpty()) {
+	            try {
+	                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmssSSS");
+	                String timestamp = LocalDateTime.now().format(formatter);
 
-		Member member = (Member) session.getAttribute("loggedInMember");
-		if (member != null) {
-			final String uploadPath = "D:/dessertoasis-vue/public/";
-			if (!pictures.isEmpty() && pictures != null) {
-				DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmssSSS");
-				String timestamp = LocalDateTime.now().format(formatter);
+	                Integer memId = member.getId();
 
-				Integer memId = member.getId();
+	                String sqlPath = "images/member" + "/" + memId + "/";
+	                String userFolder = uploadPath + sqlPath;
 
-				String sqlPath = "images/member" + "/" + memId + "/";
-				String userFolder = uploadPath + sqlPath;
+	                File folder = new File(userFolder);
+	                if (!folder.exists()) {
+	                    folder.mkdirs();
+	                }
 
-				File folder = new File(userFolder);
-				if (!folder.exists()) {
-					folder.mkdirs();
-				}
-				if (pictures.get(0) != null) {
-					/*----------取得前端傳來的圖檔字串----------*/
-					String mainPic = pictures.get(0).getBase64Content();
-					String mainPicName = pictures.get(0).getFileName();
-					/*----------取得前端傳來的圖檔字串----------*/
+	                if (!pictures.get(0).getBase64Content().isEmpty()) {
+	                    /*----------取得前端傳來的圖檔字串----------*/
+	                    String mainPic = pictures.get(0).getBase64Content();
+	                    String mainPicName = pictures.get(0).getFileName();
+	                    /*----------取得前端傳來的圖檔字串----------*/
+//	                    System.out.println("mainPicName: " + mainPicName);
+	                    /*----------寫入檔案及儲存位置串接字串----------*/
+	                    String mainFileName = mainPicName.substring(0, mainPicName.lastIndexOf("."));// 將副檔名與檔名拆開 取得檔名
+	                    String mainExtension = mainPicName.substring(mainPicName.lastIndexOf("."));// 將副檔名與檔名拆開 取得副檔名
+	                    String mainUniqueName = mainFileName + "_" + timestamp + mainExtension;// 將時間串入檔名
 
-					/*----------寫入檔案及儲存位置串接字串----------*/
-					String mainFileName = mainPicName.substring(0, mainPicName.lastIndexOf("."));// 將副檔名與檔名拆開 取得檔名
-					String mainExtension = mainPicName.substring(mainPicName.lastIndexOf("."));// 將副檔名與檔名拆開 取得副檔名
-					String mainUniqueName = mainFileName + "_" + timestamp + mainExtension;// 將時間串入檔名
+//	                    System.out.println("mainFileName: " + mainFileName);
+//	                    System.out.println("mainExtension: " + mainExtension);
+//	                    System.out.println("timestamp: " + timestamp);
+//	                    
+	                    byte[] mainDecode = Base64.getDecoder().decode(mainPic);
+	                    File mainfile = new File(userFolder + mainUniqueName);
 
-					byte[] mainDecode = Base64.getDecoder().decode(mainPic);
-					File mainfile = new File(userFolder + mainUniqueName);
+	                    try (FileOutputStream mainfileOutputStream = new FileOutputStream(mainfile)) {
+	                        mainfileOutputStream.write(mainDecode);
+	                        mainfileOutputStream.flush();
+	                        String imgUrl = sqlPath+mainPicName;
+	                        
+	                        MemberDetail memberDetail = member.getMemberDetail();
+	                        if (memberDetail != null) {
+	                           //儲存圖片路徑
+	                            memberDetail.setPic(imgUrl);
 
-					try (FileOutputStream mainfileOutputStream = new FileOutputStream(mainfile)) {
-						mainfileOutputStream.write(mainDecode);
-						mainfileOutputStream.flush();
+	                          
+	                            mdService.updateMemberDetail(memId, memberDetail);
+	                        }
+	                        return imgUrl;
 
-						return userFolder;
+	                    } catch (IOException e) {
+	                        e.printStackTrace();
+	                        System.out.println(e);
+	                        return "寫入失敗";
+	                    }
+	                }
+	            } catch (Exception e) {
+	                e.printStackTrace();
+	                System.out.println(e);
+	            }
+	        }
+	    }
 
-					} catch (IOException e) {
-						e.printStackTrace();
-						System.out.println(e);
-					}
-				}
-
-			}
-
-		}
-		return null;
+	    return "未成功";
 	}
+	
+	//獲取圖片URL
+	 @GetMapping("/getImageURL")
+	    public ResponseEntity<String> getImageURL(HttpSession session) {
+	        Member member = (Member) session.getAttribute("loggedInMember");
+	        if (member != null) {
+	            MemberDetail memberDetail = member.getMemberDetail();
+	            if (memberDetail != null) {
+	                String imageURL = memberDetail.getPic();
+	                if (imageURL != null && !imageURL.isEmpty()) {
+	                    return ResponseEntity.ok().body(imageURL);
+	                }
+	            }
+	        }
+	        return ResponseEntity.notFound().build();
+	    }
+	
+//	 @GetMapping("/getMemberPic")
+//	    public ResponseEntity<byte[]> getMemberPic(HttpSession session) {
+//	        Member member = (Member) session.getAttribute("loggedInMember");
+//	        if (member != null) {
+//	            MemberDetail memberDetail = member.getMemberDetail();
+//	            if (memberDetail != null && memberDetail.getPic() != null) {
+//	                try {
+//	                    // 从文件系统或其他存储位置读取图片内容
+//	                    Path imagePath = Paths.get("C:/dessertoasis-vue/public/", memberDetail.getPic());
+//	                    byte[] imageBytes = Files.readAllBytes(imagePath);
+//
+//	                    HttpHeaders headers = new HttpHeaders();
+//	                    headers.setContentType(MediaType.IMAGE_JPEG); // 设置响应的Content-Type
+//
+//	                    return new ResponseEntity<>(imageBytes, headers, HttpStatus.OK);
+//	                } catch (IOException e) {
+//	                    e.printStackTrace();
+//	                    return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+//	                }
+//	            }
+//	        }
+//	        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+//	    }
+
 }

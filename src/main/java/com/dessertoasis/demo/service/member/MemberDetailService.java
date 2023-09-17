@@ -41,4 +41,10 @@ public class MemberDetailService {
 	        }
 	        throw new ResourceNotFoundException("MemberDetail not found");
 	    }
+	 
+	 	//新增
+		public void saveMemberDetail(MemberDetail memberDetail) {
+			memberDetailRepository.save(memberDetail);
+			
+		}
 	}
