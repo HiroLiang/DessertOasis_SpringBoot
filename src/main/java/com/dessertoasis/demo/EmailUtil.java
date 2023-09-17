@@ -43,7 +43,35 @@ public class EmailUtil {
 		    javaMailSender.send(mimeMessage);
 		  }
 	
-	
+	 public void sendNewPasswordEmail(String email, String newPassword) throws MessagingException {
+		 MimeMessage mimeMessage = javaMailSender.createMimeMessage();
+		    MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMessage,true, "UTF-8");
+		    mimeMessageHelper.setTo(email);
+		    mimeMessageHelper.setSubject("甜點綠洲密碼重置通知");
+		    String emailContent = "尊敬的用戶，<br>"
+		    		+ "\r\n"
+		    		+ "我們收到了您的密碼重置請求，並已為您生成了一個全新的密碼。請在收到此郵件後立即登錄並更改密碼，以確保您的賬戶安全。<br>"
+		    		+ "\r\n"
+		    		+ "新密碼："+newPassword+"<br>"
+		    		+ "\r\n"
+		    		+ "請注意，這是一個自動生成的密碼，為了您的安全，建議盡快登錄並設置一個您容易記住的新密碼。<br>"
+		    		+ "\r\n"
+		    		+ "如有任何疑問或需要幫助，請隨時聯系我們的客戶支持團隊。<br>"
+		    		+ "\r\n"
+		    		+ "感謝您使用甜點綠洲！<br>"
+		    		+ "\r\n"
+		    		+ "祝您一天愉快。<br>"
+		    		+ "\r\n"
+		    		+ "甜點綠洲團隊" ;
+		    mimeMessageHelper.setText(
+		        emailContent
+		       .formatted(email), true);
+
+		    javaMailSender.send(mimeMessage);
+		  
+}
+
+	 
 	 public void sendSetPasswordEmail(String email) throws MessagingException {
 		    MimeMessage mimeMessage = javaMailSender.createMimeMessage();
 		    MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMessage);

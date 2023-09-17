@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.Random;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
@@ -254,18 +255,49 @@ public class MemberService {
 	    public String forgotPassword(String email) {
 	    	Member member = mRepo.findByEmail(email)
 	    			.orElseThrow(
-	    					() -> new RuntimeException("User not found with this email: " + email));
+	    					() -> new RuntimeException("找不到 email: " + email));
+	    	String newPassword = generateRandomPassword(16); // 長度16
+
 	    	try {
 	    		
-	    		emailUtil.sendSetPasswordEmail(email);
+	    		emailUtil.sendNewPasswordEmail(email, newPassword);
 	    	}catch(MessagingException e) {
 	    		throw new RuntimeException("傳送email失敗");
 	    	}
+	    	
+	    	String encodedPassword = passwordEncoder.encode(newPassword);
+	        member.setPasswords(encodedPassword);
+
+	        mRepo.save(member);
 	    	return "檢查信箱，重製密碼";
 	    	
 	    }
-
+	    
+	    //重設密碼
+		public String setPassword(String email, String newpassword) {
+			Member member = mRepo.findByEmail(email)
+	    			.orElseThrow(
+	    					() -> new RuntimeException("找不到 email: " + email));
+			member.setPasswords(passwordEncoder.encode(newpassword));
+			mRepo.save(member);
+			return "密碼設定成功";
+		}
 		
+		//產生隨機密碼
+		public String generateRandomPassword(int length) {
+	        // 在这里生成随机密码的逻辑，可以包含字母、数字、符号等
+	        // 以下示例生成包含字母和数字的随机密码
+	        String characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+	        StringBuilder newPassword = new StringBuilder();
+	        Random random = new Random();
+
+	        for (int i = 0; i < length; i++) {
+	            int index = random.nextInt(characters.length());
+	            newPassword.append(characters.charAt(index));
+	        }
+
+	        return newPassword.toString();
+	    }
 	    
 	}
 	
