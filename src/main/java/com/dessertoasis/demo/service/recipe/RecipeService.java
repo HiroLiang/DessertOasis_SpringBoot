@@ -271,15 +271,15 @@ public class RecipeService {
 	}
 
 	// 修改食譜
-	public Boolean updateRecipe(Integer id, Recipes recipe) {
-		Optional<Member> member = memberRepo.findById(id);
-		Optional<Recipes> optional = recipeRepo.findById(recipe.getId());
+	public Boolean updateRecipe(Integer recipeId, Integer memberId) {
+		Optional<Member> member = memberRepo.findById(memberId);
+		Optional<Recipes> optional = recipeRepo.findById(recipeId);
 
 		if (optional.isPresent()) {
 			Recipes recipeData = optional.get();
-			if (recipeData.getRecipeAuthor().getId().equals(member.get().getId())) {
-				recipeRepo.save(recipe);
-			}
+//			if (recipeData.getRecipeAuthor().getId().equals(member.get().getId())) {
+				recipeRepo.save(recipeData);
+//			}
 
 //			RecipeDTO rDto = new RecipeDTO();
 //			rDto.setId(recipe.getId());
@@ -310,7 +310,9 @@ public class RecipeService {
 		if (recipe.isPresent()) {
 			Recipes recipeData = recipe.get();
 			if (recipeData.getRecipeAuthor().getId().equals(member.get().getId())) {
-				recipeRepo.deleteById(recipeId);
+				//註銷食譜  使狀態設為-1
+				recipeData.setRecipeStatus(-1);
+				recipeRepo.save(recipeData);
 				return true;
 			}
 		}
