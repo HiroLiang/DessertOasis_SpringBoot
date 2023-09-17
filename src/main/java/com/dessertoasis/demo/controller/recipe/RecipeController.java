@@ -168,11 +168,10 @@ public class RecipeController {
 	}
 
 	// 取得特定類別的10筆食譜
-	@GetMapping("/recipe/get10categoryRecipes")
+	@GetMapping("recipe/get10categoryRecipes")
 	public List<RecipeCarouselDTO> find10RecipeByCategory(@RequestParam("cid") Integer cid) {
-		Category category = new Category();
-		category.setId(cid);
-		return recipeService.find10RecipeByCategory(category);
+		
+		return recipeService.find10RecipeByCategory(cid);
 	}
 
 	/*--------------------------------------------食譜建立頁使用controller ------------------------------------------------*/

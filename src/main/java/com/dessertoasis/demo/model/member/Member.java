@@ -1,5 +1,6 @@
 package com.dessertoasis.demo.model.member;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 
@@ -69,8 +70,12 @@ public class Member { //與會員帳號相關
 	@Column(name="signDate" , columnDefinition ="datetime2(0)")
 	private Date signDate;
 	
-	@Column(name="verificationToken", columnDefinition ="VARCHAR(100)")
-	private String verificationToken;
+	@Column(name="otp", columnDefinition ="VARCHAR(100)")
+	private String otp;
+	
+	@Column(name="otpGeneratedTime" , columnDefinition ="datetime2(0)")
+	private LocalDateTime otpGeneratedTime;
+
 
 	@JsonIgnore
 	@OneToMany(mappedBy = "recipeAuthor",cascade = CascadeType.ALL)
@@ -185,12 +190,23 @@ public class Member { //與會員帳號相關
 		this.signDate = signDate;
 	}
 
-	public String getVerificationToken() {
-		return verificationToken;
+	
+	
+
+	public String getOtp() {
+		return otp;
 	}
 
-	public void setVerificationToken(String verificationToken) {
-		this.verificationToken = verificationToken;
+	public void setOtp(String otp) {
+		this.otp = otp;
+	}
+
+	public LocalDateTime getOtpGeneratedTime() {
+		return otpGeneratedTime;
+	}
+
+	public void setOtpGeneratedTime(LocalDateTime otpGeneratedTime) {
+		this.otpGeneratedTime = otpGeneratedTime;
 	}
 
 	public List<Recipes> getRecipes() {

@@ -91,7 +91,11 @@ public class OrderService {
 		LocalDateTime currentDateTime = LocalDateTime.now();
 		order.setOrdDate(currentDateTime);
 		order.setUpdateDate(currentDateTime);
-		order.setOrdStatus("訂單成立");
+		
+		String ordStatus = (order.getProdOrderItems() != null && order.getProdOrderItems().size() > 0)?
+				"處理中" : "已下訂";
+		order.setOrdStatus(ordStatus);
+		
 		return orderRepo.save(order);
 	}
 
@@ -163,6 +167,22 @@ public class OrderService {
 		}
 		
 		return reservations;
+	}
+	
+	// 修改訂單狀態
+	public Order updateOrdStatus(Integer ordId, String ordStatus) {
+		Order order = orderRepo.findById(ordId).get();
+		order.setOrdStatus(ordStatus);
+		
+		LocalDateTime currentDateTime = LocalDateTime.now();
+		order.setUpdateDate(currentDateTime);
+		
+		return orderRepo.save(order);
+	}
+	
+	// 刪除訂單
+	public void deleteByOrdId(Integer ordId) {
+		orderRepo.deleteById(ordId);
 	}
 	
 	/*-----------------------------------------v v v 範例 v v v---------------------------------------------------*/

@@ -103,8 +103,6 @@ public class MemberController {
 	        	member.getMemberDetail().setIdNumber(updatedMemberDetail.getIdNumber());
 	        	member.getMemberDetail().setBirthday(updatedMemberDetail.getBirthday());
 	        	member.getMemberDetail().setDeliveryAddress(updatedMemberDetail.getDeliveryAddress());
-	        	member.getMemberDetail().setFolderURL(updatedMemberDetail.getFolderURL());
-	        	member.getMemberDetail().setPic(updatedMemberDetail.getPic());
 
 	            // 調用服務層方法更新 MemberDetail
 	            MemberDetail updatedDetail = mdService.updateMemberDetail(member.getId(), member.getMemberDetail());
