@@ -28,18 +28,21 @@ import com.dessertoasis.demo.ImageUploadUtil;
 import com.dessertoasis.demo.model.course.Course;
 import com.dessertoasis.demo.model.course.CourseCmsTable;
 import com.dessertoasis.demo.model.course.CourseDTO;
+import com.dessertoasis.demo.model.course.CourseRepository;
 import com.dessertoasis.demo.model.course.Teacher;
 import com.dessertoasis.demo.model.course.TeacherCmsTable;
 import com.dessertoasis.demo.model.course.TeacherDTO;
 import com.dessertoasis.demo.model.course.TeacherDemo;
+import com.dessertoasis.demo.model.course.TeacherFrontDTO;
 import com.dessertoasis.demo.model.course.TeacherPicture;
-import com.dessertoasis.demo.model.course.TeacherPictureDTO;
+
 import com.dessertoasis.demo.model.course.TeacherPictureRepository;
 import com.dessertoasis.demo.model.course.TeacherRepository;
 import com.dessertoasis.demo.model.member.Member;
 import com.dessertoasis.demo.model.member.MemberAccess;
 import com.dessertoasis.demo.model.product.Product;
 import com.dessertoasis.demo.model.product.ProductPicture;
+import com.dessertoasis.demo.model.recipe.RecipeFrontDTO;
 import com.dessertoasis.demo.model.sort.SortCondition;
 import com.dessertoasis.demo.service.course.CourseService;
 import com.dessertoasis.demo.service.course.TeacherPictureService;
@@ -72,6 +75,9 @@ public class TeacherController {
 	private CourseService cService;
 
 	@Autowired
+	private CourseRepository cRepo;
+	
+	@Autowired
 	private ImageUploadUtil imgUtil;
 
 	@PostMapping("/getTeacherPage")
@@ -81,6 +87,12 @@ public class TeacherController {
 		return teacherPage;
 	}
 
+	@GetMapping("/teacher-desplay")
+	public Teacher getTeacherDetail(@RequestParam Integer id)  {
+		//取得課程資料
+		Teacher teacher = tService.getTeacherById(id);
+		return teacher;}
+	
 //	// 新增教師
 //	@PostMapping("/becomeTeacher")
 //    public ResponseEntity<String> becomeTeacher(@RequestBody Teacher teacher, @RequestParam("memberId") Integer memberId) {
@@ -105,36 +117,36 @@ public class TeacherController {
 //        }
 //    }
 	
-	@PutMapping("/beaomeTeacher")
-	public ResponseEntity<String>  becomeTeacher(@RequestBody TeacherDTO teacherDTO,HttpSession session){
-		// 判斷 user 不存在且不為 ADMIN 且不為 TEACHER
-		Member user = (Member) session.getAttribute("loggedInMember");
-		if (user == null || !user.getAccess().equals(MemberAccess.ADMIN) || user.getAccess().equals(MemberAccess.TEACHER)) {
-			return null;
-		}
-		
-		//將TeacherDTO 資料映射到Teacher實體
-		Teacher teacher = new Teacher();
-		teacher.setTeacherName(teacherDTO.getTeacherName());
-		teacher.setTeacherContract(teacherDTO.getTeacherContract());
-		teacher.setTeacherTel(teacherDTO.getTeacherTel());
-		teacher.setTeacherMail(teacherDTO.getTeacherMail());
-		teacher.setTeacherProfile(teacherDTO.getTeacherProfile());
-		
-		teacher.setMember(user);
-		
-		List<TeacherPicture> pictures = new ArrayList<>();
-		if(teacherDTO.getPictures() != null) {
-			for (TeacherPicture pictureURL: teacherDTO.getPictures()) {
-				TeacherPicture picture = new TeacherPicture();
-				picture.setPictureURL(pictureURL.getPictureURL());
-				picture.setTeacher(teacher);
-				pictures.add(picture);
-			}
-		}
-		teacher.setPictures(pictures);
-		return ResponseEntity.ok("教師已成功新增");
-	}
+//	@PutMapping("/beaomeTeacher")
+//	public ResponseEntity<String>  becomeTeacher(@RequestBody TeacherDTO teacherDTO,HttpSession session){
+//		// 判斷 user 不存在且不為 ADMIN 且不為 TEACHER
+//		Member user = (Member) session.getAttribute("loggedInMember");
+//		if (user == null || !user.getAccess().equals(MemberAccess.ADMIN) || user.getAccess().equals(MemberAccess.TEACHER)) {
+//			return null;
+//		}
+//		
+//		//將TeacherDTO 資料映射到Teacher實體
+//		Teacher teacher = new Teacher();
+//		teacher.setTeacherName(teacherDTO.getTeacherName());
+//		teacher.setTeacherContract(teacherDTO.getTeacherContract());
+//		teacher.setTeacherTel(teacherDTO.getTeacherTel());
+//		teacher.setTeacherMail(teacherDTO.getTeacherMail());
+//		teacher.setTeacherProfile(teacherDTO.getTeacherProfile());
+//		
+//		teacher.setMember(user);
+//		
+//		List<TeacherPicture> pictures = new ArrayList<>();
+//		if(teacherDTO.getPictures() != null) {
+//			for (TeacherPicture pictureURL: teacherDTO.getPictures()) {
+//				TeacherPicture picture = new TeacherPicture();
+//				picture.setPictureURL(pictureURL.getPictureURL());
+//				picture.setTeacher(teacher);
+//				pictures.add(picture);
+//			}
+//		}
+//		teacher.setPictures(pictures);
+//		return ResponseEntity.ok("教師已成功新增");
+//	}
 
 	// 查詢老師個人資料by id
 	@GetMapping("/{id}")
@@ -178,12 +190,86 @@ public class TeacherController {
 		tService.deleteTeacherById(id);
 		return ResponseEntity.ok("已成功刪除");
 	}
+	
+	@PostMapping("/editTeacher")
+	public ResponseEntity<Teacher> editTeacher(
+		@RequestParam("id")Integer id,@RequestParam("teacherName") String teacherName,
+		@RequestParam("teacherTel") Integer teacherTel,
+		@RequestParam("email") String email, 
+		@RequestParam("teacherProfile") String teacherProfile) {
+		
+		//判斷會員有無登入
+//				Member user = (Member)session.getAttribute("loggedInMember");
+//				if (user == null || user.getAccess().equals(MemberAccess.ADMIN) || user.getAccess().equals(MemberAccess.ADMIN)) {
+//					return null;
+//				}
+//				System.out.println(user.getId()+"-------------------------");
+//				//拿到會員id
+//				Member result = mService.findByMemberId(user.getId());
+//				System.out.println(result.getAccess()+"------------------");
+				Teacher old = tService.getTeacherById(id);
+//				Teacher teacher = new Teacher();
+				old.setTeacherName(teacherName);
+				old.setTeacherTel(teacherTel);
+				old.setTeacherMail(email);
+				old.setTeacherProfile(teacherProfile);
+//				teacher.setTeacherContract(teacherContract);
+//				teacher.setTeacherAccountStatus(teacherAccountStatus);
 
-	@PutMapping("/edit/{id}")
-	public ResponseEntity<Teacher> editTeacher(@PathVariable Integer id, @RequestBody Teacher teacher) {
-		Teacher existingTeacher = tService.getTeacherById(id);
-		if (existingTeacher != null) {
-			tService.update(teacher);
+				
+//				teacher.setMember(result);
+//				 result.setAccess(MemberAccess.TEACHER);
+//				 System.out.println(result.getAccess()+"---------------------");
+
+				  // 将更新后的老师对象保存到数据库
+				Teacher updatedTeacher = tService.updateTeacher(old);
+				return ResponseEntity.ok(updatedTeacher);
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	// 修改老師
+		@PostMapping("/updateTeacher")
+		public Teacher updateTeacher(@RequestBody Teacher teacherData, HttpSession session) {
+
+			// 身份判斷
+//			Member user = (Member) session.getAttribute("loggedInMember");
+//			if (user == null || !user.getAccess().equals(MemberAccess.TEACHER) || !user.getId().equals(courseData.getTeacher().getMemberId())) {
+//				return null;
+//			}
+
+			Teacher teacher = tService.updateTeacher(teacherData);
+			if(teacher!=null)
+				return teacher;
+
+			return null;
+
+		}
+
+	@PutMapping("/edit")
+	public ResponseEntity<Teacher> editTeacher( @RequestBody Teacher teacher,HttpSession session) {
+		
+		//判斷會員有無登入
+				Member user = (Member)session.getAttribute("loggedInMember");
+				if (user == null || user.getAccess().equals(MemberAccess.ADMIN) || user.getAccess().equals(MemberAccess.ADMIN)) {
+					return null;
+				}
+				System.out.println(user.getId()+"-------------------------");
+				//拿到會員id
+				Member existingMember = mService.findByMemberId(user.getId());
+				System.out.println(existingMember.getAccess()+"------------------");
+		
+		
+		Teacher existingTeacher = tService.getTeacherById(existingMember.getId());
+		if (existingTeacher  != null) {
+			 tService.updateTeacher(existingTeacher);
 			return ResponseEntity.ok(teacher);
 		} else {
 			return ResponseEntity.notFound().build();
@@ -221,16 +307,16 @@ public class TeacherController {
 //
 //		return ResponseEntity.ok("Teacher cookie set successfully.");
 //	}
-
-	// 課程分頁查詢
+//
+//	// 課程分頁查詢
 	@PostMapping("/pagenation")
 	public List<TeacherCmsTable> getTeacherPage(@RequestBody SortCondition sortCon, HttpSession session) {
 		System.out.println(sortCon);
 		// 判斷 user 存在且為 ADMIN
-//			Member user = (Member) session.getAttribute("loggedInMember");
-//			if (user == null || !user.getAccess().equals(MemberAccess.ADMIN)) {
-//				return null;
-//			}
+			Member user = (Member) session.getAttribute("loggedInMember");
+			if (user == null || !user.getAccess().equals(MemberAccess.ADMIN)) {
+				return null;
+			}
 		// 送出查詢條件給service，若有結果則回傳list
 		List<TeacherCmsTable> result = tService.getTeacherPagenation(sortCon);
 		if (result != null) {
@@ -272,8 +358,8 @@ public class TeacherController {
 
 				/*-------------------getPicture方法   第一個參數接收自己的儲存路徑， 第二個參數接收存於資料庫的路徑(範例: images/recipe/1/3584160_20230914005256937.jpg  等等)---------------------*/
 				List<String> picture = imgUtil.getPicture(userPath, pictureURL);
-				System.out.println(userPath);
-				System.out.println(pictureURL);
+				System.out.println("userPath:"+userPath);
+				System.out.println("pictureURL:"+pictureURL);
 				HttpHeaders headers = new HttpHeaders();
 				/*-------------------getPicture回傳值[0]為檔案MIME字串(如image/png 等)  將其設定到 headers中----------------------------*/
 				headers.setContentType(MediaType.parseMediaType(picture.get(0)));
@@ -319,16 +405,17 @@ public class TeacherController {
 		 System.out.println(result.getAccess()+"---------------------");
 
 		Teacher save = tService.addTeacher(teacher);
+		Integer teacherId = save.getId();
 
 		try {
-			String uploadDir = "C:/dessertoasis-vue/public/images/teacher/" + teacherName;
+			String uploadDir = "C:/dessertoasis-vue/public/images/teacher/" + teacherId;
 			File dir = new File(uploadDir);
 			if (!dir.exists()) {
 				dir.mkdirs();
 			}
 
 			String imagePath = uploadDir + "/" + image.getOriginalFilename();
-			String sqlPath =  "/" + "images/teacher/" + teacherName + "/" + image.getOriginalFilename();
+			String sqlPath =  "/" + "images/teacher/" + teacherId + "/" + image.getOriginalFilename();
 			File destination = new File(imagePath);
 			image.transferTo(destination);
 			System.out.println(imagePath);
@@ -344,5 +431,42 @@ public class TeacherController {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Image upload failed.");
 		}
 	}
+	
+	/*----------------------------------------------前台資料查詢Controller------------------------------------------------------------------*/
 
+	@PostMapping("/teacherFrontPagenation")
+	public List<TeacherFrontDTO> getFrontRecipePage(@RequestBody SortCondition sortCon, HttpSession session) {
+		System.out.println(sortCon);
+		// 判斷 user 存在且為 ADMIN
+		Member user = (Member) session.getAttribute("loggedInMember");
+		if (user == null || (!user.getAccess().equals(MemberAccess.ADMIN) && !user.getAccess().equals(MemberAccess.TEACHER))) {
+			return null;
+		}
+		
+	
+		Integer memberId = user.getId();
+		System.out.println("memberId:" + memberId);
+		
+//		
+//		Teacher teacher = tService.getTeacherById(memberId);
+//		System.out.println("teacherId:" + teacher.getId());
+		
+//		List<CourseDTO> courseDTOList = cService.getCoursesByTeacherId(teacher.getId());
+		
+		
+//		List<Course> courses = cRepo.findByTeacherId(memberId);
+		
+		// 送出查詢條件給service，若有結果則回傳list
+		List<TeacherFrontDTO> result = tService.getFrontTeacherPagenation(sortCon);
+		if (result != null) {
+			System.out.println(result);
+			return result;
+		}
+		return null;
+	}
+
+	 public List<Course> getCoursesByTeacherId(Integer teacherId) {
+	        // 使用數據訪問層（Repository）查詢該教師開設的所有課程
+	        return cRepo.findByTeacherId(teacherId);
+	    }
 }

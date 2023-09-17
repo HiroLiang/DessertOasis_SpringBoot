@@ -17,6 +17,7 @@ import com.dessertoasis.demo.model.course.CourseCmsTable;
 import com.dessertoasis.demo.model.course.Teacher;
 import com.dessertoasis.demo.model.course.TeacherCmsTable;
 import com.dessertoasis.demo.model.course.TeacherDemo;
+import com.dessertoasis.demo.model.course.TeacherFrontDTO;
 import com.dessertoasis.demo.model.course.TeacherPicture;
 import com.dessertoasis.demo.model.course.TeacherPictureRepository;
 import com.dessertoasis.demo.model.course.TeacherRepository;
@@ -25,6 +26,7 @@ import com.dessertoasis.demo.model.member.MemberRepository;
 import com.dessertoasis.demo.model.product.Product;
 import com.dessertoasis.demo.model.product.ProductPicture;
 import com.dessertoasis.demo.model.product.ProductPictureRepository;
+import com.dessertoasis.demo.model.recipe.RecipeFrontDTO;
 import com.dessertoasis.demo.model.recipe.Recipes;
 import com.dessertoasis.demo.model.sort.DateRules;
 import com.dessertoasis.demo.model.sort.SearchRules;
@@ -64,51 +66,53 @@ public class TeacherService {
 	@Autowired
 	private TeacherPictureRepository TrPicRepo;
 
-//	public Optional<Teacher> getCourseByTeacherId(Integer id) {
-//		Optional<Teacher> optional = tRepo.findById(id);
-//		if(optional.isPresent()) {
-//			Teacher teacher = optional.get();
-//		return teacher;}
-//	}
-//	
+	public Teacher getCourseByTeacherId(Integer id) {
+		Optional<Teacher> optional = tRepo.findById(id);
+		if(optional.isPresent()) {
+			Teacher teacher = optional.get();
+		return teacher;
+		}
+		return null;
+	}
+	
 
 	public List<Teacher> findAllTeachers(){
 		return tRepo.findAll();
 	}
 	
 	
-	//成為教師
-	public Teacher becomeTeacher(Integer memberId) {
-		// 根據memberId查詢是否已經存在關聯的Teacher
-        Teacher existingTeacher = tRepo.findByMemberId(memberId);	
-
-        if (existingTeacher == null) {
-            // 不存在關聯的Teacher，可以執行新增操作
-            Member existingMember = mService.findByMemberId(memberId);
-
-            if (existingMember != null) {
-                // 創建一個新的Teacher實體
-                Teacher newTeacher = new Teacher();
-                newTeacher.setMember(existingMember); // 設定member屬性
-
-                // 保存新創建的Teacher實體
-                  Teacher result = tRepo.save(newTeacher);
-                  System.out.println("新增成功");
-                  return result;
-                
-            } else {
-                // 處理Member不存在的情況
-                // 可以拋出異常或執行其他操作
-            	System.out.println("member不存在");
-            	return null;
-            }
-        } else {
-            // 已經存在關聯的Teacher，不執行新增操作
-            // 可以拋出異常或執行其他操作
-        	System.out.println("已經存在關聯的Teacher，不執行新增操作");
-        	return null;
-        }
-    }
+//	//成為教師
+//	public Teacher becomeTeacher(Integer memberId) {
+//		// 根據memberId查詢是否已經存在關聯的Teacher
+//        Teacher existingTeacher = tRepo.findByMemberId(memberId);	
+//
+//        if (existingTeacher == null) {
+//            // 不存在關聯的Teacher，可以執行新增操作
+//            Member existingMember = mService.findByMemberId(memberId);
+//
+//            if (existingMember != null) {
+//                // 創建一個新的Teacher實體
+//                Teacher newTeacher = new Teacher();
+//                newTeacher.setMember(existingMember); // 設定member屬性
+//
+//                // 保存新創建的Teacher實體
+//                  Teacher result = tRepo.save(newTeacher);
+//                  System.out.println("新增成功");
+//                  return result;
+//                
+//            } else {
+//                // 處理Member不存在的情況
+//                // 可以拋出異常或執行其他操作
+//            	System.out.println("member不存在");
+//            	return null;
+//            }
+//        } else {
+//            // 已經存在關聯的Teacher，不執行新增操作
+//            // 可以拋出異常或執行其他操作
+//        	System.out.println("已經存在關聯的Teacher，不執行新增操作");
+//        	return null;
+//        }
+//    }
     
 	//利用teacherId查單筆資料
 	public Teacher getTeacherById(Integer id) {
@@ -157,8 +161,10 @@ public class TeacherService {
 //			return false;
 //		}
 	
-	public void update(Teacher teacher) {
-		tRepo.save(teacher);
+	@Transactional
+	public Teacher update(Teacher teacher) {
+		Teacher result = tRepo.save(teacher);
+		return result;
 	}
 
 	//動態條件搜索
@@ -251,65 +257,66 @@ public class TeacherService {
 		return result;
 	}
 
-	// Order table範例
-			public List<TeacherCmsTable> getTeacherPagenation(SortCondition sortCon) {
-				CriteriaBuilder cb = em.getCriteriaBuilder();
+	// 老師後臺表格
+	public List<TeacherCmsTable> getTeacherPagenation(SortCondition sortCon) {
+			CriteriaBuilder cb = em.getCriteriaBuilder();
 
-				// 決定輸出表格型態
-				CriteriaQuery<TeacherCmsTable> cq = cb.createQuery(TeacherCmsTable.class);
+		// 決定輸出表格型態
+			CriteriaQuery<TeacherCmsTable> cq = cb.createQuery(TeacherCmsTable.class);
 
-				// 決定select.join表格
-				Root<Teacher> root = cq.from(Teacher.class);
-				Join<Teacher, Member> join = root.join("member");
+		// 決定select.join表格
+			Root<Teacher> root = cq.from(Teacher.class);
+			Join<Teacher, Member> join = root.join("member");
 
-				// 決定查詢 column
-//				cq.multiselect(root.get("id"), join.get("teacherName"),root.get("courseName"),root.get("courseDate"),root.get("closeDate"),root.get("coursePlace"),root.get("remainPlaces"),root.get("coursePrice"),root.get("courseStatus"),root.get("courseIntroduction")
-//						);
-				cq.multiselect(root.get("id"), join.get("fullName"),root.get("teacherName"),root.get("teacherTel"),root.get("teacherMail"),root.get("teacherProfile"))
-						;
+		// 決定查詢 column
+//			cq.multiselect(root.get("id"), join.get("teacherName"),root.get("courseName"),root.get("courseDate"),root.get("closeDate"),root.get("coursePlace"),root.get("remainPlaces"),root.get("coursePrice"),root.get("courseStatus"),root.get("courseIntroduction")
+//					);
+			cq.multiselect(root.get("id"),root.get("teacherName"),
+				root.get("teacherTel"),root.get("teacherMail"),root.get("teacherProfile"),
+				root.get("teacherContract"),root.get("teacherAccountStatus"),join.get("account"));
 
 
-				// 加入查詢條件
-				Predicate predicate = cb.conjunction();
-				Teacher teacher = new Teacher();
-//				Predicate pre = pService.checkCourseCondition(root, join, predicate, sortCon, cb, course);
-				Predicate pre = pService.checkTeacherCondition(root,join, predicate, sortCon, cb, teacher);
+		// 加入查詢條件
+			Predicate predicate = cb.conjunction();
+			Teacher teacher = new Teacher();
+//			Predicate pre = pService.checkCourseCondition(root, join, predicate, sortCon, cb, course);
+			Predicate pre = pService.checkTeacherCondition(root,join, predicate, sortCon, cb, teacher);
 				
-				// 填入 where 條件
-				cq.where(pre);
+		// 填入 where 條件
+			cq.where(pre);
 
-				// 排序條件
-				if (sortCon.getSortBy() != null) {
-					System.out.println("sort");
-					if (pService.hasProperty(teacher, sortCon.getSortBy())) {
-						if (sortCon.getSortBy() != null && sortCon.getSortWay().equals(SortWay.ASC)) {
-							cq.orderBy(cb.asc(root.get(sortCon.getSortBy())));
+		// 排序條件
+			if (sortCon.getSortBy() != null) {
+				System.out.println("sort");
+				if (pService.hasProperty(teacher, sortCon.getSortBy())) {
+					if (sortCon.getSortBy() != null && sortCon.getSortWay().equals(SortWay.ASC)) {
+						cq.orderBy(cb.asc(root.get(sortCon.getSortBy())));
 						} else if (sortCon.getSortBy() != null && sortCon.getSortWay().equals(SortWay.DESC)) {
 							cq.orderBy(cb.desc(root.get(sortCon.getSortBy())));
 						}
-					}
-					} else {
-						if (sortCon.getSortBy() != null && sortCon.getSortWay().equals(SortWay.ASC)) {
-							cq.orderBy(cb.asc(join.get(sortCon.getSortBy())));
+				}
+				} else {
+					if (sortCon.getSortBy() != null && sortCon.getSortWay().equals(SortWay.ASC)) {
+						cq.orderBy(cb.asc(join.get(sortCon.getSortBy())));
 						} else if (sortCon.getSortBy() != null && sortCon.getSortWay().equals(SortWay.DESC)) {
 							cq.orderBy(cb.desc(join.get(sortCon.getSortBy())));
 						}
 					}
 				
 
-				// 分頁
-				TypedQuery<TeacherCmsTable> query = em.createQuery(cq);
+		// 分頁
+			TypedQuery<TeacherCmsTable> query = em.createQuery(cq);
 				query.setFirstResult((sortCon.getPage() - 1) * sortCon.getPageSize());
 				query.setMaxResults(sortCon.getPageSize());
 
-				// 送出請求
-				List<TeacherCmsTable> list = query.getResultList();
+		// 送出請求
+			List<TeacherCmsTable> list = query.getResultList();
 				if (list != null) 
 					return list;
 				return null;
 			}
 
-			public Integer getPages(SortCondition sortCon) {
+	public Integer getPages(SortCondition sortCon) {
 				CriteriaBuilder cb = em.getCriteriaBuilder();
 
 				// 決定輸出表格型態
@@ -336,7 +343,7 @@ public class TeacherService {
 				return totalPages;
 			}
 			
-			public List<TeacherPicture> getTeacherPicturesByTeacherId(Integer id) {
+	public List<TeacherPicture> getTeacherPicturesByTeacherId(Integer id) {
 		        Optional<Teacher> optional = tRepo.findById(id);
 
 		        if (optional.isPresent()) {
@@ -375,4 +382,60 @@ public class TeacherService {
 		        }
 			}
 	
+			/*--------------------------------------------前台Criteria ------------------------------------------------*/
+
+			public List<TeacherFrontDTO> getFrontTeacherPagenation(SortCondition sortCon) {
+				CriteriaBuilder cb = em.getCriteriaBuilder();
+
+				// 決定select table
+				CriteriaQuery<TeacherFrontDTO> cq = cb.createQuery(TeacherFrontDTO.class);
+
+				// 決定select.join表格
+				Root<Teacher> root = cq.from(Teacher.class);
+				Join<Teacher, Course> join = root.join("courseList");
+//				
+
+				// 決定查詢 column
+				cq.multiselect(root.get("id"), root.get("teacherName"));
+
+				// 加入查詢條件
+				Predicate predicate = cb.conjunction();
+				Teacher teacher = new Teacher();
+				Predicate pre = pService.checkTeacherCondition2(root, join, predicate, sortCon, cb, teacher);
+//				Predicate pre = pService.checkTeacherCondition3(root, predicate, sortCon, cb, teacher);
+				
+				// 填入 where 條件
+				cq.where(pre);
+
+				// 分頁
+				TypedQuery<TeacherFrontDTO> query = em.createQuery(cq);
+				query.setFirstResult((sortCon.getPage() - 1) * sortCon.getPageSize());
+				query.setMaxResults(sortCon.getPageSize());
+
+				// 送出請求
+				List<TeacherFrontDTO> list = query.getResultList();
+				if (list != null) {
+					return list;
+				}
+				return null;
+			}
+			
+			@Transactional
+			public Teacher updateTeacher(Teacher teacher) {
+				Optional<Teacher> optionalTeacher = tRepo.findById(teacher.getId());
+				if (optionalTeacher.isPresent()) {
+					// 获取数据库中的老师对象
+			        Teacher oldTeacher = optionalTeacher.get();
+				// 更新老师对象的属性
+		        oldTeacher.setTeacherName(teacher.getTeacherName());
+		        oldTeacher.setTeacherTel(teacher.getTeacherTel());
+		        oldTeacher.setTeacherMail(teacher.getTeacherMail());
+		        oldTeacher.setTeacherProfile(teacher.getTeacherProfile());
+		     // 保存更新后的老师对象到数据库
+		        Teacher savedTeacher = tRepo.save(oldTeacher);
+		        
+		        return savedTeacher;
+				}return null;
+				}
+			
 }
