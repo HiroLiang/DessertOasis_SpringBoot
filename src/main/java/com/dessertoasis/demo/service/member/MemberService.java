@@ -1,5 +1,8 @@
 package com.dessertoasis.demo.service.member;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -9,10 +12,15 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.dessertoasis.demo.EmailUtil;
+import com.dessertoasis.demo.OtpUtil;
 import com.dessertoasis.demo.model.member.Member;
+import com.dessertoasis.demo.model.member.MemberAccess;
 import com.dessertoasis.demo.model.member.MemberRepository;
 import com.dessertoasis.demo.model.member.MemberState;
+import com.dessertoasis.demo.model.member.RegisterDto;
 
+import jakarta.mail.MessagingException;
 import jakarta.servlet.http.HttpSession;
 
 @Service
@@ -26,6 +34,13 @@ public class MemberService {
 
 	@Autowired
 	private JavaMailSender javaMailSender;
+
+	@Autowired
+	private EmailUtil emailUtil;
+	
+	@Autowired
+	private OtpUtil otpUtil;
+	
 
 	// 新增 更改成加密後的版本
 //	public void insert(Member member) {
@@ -123,18 +138,87 @@ public class MemberService {
 			throw new RuntimeException("密碼更新失敗，請稍後重試。", e);
 		}
 	}
+	
+	 	//註冊帳號
+		public String register(RegisterDto registerDto) {
+		    // 檢查是否重複帳號
+		    Member existingMember = mRepo.findByAccount(registerDto.getAccount());
+		    if (existingMember != null) {
+		    	return "帳號已存在"; 
+		    }
+		    // 檢查是否重複Email
+//		    Optional<Member> existingMemberByEmail = mRepo.findByEmail(registerDto.getEmail());
+//		    if (existingMemberByEmail.isPresent()) {
+//		        return "電子郵件地址已存在";
+//		    }
+	
+		    String otp = otpUtil.generateOtp();
+		    try {
+		        emailUtil.sendOtpEmail(registerDto.getEmail(), otp);
+		    } catch (MessagingException e) {
+		    	return "驗證碼傳送失敗";
+		    }
+	
+		    Member member = new Member();
+		    member.setAccount(registerDto.getAccount());
+		    member.setEmail(registerDto.getEmail());
+		    // ↓↓↓加密密碼↓↓↓
+		    member.setPasswords(passwordEncoder.encode(registerDto.getPasswords()));
+		    member.setOtp(otp);
+		    member.setOtpGeneratedTime(LocalDateTime.now());
+		    // ↓↓↓創立新帳號為一般會員↓↓↓
+		    member.setAccess(MemberAccess.USER);              
+		    // ↓↓↓創立新帳號為不活耀狀態↓↓↓
+		    member.setMemberStatus(MemberState.INACTIVE);        
+		    // ↓↓↓創立帳號日期是系統當下時間↓↓↓
+		    member.setSignDate(new Date());                     
+		    mRepo.save(member);
+		    return "註冊成功";
+		}
 
-	// 寄驗證信
-	public void sendVerificationEmail(String toEmail, String token) {
-		String verificationLink =token;
-		System.out.println("我是verificationLink:"+verificationLink);
-		SimpleMailMessage mailMessage = new SimpleMailMessage();
-		mailMessage.setFrom("Dessert0asis@outlook.com");
-		mailMessage.setTo(toEmail);
-		mailMessage.setSubject("驗證信");
-		mailMessage.setText("點擊連結進行驗證" + verificationLink);
-		javaMailSender.send(mailMessage);
-	}
+	 
+	 //驗證帳號
+	 public String verifyAccount(String email, String otp) {
+	    	Member member = mRepo.findByEmail(email)
+	            .orElseThrow(() -> new RuntimeException("找不到此email: " + email));
+	        if (member.getOtp().equals(otp) && Duration.between(member.getOtpGeneratedTime(),
+	            LocalDateTime.now()).getSeconds() < (10 * 60)) { //驗證信時效十分鐘
+	        	member.setMemberStatus(MemberState.ACTIVE); //改變會員狀態
+	        	mRepo.save(member);
+	          return "驗證成功";
+	        }
+	        return "請重新驗證";
+	      }
+	 
+	 //產生otp，並寄出email
+	 public String regenerateOtp(String email) {
+		 Member member = mRepo.findByEmail(email)
+		        .orElseThrow(() -> new RuntimeException("找不到此email: " + email));
+		    String otp = otpUtil.generateOtp();
+		    try {
+		      emailUtil.sendOtpEmail(email, otp);
+		    } catch (MessagingException e) {
+		      throw new RuntimeException("驗證碼傳送失敗");
+		    }
+		    member.setOtp(otp);
+		    member.setOtpGeneratedTime(LocalDateTime.now());
+		    mRepo.save(member);
+		    return "請確認信箱，驗證需再三分鐘內完成";
+		  }
+
+	 
+	
+//	// 寄驗證信
+//	public void sendVerificationEmail(String toEmail, String token) {
+//		String verificationLink =token;
+//		System.out.println("我是verificationLink:"+verificationLink);
+//		SimpleMailMessage mailMessage = new SimpleMailMessage();
+//		mailMessage.setFrom("Dessert0asis@outlook.com");
+//		mailMessage.setTo(toEmail);
+//		mailMessage.setSubject("驗證信");
+//		mailMessage.setText("點擊連結進行驗證" + verificationLink);
+//		javaMailSender.send(mailMessage);
+//	}
 
 	public List<Member> getAllAdmin(Integer id) {
 		List<Member> list = mRepo.findByAccessExcept(id);
@@ -163,6 +247,26 @@ public class MemberService {
 	            mRepo.save(member);
 	        }
 	    }
+	    
+	    
+	    
+	    //忘記密碼
+	    public String forgotPassword(String email) {
+	    	Member member = mRepo.findByEmail(email)
+	    			.orElseThrow(
+	    					() -> new RuntimeException("User not found with this email: " + email));
+	    	try {
+	    		
+	    		emailUtil.sendSetPasswordEmail(email);
+	    	}catch(MessagingException e) {
+	    		throw new RuntimeException("傳送email失敗");
+	    	}
+	    	return "檢查信箱，重製密碼";
+	    	
+	    }
+
+		
+	    
 	}
 	
 
