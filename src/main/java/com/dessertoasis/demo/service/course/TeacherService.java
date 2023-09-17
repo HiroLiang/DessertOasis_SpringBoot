@@ -431,6 +431,8 @@ public class TeacherService {
 		        oldTeacher.setTeacherTel(teacher.getTeacherTel());
 		        oldTeacher.setTeacherMail(teacher.getTeacherMail());
 		        oldTeacher.setTeacherProfile(teacher.getTeacherProfile());
+		        oldTeacher.setTeacherContract(teacher.getTeacherContract());
+		        oldTeacher.setTeacherAccountStatus(teacher.getTeacherAccountStatus());
 		     // 保存更新后的老师对象到数据库
 		        Teacher savedTeacher = tRepo.save(oldTeacher);
 		        

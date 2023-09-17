@@ -196,9 +196,11 @@ public class TeacherController {
 		@RequestParam("id")Integer id,@RequestParam("teacherName") String teacherName,
 		@RequestParam("teacherTel") Integer teacherTel,
 		@RequestParam("email") String email, 
-		@RequestParam("teacherProfile") String teacherProfile) {
+		@RequestParam("teacherProfile") String teacherProfile,
+		@RequestParam("teacherContract") String teacherContract,
+		@RequestParam("teacherAccountStatus") String teacherAccountStatus){
 		
-		//判斷會員有無登入
+		//判斷會員有無登入) {
 //				Member user = (Member)session.getAttribute("loggedInMember");
 //				if (user == null || user.getAccess().equals(MemberAccess.ADMIN) || user.getAccess().equals(MemberAccess.ADMIN)) {
 //					return null;
@@ -213,8 +215,8 @@ public class TeacherController {
 				old.setTeacherTel(teacherTel);
 				old.setTeacherMail(email);
 				old.setTeacherProfile(teacherProfile);
-//				teacher.setTeacherContract(teacherContract);
-//				teacher.setTeacherAccountStatus(teacherAccountStatus);
+				old.setTeacherContract(teacherContract);
+				old.setTeacherAccountStatus(teacherAccountStatus);
 
 				
 //				teacher.setMember(result);
