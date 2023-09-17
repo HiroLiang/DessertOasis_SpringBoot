@@ -8,10 +8,13 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.dessertoasis.demo.model.cart.CartListDTO;
@@ -45,6 +48,19 @@ public class OrderController {
 		Order order = orderService.getByOrdId(ordId);
 		OrderDTO orderDto = new OrderDTO(order);
 		return orderDto;
+	}
+	
+	// 修改訂單狀態
+	@PatchMapping("/order/{ordId}")
+	public Order updateOrdStatus(@PathVariable("ordId") Integer ordId, @RequestParam("ordStatus") String ordStatus) {
+		Order order = orderService.updateOrdStatus(ordId, ordStatus);
+		return order;
+	}
+	
+	// 刪除訂單
+	@DeleteMapping("/order/{ordId}")
+	public void deleteOrderById(@PathVariable("ordId") Integer ordId) {
+		orderService.deleteByOrdId(ordId);
 	}
 	
 	// 取得會員的訂單
