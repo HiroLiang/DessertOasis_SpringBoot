@@ -8,6 +8,7 @@ import com.dessertoasis.demo.model.recipe.RecipeCategory;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -44,7 +45,7 @@ public class Category {
    
     //食譜分類
     @JsonIgnoreProperties({"category"})
-    @OneToMany(mappedBy = "category")
+    @OneToMany(mappedBy = "category",cascade = CascadeType.DETACH)
     private List<RecipeCategory> recipeCategories;
     //商品
     @JsonIgnore
@@ -118,6 +119,30 @@ public class Category {
 
 	public void setCourses(List<Course> courses) {
 		this.courses = courses;
+	}
+
+	public Category() {
+		super();
+	}
+
+	public Category(Integer id, String categoryName, Integer parentId, Category parent, List<Category> children,
+			List<RecipeCategory> recipeCategories, List<Product> products, List<Course> courses) {
+		super();
+		this.id = id;
+		this.categoryName = categoryName;
+		this.parentId = parentId;
+		this.parent = parent;
+		this.children = children;
+		this.recipeCategories = recipeCategories;
+		this.products = products;
+		this.courses = courses;
+	}
+
+	public Category(Integer id, String categoryName, Integer parentId) {
+		super();
+		this.id = id;
+		this.categoryName = categoryName;
+		this.parentId = parentId;
 	}
     
     

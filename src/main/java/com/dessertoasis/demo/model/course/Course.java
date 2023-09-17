@@ -10,7 +10,6 @@ import com.dessertoasis.demo.model.order.CourseOrderItem;
 import com.dessertoasis.demo.model.recipe.Recipes;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -21,7 +20,6 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
-import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
@@ -40,16 +38,17 @@ public class Course {
 	//教師ID FK(連結教師ID)
 	@ManyToOne
 	@JoinColumn(name = "teacherId")
+	@JsonIgnoreProperties({"courseList","pictures","expertiseList","member"})
 	private Teacher teacher;
 	
 	//食譜ID FK(連接食譜ID)
-	@ManyToOne
+	@ManyToOne 
 	@JsonIgnoreProperties({"recipeCategories","recipeSteps","ingredientList","course"})
 	@JoinColumn(name = "recipesId")
 	private Recipes recipes;
 	
 	//分類ID FK(連接分類ID)
-	@ManyToOne
+	@ManyToOne 
 	@JsonIgnoreProperties({"parent","children","recipeCategories","products","courses"})
     @JoinColumn(name = "categoryId")
     private Category category;
@@ -114,19 +113,166 @@ public class Course {
 	@OneToMany(mappedBy="course",cascade = CascadeType.ALL)
 	private List<CourseCtag> courseList;
 	
-//	@ManyToMany
-//    @JoinTable(name="course_coursetag", joinColumns = {@JoinColumn(name="course_id")}, inverseJoinColumns = {@JoinColumn(name="coursetag_id")})
-//    private List<CourseCtag> courseTags;
-	
-	
 	@OneToMany(mappedBy = "course",cascade = CascadeType.ALL)
 	@JsonIgnoreProperties("course")
 	private List<CoursePicture> coursePictureList;
 	
 	@JsonIgnore
-	@OneToMany(mappedBy = "course")
+	@OneToMany(mappedBy = "course" , cascade = CascadeType.ALL)
 	private List<CourseOrderItem> courseOrderItems;
 	
+	public Integer getId() {
+		return id;
+	}
+
+	public void setId(Integer id) {
+		this.id = id;
+	}
+
+	public Teacher getTeacher() {
+		return teacher;
+	}
+
+	public void setTeacher(Teacher teacher) {
+		this.teacher = teacher;
+	}
+
+	public Recipes getRecipes() {
+		return recipes;
+	}
+
+	public void setRecipes(Recipes recipes) {
+		this.recipes = recipes;
+	}
+
+	public Category getCategory() {
+		return category;
+	}
+
+	public void setCategory(Category category) {
+		this.category = category;
+	}
+
+	public String getCourseName() {
+		return courseName;
+	}
+
+	public void setCourseName(String courseName) {
+		this.courseName = courseName;
+	}
+
+	public String getCourseIntroduction() {
+		return courseIntroduction;
+	}
+
+	public void setCourseIntroduction(String courseIntroduction) {
+		this.courseIntroduction = courseIntroduction;
+	}
+
+	public String getCourseFeature() {
+		return courseFeature;
+	}
+
+	public void setCourseFeature(String courseFeature) {
+		this.courseFeature = courseFeature;
+	}
+
+	public String getCourseDestination() {
+		return courseDestination;
+	}
+
+	public void setCourseDestination(String courseDestination) {
+		this.courseDestination = courseDestination;
+	}
+
+	public String getServiceTarget() {
+		return serviceTarget;
+	}
+
+	public void setServiceTarget(String serviceTarget) {
+		this.serviceTarget = serviceTarget;
+	}
+
+	public Date getCloseDate() {
+		return closeDate;
+	}
+
+	public void setCloseDate(Date closeDate) {
+		this.closeDate = closeDate;
+	}
+
+	public Date getUpdateDate() {
+		return updateDate;
+	}
+
+	public void setUpdateDate(Date updateDate) {
+		this.updateDate = updateDate;
+	}
+
+	public Date getCourseDate() {
+		return courseDate;
+	}
+
+	public void setCourseDate(Date courseDate) {
+		this.courseDate = courseDate;
+	}
+
+	public String getCoursePlace() {
+		return coursePlace;
+	}
+
+	public void setCoursePlace(String coursePlace) {
+		this.coursePlace = coursePlace;
+	}
+
+	public String getCourseStatus() {
+		return courseStatus;
+	}
+
+	public void setCourseStatus(String courseStatus) {
+		this.courseStatus = courseStatus;
+	}
+
+	public Integer getRemainPlaces() {
+		return remainPlaces;
+	}
+
+	public void setRemainPlaces(Integer remainPlaces) {
+		this.remainPlaces = remainPlaces;
+	}
+
+	public Integer getCoursePrice() {
+		return coursePrice;
+	}
+
+	public void setCoursePrice(Integer coursePrice) {
+		this.coursePrice = coursePrice;
+	}
+
+	public List<CourseCtag> getCourseList() {
+		return courseList;
+	}
+
+	public void setCourseList(List<CourseCtag> courseList) {
+		this.courseList = courseList;
+	}
+
+	public List<CoursePicture> getCoursePictureList() {
+		return coursePictureList;
+	}
+
+	public void setCoursePictureList(List<CoursePicture> coursePictureList) {
+		this.coursePictureList = coursePictureList;
+	}
+
+	public List<CourseOrderItem> getCourseOrderItems() {
+		return courseOrderItems;
+	}
+
+	public void setCourseOrderItems(List<CourseOrderItem> courseOrderItems) {
+		this.courseOrderItems = courseOrderItems;
+	}
+
 	public Course() {
 	}
 
@@ -152,6 +298,33 @@ public class Course {
 		this.remainPlaces = remainPlaces;
 		this.coursePrice = coursePrice;
 		this.coursePictureList = coursePictureList;
+	}
+
+	public Course(Integer id, Teacher teacher, Recipes recipes, Category category, String courseName,
+			String courseIntroduction, String courseFeature, String courseDestination, String serviceTarget,
+			Date closeDate, Date updateDate, Date courseDate, String coursePlace, String courseStatus,
+			Integer remainPlaces, Integer coursePrice, List<CourseCtag> courseList,
+			List<CoursePicture> coursePictureList, List<CourseOrderItem> courseOrderItems) {
+		super();
+		this.id = id;
+		this.teacher = teacher;
+		this.recipes = recipes;
+		this.category = category;
+		this.courseName = courseName;
+		this.courseIntroduction = courseIntroduction;
+		this.courseFeature = courseFeature;
+		this.courseDestination = courseDestination;
+		this.serviceTarget = serviceTarget;
+		this.closeDate = closeDate;
+		this.updateDate = updateDate;
+		this.courseDate = courseDate;
+		this.coursePlace = coursePlace;
+		this.courseStatus = courseStatus;
+		this.remainPlaces = remainPlaces;
+		this.coursePrice = coursePrice;
+		this.courseList = courseList;
+		this.coursePictureList = coursePictureList;
+		this.courseOrderItems = courseOrderItems;
 	}
 
 }

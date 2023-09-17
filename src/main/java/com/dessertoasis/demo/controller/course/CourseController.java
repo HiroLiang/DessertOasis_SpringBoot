@@ -79,7 +79,7 @@ public class CourseController {
 
 	@Autowired
 	private CategoryRepository cRepo;
-	
+
 	@Autowired
 	private ImageUploadUtil imgUtil;
 
@@ -169,7 +169,7 @@ public class CourseController {
 	// 修改課程
 	@PostMapping("/updateCourse")
 	public Course updateCourse(@RequestBody Course courseData, HttpSession session) {
-
+		System.out.println(courseData.getId());
 		// 身份判斷
 //		Member user = (Member) session.getAttribute("loggedInMember");
 //		if (user == null || !user.getAccess().equals(MemberAccess.TEACHER) || !user.getId().equals(courseData.getTeacher().getMemberId())) {
@@ -177,7 +177,7 @@ public class CourseController {
 //		}
 
 		Course course = cService.updateCourse(courseData);
-		if(course!=null)
+		if (course != null)
 			return course;
 
 		return null;
@@ -190,7 +190,7 @@ public class CourseController {
 		try {
 			String baseDir = "C:/dessertoasis-vue/public/images/course/";
 			String courseDir = baseDir + courseId;
-			String thumbnailDir = courseDir + "/thumbnail"; // 创建thumbnail子文件夹
+			String thumbnailDir = courseDir + "/thumbnail";
 
 			File courseFolder = new File(courseDir);
 			if (!courseFolder.exists()) {
@@ -246,7 +246,7 @@ public class CourseController {
 //		return "不是會員，請登入";
 //	}
 
-	//刪除圖片
+	// 刪除圖片
 	@DeleteMapping("/{courseId}")
 	public String deleteCourseById(@PathVariable Integer courseId) {
 
@@ -317,14 +317,14 @@ public class CourseController {
 		return ResponseEntity.ok(courses);
 	}
 
-	//ID查詢課程,並輸出圖片
+	// ID查詢課程,並輸出圖片
 	@GetMapping("/course-desplay")
-	public Course getCourseDetail(@RequestParam Integer id)  {
-		//取得課程資料
+	public Course getCourseDetail(@RequestParam Integer id) {
+		// 取得課程資料
 		Course course = cService.findById(id);
 		if (course != null) {
-			//處理圖片路徑
-			for(int i = 0 ; i < course.getCoursePictureList().size();i++) {
+			// 處理圖片路徑
+			for (int i = 0; i < course.getCoursePictureList().size(); i++) {
 				CoursePicture picture = course.getCoursePictureList().get(i);
 				String pictureUrl = picture.getCourseImgURL();
 				String picUrl = imgUtil.writeImageToString(pictureUrl);
@@ -334,11 +334,11 @@ public class CourseController {
 		}
 		return null;
 	}
-	
+
 	@GetMapping("/base64/image")
 	public String getPictureUrlByPath(@RequestParam("path") String path) {
 		String picUrl = imgUtil.writeImageToString(path);
-		if(picUrl!=null)
+		if (picUrl != null)
 			return picUrl;
 		return null;
 	}
@@ -355,10 +355,10 @@ public class CourseController {
 		// 送出查詢條件給service，若有結果則回傳list
 		List<CourseCmsTable> result = cService.getCoursePagenation(sortCon);
 		if (result != null) {
-			for(int j = 0 ; j < result.size() ; j ++) {
+			for (int j = 0; j < result.size(); j++) {
 				CourseCmsTable table = result.get(j);
 				Course course = cService.findById(table.getId());
-				if(course.getCoursePictureList()!=null && course.getCoursePictureList().size()>0) {
+				if (course.getCoursePictureList() != null && course.getCoursePictureList().size() > 0) {
 					String url = course.getCoursePictureList().get(0).getCourseImgURL();
 					table.setCourseImgURL(url);
 				}
@@ -381,13 +381,13 @@ public class CourseController {
 		Integer pages = cService.getPages(sortCon);
 		return pages;
 	}
-	
+
 	@PostMapping("/number-range")
-	public List<Integer> getNumberRange(@RequestBody SortCondition sortCon, HttpSession session){
-		 List<Integer> numberRange = cService.getNumberRange(sortCon);
-		 if(numberRange!=null) {
-			 return numberRange;
-		 }
+	public List<Integer> getNumberRange(@RequestBody SortCondition sortCon, HttpSession session) {
+		List<Integer> numberRange = cService.getNumberRange(sortCon);
+		if (numberRange != null) {
+			return numberRange;
+		}
 		return null;
 	}
 }

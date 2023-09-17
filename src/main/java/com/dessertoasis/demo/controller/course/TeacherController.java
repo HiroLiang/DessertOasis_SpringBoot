@@ -25,31 +25,21 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.dessertoasis.demo.ImageUploadUtil;
-import com.dessertoasis.demo.model.course.Course;
-import com.dessertoasis.demo.model.course.CourseCmsTable;
 import com.dessertoasis.demo.model.course.CourseDTO;
 import com.dessertoasis.demo.model.course.Teacher;
 import com.dessertoasis.demo.model.course.TeacherCmsTable;
 import com.dessertoasis.demo.model.course.TeacherDTO;
 import com.dessertoasis.demo.model.course.TeacherDemo;
 import com.dessertoasis.demo.model.course.TeacherPicture;
-import com.dessertoasis.demo.model.course.TeacherPictureDTO;
 import com.dessertoasis.demo.model.course.TeacherPictureRepository;
-import com.dessertoasis.demo.model.course.TeacherRepository;
 import com.dessertoasis.demo.model.member.Member;
 import com.dessertoasis.demo.model.member.MemberAccess;
-import com.dessertoasis.demo.model.product.Product;
-import com.dessertoasis.demo.model.product.ProductPicture;
 import com.dessertoasis.demo.model.sort.SortCondition;
 import com.dessertoasis.demo.service.course.CourseService;
 import com.dessertoasis.demo.service.course.TeacherPictureService;
 import com.dessertoasis.demo.service.course.TeacherService;
 import com.dessertoasis.demo.service.member.MemberService;
-import com.fasterxml.jackson.annotation.JsonRawValue;
 
-import jakarta.servlet.http.Cookie;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
 @RestController

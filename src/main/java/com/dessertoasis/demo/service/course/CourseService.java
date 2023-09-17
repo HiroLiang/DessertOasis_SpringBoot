@@ -141,14 +141,14 @@ public class CourseService {
 
 		List<CoursePicture> pictureList = course.getCoursePictureList();
 		for (int i = 0; i < pictureList.size(); i++) {
-			if (pictureList.get(i).getId() == null) {
-				CoursePicture coursePicture = pictureList.get(i);
+			CoursePicture coursePicture = pictureList.get(i);
+			if (coursePicture.getId() == null) {
 				Date date = new Date();
 				long time = date.getTime();
 				String path = "/Users/apple/Documents/PDF";
 				String img = coursePicture.getCourseImgURL();
 				String[] split = img.split(",");
-				System.out.println(split[0] + "---------------" + split[1]);
+				System.out.println("save picture :" + img);
 				// 取得副檔名
 				String extension = "";
 				int indexOfSemicolon = img.indexOf(";");
@@ -157,9 +157,14 @@ public class CourseService {
 					extension = time + "." + img.substring(indexOfSlash + 1, indexOfSemicolon);
 				}
 				String saveName = imgUtil.saveImageToFolder(path, split[1], extension);
-				pictureList.get(i).setCourseImgURL(saveName);
-				pictureList.get(i).setCourse(course);
-				cpRepo.save(pictureList.get(i));
+				coursePicture.setCourseImgURL(saveName);
+				coursePicture.setCourse(course);
+				cpRepo.save(coursePicture);
+				pictureList.set(i, coursePicture);
+			} else {
+				Optional<CoursePicture> oldP = cpRepo.findById(coursePicture.getId());
+				CoursePicture oldPic = oldP.get();
+				coursePicture.setCourseImgURL(oldPic.getCourseImgURL());
 			}
 		}
 		List<CoursePicture> oldPictures = old.getCoursePictureList();
@@ -332,7 +337,7 @@ public class CourseService {
 		return null;
 	}
 
-	//course 分頁頁數
+	// course 分頁頁數
 	public Integer getPages(SortCondition sortCon) {
 		CriteriaBuilder cb = em.getCriteriaBuilder();
 
@@ -350,7 +355,7 @@ public class CourseService {
 		// 加入查詢條件
 		Predicate predicate = cb.conjunction();
 		Course course = new Course();
-		Predicate pre = pService.checkCourseCondition(root, join,catJoin, predicate, sortCon, cb, course);
+		Predicate pre = pService.checkCourseCondition(root, join, catJoin, predicate, sortCon, cb, course);
 		cq.where(pre);
 
 		// 查詢傯頁數
@@ -359,12 +364,12 @@ public class CourseService {
 
 		return totalPages;
 	}
-	
-	public List<Integer> getNumberRange(SortCondition sortCon){
+
+	public List<Integer> getNumberRange(SortCondition sortCon) {
 		CriteriaBuilder cb = em.getCriteriaBuilder();
 
 		// 決定輸出表格型態
-		 CriteriaQuery<Tuple> cq = cb.createTupleQuery();
+		CriteriaQuery<Tuple> cq = cb.createTupleQuery();
 
 		// 決定select.join表格
 		Root<Course> root = cq.from(Course.class);
@@ -372,26 +377,26 @@ public class CourseService {
 		Join<Course, Category> catJoin = root.join("category");
 
 		// 決定查詢 column
-		cq.multiselect(cb.max(root.get("coursePrice")),cb.min(root.get("coursePrice")));
+		cq.multiselect(cb.max(root.get("coursePrice")), cb.min(root.get("coursePrice")));
 
 		// 加入查詢條件
 		Predicate predicate = cb.conjunction();
 		Course course = new Course();
-		Predicate pre = pService.checkCourseCondition(root, join,catJoin, predicate, sortCon, cb, course);
+		Predicate pre = pService.checkCourseCondition(root, join, catJoin, predicate, sortCon, cb, course);
 		cq.where(pre);
 
 		// 查詢傯頁數
 		List<Tuple> range = em.createQuery(cq).getResultList();
 		if (range != null && !range.isEmpty()) {
-            Tuple result = range.get(0);
-            Integer maxPrice = (Integer) result.get(0); 
-            Integer minPrice = (Integer) result.get(1); 
-            List<Integer> ranges = new ArrayList<>();
-            ranges.add(maxPrice);
-            ranges.add(minPrice);
-            return ranges;
+			Tuple result = range.get(0);
+			Integer maxPrice = (Integer) result.get(0);
+			Integer minPrice = (Integer) result.get(1);
+			List<Integer> ranges = new ArrayList<>();
+			ranges.add(maxPrice);
+			ranges.add(minPrice);
+			return ranges;
 		}
 		return null;
 	}
-	
+
 }
