@@ -67,7 +67,7 @@ public class RecipeService {
 
 	@Autowired
 	private RecipeCategoryRepository recaRepo;
-	
+
 	@Autowired
 	private IngredientRepository ingreRepo;
 
@@ -166,28 +166,34 @@ public class RecipeService {
 		return hottest10RecipeDTO;
 	}
 
-	public List<RecipeCarouselDTO> find10RecipeByCategory(Category category) {
-		List<Recipes> recipes = recipeRepo.findRecipesByCategory(category);
-		List<RecipeCarouselDTO> categoryRecipeDTO = new ArrayList<>();
-		if (recipes != null && !recipes.isEmpty()) {
-			for (int i = 0; i < Math.min(10, recipes.size()); i++) {
-				Recipes recipe = recipes.get(i);
-				RecipeCarouselDTO rcDto = new RecipeCarouselDTO();
-				rcDto.setId(recipe.getId());
-				rcDto.setRecipeTitle(recipe.getRecipeTitle());
-				List<RecipeCategory> recipeCategories = recipe.getRecipeCategories();
-				List<Integer> categoryIds = new ArrayList<>();
-				for (RecipeCategory rc : recipeCategories) {
-					categoryIds.add(rc.getCategory().getId());
-				}
-				rcDto.setRecipeCategoryIds(categoryIds);
-				rcDto.setPictureURL(recipe.getPictureURL());
-				rcDto.setRecipeIntroduction(recipe.getRecipeIntroduction());
+	public List<RecipeCarouselDTO> find10RecipeByCategory(Integer categoryId) {
+		Optional<Category> categories = cateRepo.findById(categoryId);
+		if (categories.isPresent()) {
+			Category category = categories.get();
 
-				categoryRecipeDTO.add(rcDto);
+			List<Recipes> recipes = recipeRepo.findRecipesByCategory(category);
+			List<RecipeCarouselDTO> categoryRecipeDTO = new ArrayList<>();
+			if (recipes != null && !recipes.isEmpty()) {
+				for (int i = 0; i < Math.min(10, recipes.size()); i++) {
+					Recipes recipe = recipes.get(i);
+					RecipeCarouselDTO rcDto = new RecipeCarouselDTO();
+					rcDto.setId(recipe.getId());
+					rcDto.setRecipeTitle(recipe.getRecipeTitle());
+					List<RecipeCategory> recipeCategories = recipe.getRecipeCategories();
+					List<Integer> categoryIds = new ArrayList<>();
+					for (RecipeCategory rc : recipeCategories) {
+						categoryIds.add(rc.getCategory().getId());
+					}
+					rcDto.setRecipeCategoryIds(categoryIds);
+					rcDto.setPictureURL(recipe.getPictureURL());
+					rcDto.setRecipeIntroduction(recipe.getRecipeIntroduction());
+
+					categoryRecipeDTO.add(rcDto);
+				}
 			}
+			return categoryRecipeDTO;
 		}
-		return categoryRecipeDTO;
+		return null;
 	}
 	/*--------------------------------------------食譜建立頁使用service ------------------------------------------------*/
 
@@ -200,7 +206,8 @@ public class RecipeService {
 			System.out.println("out for");
 			for (Ingredient ingredientData : cDto.getIngredients()) {
 				System.out.println("in for");
-				System.out.println("name-------------------------------------------"+ingredientData.getIngredientName());
+				System.out.println(
+						"name-------------------------------------------" + ingredientData.getIngredientName());
 				Ingredient existIngredient = ingreRepo.findByIngredientName(ingredientData.getIngredientName());
 				if (existIngredient != null) {
 					ingredientData = existIngredient;
@@ -217,30 +224,46 @@ public class RecipeService {
 			if (cDto.getRecipe().getCookingTime() == null) {
 				cDto.getRecipe().setCookingTime(0);
 			}
-			System.out.println(cDto.getRecipe().getId()); //持久化前沒有id
+			System.out.println(cDto.getRecipe().getId()); // 持久化前沒有id
 			Recipes save = recipeRepo.save(cDto.getRecipe());
-			System.out.println(cDto.getRecipe().getId()); //持久化後能取得id
-//			List<RecipeCategory> recipecategories = new ArrayList<>();
+			System.out.println(cDto.getRecipe().getId()); // 持久化後能取得id
 			/*--------------------------------------------儲存食譜類別區塊-----------------------------------------------------*/
-//			List<Category> categories = cDto.getCategories();
-//			System.out.println("before for");
-//			for (int i = 0; i < categories.size(); i++) {
-////				System.out.println("for");
-//				Optional<Category> existCategory = cateRepo.findById(categories.get(i).getId());
-////				System.out.println("before if"+existCategory.isPresent());
-//				if(existCategory.isPresent()) {
-//					
-//					RecipeCategory recipeCategory = new RecipeCategory();
-//					Category category = existCategory.get();
-//					recipeCategory.setCategory(category);
-//					recipeCategory.setRecipe(save);
-////					recipecategories.add(recipeCategory);
-////					System.out.println(" before save");
-//					recaRepo.save(recipeCategory);	
-////					System.out.println(" after save");
-//				}
-//			}
-		/*--------------------------------------------儲存食譜類別區塊-----------------------------------------------------*/
+			List<RecipeCategory> recipecategories = new ArrayList<>();
+			List<Category> categories = cDto.getCategories();
+			/*------無論有無設定分類一律設定為食譜分類---------*/
+			Optional<Category> rCate = cateRepo.findById(3);
+			Category cateForReci = rCate.get();
+			RecipeCategory defualtCategory = new RecipeCategory();
+			defualtCategory.setCategory(cateForReci);
+			defualtCategory.setRecipe(save);
+			/*------無論有無設定分類一律設定為食譜分類---------*/
+			System.out.println("before for");
+
+			/*------有設定分類則將分類逐一設定---------*/
+			if (!categories.isEmpty()) {
+				System.out.println("in if");
+				for (int i = 0; i < categories.size(); i++) {
+//				System.out.println("for");
+					Integer categoryId = categories.get(i).getId();
+					if (categoryId != null) {
+						Optional<Category> existCategory = cateRepo.findById(categoryId);
+//				System.out.println("before if"+existCategory.isPresent());
+						if (existCategory.isPresent()) {
+							Category category = existCategory.get();
+							RecipeCategory recipeCategory = new RecipeCategory();
+							recipeCategory.setCategory(category);
+							recipeCategory.setRecipe(save);
+							recipecategories.add(recipeCategory);
+//					System.out.println(" before save");
+//					System.out.println(" after save");
+						}
+					}
+				}
+			}
+			/*------有無設定分類一律設定則將分類逐一設定---------*/
+			recipecategories.add(defualtCategory);
+			recaRepo.saveAll(recipecategories);
+			/*--------------------------------------------儲存食譜類別區塊-----------------------------------------------------*/
 
 			return save.getId().toString();
 		}
@@ -395,8 +418,8 @@ public class RecipeService {
 //		Join<Recipes,Category> categoryJoin = join.join("");
 
 		// 決定查詢 column
-		cq.multiselect(root.get("id"), root.get("recipeTitle"), join.get("fullName"),
-				root.get("pictureURL"), root.get("difficulty"), root.get("recipeIntroduction"));
+		cq.multiselect(root.get("id"), root.get("recipeTitle"), join.get("fullName"), root.get("pictureURL"),
+				root.get("difficulty"), root.get("recipeIntroduction"));
 
 		// 加入查詢條件
 		Predicate predicate = cb.conjunction();

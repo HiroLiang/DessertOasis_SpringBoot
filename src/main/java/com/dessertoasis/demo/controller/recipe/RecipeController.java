@@ -54,6 +54,7 @@ import com.dessertoasis.demo.model.recipe.RecipeSteps;
 import com.dessertoasis.demo.model.recipe.RecipeStepsRepository;
 import com.dessertoasis.demo.model.recipe.Recipes;
 import com.dessertoasis.demo.model.sort.SortCondition;
+import com.dessertoasis.demo.service.CategoryService;
 import com.dessertoasis.demo.service.recipe.RecipeService;
 
 import jakarta.persistence.EntityManager;
@@ -75,6 +76,9 @@ public class RecipeController {
 
 	@Autowired
 	private RecipeStepsRepository stepRepo;
+	
+	@Autowired
+	private CategoryService cateService;
 
 	@Autowired
 	private ImageUploadUtil imgUtil;
@@ -164,11 +168,10 @@ public class RecipeController {
 	}
 
 	// 取得特定類別的10筆食譜
-	@GetMapping("/recipe/get10categoryRecipes")
+	@GetMapping("recipe/get10categoryRecipes")
 	public List<RecipeCarouselDTO> find10RecipeByCategory(@RequestParam("cid") Integer cid) {
-		Category category = new Category();
-		category.setId(cid);
-		return recipeService.find10RecipeByCategory(category);
+		
+		return recipeService.find10RecipeByCategory(cid);
 	}
 
 	/*--------------------------------------------食譜建立頁使用controller ------------------------------------------------*/
@@ -447,6 +450,8 @@ public class RecipeController {
 		return ResponseEntity.ok("recipe not found");
 	}
 	/*----------------------﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀發送base64給前端範例﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀--------------------------*/
+	
+	/*取得步驟圖片 base64回傳前端*/
 	@PostMapping("recipe/getStepPics")
 	@ResponseBody
 	public List<String> getStepPicture(@RequestBody Integer recipeId){
@@ -471,8 +476,11 @@ public class RecipeController {
 		return pictureDatas;
 	}
 	
-
 	/*----------------------------------------------處理前端請求回傳base64給前端顯示Controller------------------------------------------------------------------*/
+	
+//	public List<Category> getRecipeCategory(@RequestBody Integer categoryId){
+//		
+//	}
 
 	// 更新食譜
 	@PutMapping("recipe/updaterecipe")

@@ -35,6 +35,7 @@ public class SortCondition {
 	 * 			"numKey":"teacherTel", 
 	 * 			"numStart":8, 
 	 * 			"numEnd":12 
+	 * 			"numberLabel":"price"
 	 * 		}
 	 * 
 	 * 		兩個List的數量可以自由增加
@@ -48,6 +49,7 @@ public class SortCondition {
 	private String numKey;
 	private Integer numStart;
 	private Integer numEnd;
+	private String numberLabel;
 
 	public enum SortWay {
 		DESC, ASC
@@ -69,6 +71,14 @@ public class SortCondition {
 		this.numKey = numKey;
 		this.numStart = numStart;
 		this.numEnd = numEnd;
+	}
+
+	public String getNumberLabel() {
+		return numberLabel;
+	}
+
+	public void setNumberLabel(String numberLabel) {
+		this.numberLabel = numberLabel;
 	}
 
 	public String getNumKey() {

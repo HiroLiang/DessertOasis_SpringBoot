@@ -12,6 +12,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.dessertoasis.demo.ImageUploadUtil;
+import com.dessertoasis.demo.model.category.Category;
 import com.dessertoasis.demo.model.course.CTag;
 import com.dessertoasis.demo.model.course.CTagRepository;
 import com.dessertoasis.demo.model.course.Course;
@@ -32,6 +33,7 @@ import com.dessertoasis.demo.service.PageSortService;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.Tuple;
 import jakarta.persistence.TypedQuery;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
@@ -275,7 +277,7 @@ public class CourseService {
 		}, pageable);
 	}
 
-	// Order table範例
+	// course table範例
 	public List<CourseCmsTable> getCoursePagenation(SortCondition sortCon) {
 		CriteriaBuilder cb = em.getCriteriaBuilder();
 
@@ -285,16 +287,17 @@ public class CourseService {
 		// 決定select.join表格
 		Root<Course> root = cq.from(Course.class);
 		Join<Course, Teacher> join = root.join("teacher");
+		Join<Course, Category> catJoin = root.join("category");
 
 		// 決定查詢 column
 		cq.multiselect(root.get("id"), join.get("teacherName"), root.get("courseName"), root.get("courseDate"),
 				root.get("closeDate"), root.get("coursePlace"), root.get("remainPlaces"), root.get("coursePrice"),
-				root.get("courseStatus"), root.get("courseIntroduction"));
+				root.get("courseStatus"), root.get("courseIntroduction"), catJoin.get("id").alias("categoryId"));
 
 		// 加入查詢條件
 		Predicate predicate = cb.conjunction();
 		Course course = new Course();
-		Predicate pre = pService.checkCourseCondition(root, join, predicate, sortCon, cb, course);
+		Predicate pre = pService.checkCourseCondition(root, join, catJoin, predicate, sortCon, cb, course);
 
 		// 填入 where 條件
 		cq.where(pre);
@@ -329,6 +332,7 @@ public class CourseService {
 		return null;
 	}
 
+	//course 分頁頁數
 	public Integer getPages(SortCondition sortCon) {
 		CriteriaBuilder cb = em.getCriteriaBuilder();
 
@@ -338,6 +342,7 @@ public class CourseService {
 		// 決定select.join表格
 		Root<Course> root = cq.from(Course.class);
 		Join<Course, Teacher> join = root.join("teacher");
+		Join<Course, Category> catJoin = root.join("category");
 
 		// 決定查詢 column
 		cq.select(cb.count(root));
@@ -345,7 +350,7 @@ public class CourseService {
 		// 加入查詢條件
 		Predicate predicate = cb.conjunction();
 		Course course = new Course();
-		Predicate pre = pService.checkCourseCondition(root, join, predicate, sortCon, cb, course);
+		Predicate pre = pService.checkCourseCondition(root, join,catJoin, predicate, sortCon, cb, course);
 		cq.where(pre);
 
 		// 查詢傯頁數
@@ -354,4 +359,39 @@ public class CourseService {
 
 		return totalPages;
 	}
+	
+	public List<Integer> getNumberRange(SortCondition sortCon){
+		CriteriaBuilder cb = em.getCriteriaBuilder();
+
+		// 決定輸出表格型態
+		 CriteriaQuery<Tuple> cq = cb.createTupleQuery();
+
+		// 決定select.join表格
+		Root<Course> root = cq.from(Course.class);
+		Join<Course, Teacher> join = root.join("teacher");
+		Join<Course, Category> catJoin = root.join("category");
+
+		// 決定查詢 column
+		cq.multiselect(cb.max(root.get("coursePrice")),cb.min(root.get("coursePrice")));
+
+		// 加入查詢條件
+		Predicate predicate = cb.conjunction();
+		Course course = new Course();
+		Predicate pre = pService.checkCourseCondition(root, join,catJoin, predicate, sortCon, cb, course);
+		cq.where(pre);
+
+		// 查詢傯頁數
+		List<Tuple> range = em.createQuery(cq).getResultList();
+		if (range != null && !range.isEmpty()) {
+            Tuple result = range.get(0);
+            Integer maxPrice = (Integer) result.get(0); 
+            Integer minPrice = (Integer) result.get(1); 
+            List<Integer> ranges = new ArrayList<>();
+            ranges.add(maxPrice);
+            ranges.add(minPrice);
+            return ranges;
+		}
+		return null;
+	}
+	
 }
