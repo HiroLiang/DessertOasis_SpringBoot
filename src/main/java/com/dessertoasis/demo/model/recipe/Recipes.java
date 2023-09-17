@@ -70,8 +70,8 @@ public class Recipes {
 	private String recipeIntroduction;
 	
 	//食譜份量(幾人份)
-	@Column(name = "ingredientPersons",nullable=true,columnDefinition = "nvarchar(20)")
-	private String ingredientPersons;
+	@Column(name = "ingredientPersons",nullable=true,columnDefinition = "int")
+	private Integer ingredientPersons;
 	
 	//製作時間
 	@Column(name = "cookingTime",nullable=true,columnDefinition = "int")
@@ -175,6 +175,15 @@ public class Recipes {
 	public void setRecipeIntroduction(String recipeIntroduction) {
 		this.recipeIntroduction = recipeIntroduction;
 	}
+
+	public Integer getIngredientPersons() {
+		return ingredientPersons;
+	}
+
+	public void setIngredientPersons(Integer ingredientPersons) {
+		this.ingredientPersons = ingredientPersons;
+	}
+
 
 	public Integer getCookingTime() {
 		return cookingTime;

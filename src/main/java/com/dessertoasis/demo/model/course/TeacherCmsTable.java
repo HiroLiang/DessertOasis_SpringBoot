@@ -8,12 +8,17 @@ import lombok.Data;
 public class TeacherCmsTable {
 	
 	private Integer id;
-	private String fullName;
+	
 	private String teacherName;
 //	private String teacherProfilePic;
 	private Integer teacherTel;
 	private String teacherMail;
 	private String teacherProfile;
+	
+	private String teacherContract;
+	private String teacherAccountStatus;
+	private String account;
+//	private String courseName;
 //	private List<TeacherPicture> pictures;
 	
 
@@ -22,17 +27,35 @@ public class TeacherCmsTable {
 	}
 
 
-	public TeacherCmsTable(Integer id, String fullName, String teacherName, Integer teacherTel, String teacherMail,
-			String teacherProfile) {
+	public TeacherCmsTable(Integer id, String teacherName, Integer teacherTel, String teacherMail,
+			String teacherProfile, String teacherContract, String teacherAccountStatus, String account) {
 		super();
 		this.id = id;
-		this.fullName = fullName;
 		this.teacherName = teacherName;
 		this.teacherTel = teacherTel;
 		this.teacherMail = teacherMail;
 		this.teacherProfile = teacherProfile;
-//		this.pictures = pictures;
+		this.teacherContract = teacherContract;
+		this.teacherAccountStatus = teacherAccountStatus;
+		this.account = account;
 	}
+	
+	
+
+
+	
+
+//	public TeacherCmsTable(Integer id, String fullName, String teacherName, Integer teacherTel, String teacherMail,
+//			String teacherProfile) {
+//		super();
+//		this.id = id;
+//		this.fullName = fullName;
+//		this.teacherName = teacherName;
+//		this.teacherTel = teacherTel;
+//		this.teacherMail = teacherMail;
+//		this.teacherProfile = teacherProfile;
+////		this.pictures = pictures;
+//	}
 
 
 //	public TeacherCmsTable(Integer id, String fullName, String teacherName, String teacherProfilePic,

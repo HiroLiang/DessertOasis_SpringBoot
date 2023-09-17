@@ -137,7 +137,7 @@ public class RecipeController {
 		System.out.println(recipeId);
 		Optional<Recipes> findById = recipeRepo.findById(Integer.parseInt(recipeId));
 
-		if (findById.isPresent()) {
+		if (findById.isPresent() && findById.get().getRecipeStatus()!=-1) {
 			return findById.get();
 		}
 		return null;
@@ -484,10 +484,10 @@ public class RecipeController {
 
 	// 更新食譜
 	@PutMapping("recipe/updaterecipe")
-	public String updateRecipe(@RequestBody Recipes recipe, HttpSession session) {
+	public String updateRecipe(@RequestParam("recipeId") Integer recipeId, HttpSession session) {
 		Member member = (Member) session.getAttribute("loggedInMember");
 		if (member != null) {
-			Boolean update = recipeService.updateRecipe(member.getId(), recipe);
+			Boolean update = recipeService.updateRecipe(recipeId, 4);
 			if (update) {
 				return "Y";
 			}
@@ -497,18 +497,18 @@ public class RecipeController {
 	}
 
 	// 刪除食譜
-	@DeleteMapping()
-	public String deleteRecipe(@RequestParam("id") Integer id, HttpSession session) {
+	@PostMapping("recipe/deleterecipe")
+	public String deleteRecipe(@RequestParam("recipeId") Integer recipeId, HttpSession session) {
 
 		Member member = (Member) session.getAttribute("loggedInMember");
-		if (member != null) {
-			Boolean delete = recipeService.deleteById(id, member.getId());
+//		if (member != null) {
+			Boolean delete = recipeService.deleteById(recipeId,2);
 			if (delete) {
 				return "Y";
 			}
 			return "F";
-		}
-		return "N";
+//		}
+//		return "N";
 	}
 
 	/*----------------------------------------------處理食譜總頁數Controller------------------------------------------------------------------*/

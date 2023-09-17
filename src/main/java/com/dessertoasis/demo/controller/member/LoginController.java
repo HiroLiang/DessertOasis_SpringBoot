@@ -5,11 +5,15 @@ import java.util.Base64;
 import javax.crypto.SecretKey;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.WebUtils;
 
@@ -64,9 +68,10 @@ public class LoginController {
 		    	MemberState state = memberLogin.getMemberStatus();
 		    	MemberAccess access = memberLogin.getAccess();
 		    	
-		    		    	
-				 //登入後判斷會員權限設定不同cookies，
-		    	 if (access == MemberAccess.ADMIN ) {
+		    	if(state ==  MemberState.INACTIVE) {
+		    		return "INACTIVE";
+		    	}
+		    	else if (access == MemberAccess.ADMIN ) {//登入後判斷會員權限設定不同cookies，
 		    		
 		    		 //透過setEncryptedCookie來做加密
 		    		 String cookieName = "isLogin";
@@ -152,7 +157,17 @@ public class LoginController {
 	        return loggedInMember;
 	    }
 	  
-	  //更新密碼
+	  //忘記密碼
+	  @PutMapping("/forgotpassword")
+	  public ResponseEntity<String> forgotPassword(@RequestParam String email) {
+	    return new ResponseEntity<>(mService.forgotPassword(email), HttpStatus.OK);
+	  }
+	  
+	  //重設密碼
+	  @PutMapping("/setpassword")
+	  public ResponseEntity<String> setpassword(@RequestParam String email,@RequestHeader String newpassword) {
+		    return new ResponseEntity<>(mService.setPassword(email,newpassword), HttpStatus.OK);
+		  }
 
 //	@GetMapping("/getcookie")
 //	public String getCookieValue(@CookieValue(name = "adminLogin", defaultValue = "") String adminLoginCookie) {

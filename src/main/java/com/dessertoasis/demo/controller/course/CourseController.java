@@ -88,6 +88,8 @@ public class CourseController {
 //		return courseDTOList;
 	}
 
+	
+	
 	@GetMapping("/{courseId}")
 	public ResponseEntity<CourseDTO> getCourseDetails(@PathVariable Integer courseId) {
 		Course course = cService.findById(courseId);

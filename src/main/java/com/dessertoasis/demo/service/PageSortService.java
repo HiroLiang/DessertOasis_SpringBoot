@@ -160,19 +160,101 @@ public class PageSortService {
 				}
 			}
 		}
+		
 		// 數值範圍
-		if (sortCon.getNumKey() != null) {
-			System.out.println("num");
-			if (hasProperty(product, sortCon.getNumKey())) {
-				predicate = cb.and(predicate,
-						cb.between(root.get(sortCon.getNumKey()), sortCon.getNumStart(), sortCon.getNumEnd()));
-			} else {
-				predicate = cb.and(predicate,
-						cb.between(joinCategory.get(sortCon.getNumKey()), sortCon.getNumStart(), sortCon.getNumEnd()));
+				if (sortCon.getNumKey() != null) {
+					System.out.println("num");
+					if (hasProperty(product, sortCon.getNumKey())) {
+						predicate = cb.and(predicate,
+								cb.between(root.get(sortCon.getNumKey()), sortCon.getNumStart(), sortCon.getNumEnd()));
+					} else {
+						predicate = cb.and(predicate,
+								cb.between(joinCategory.get(sortCon.getNumKey()), sortCon.getNumStart(), sortCon.getNumEnd()));
+					}
+				}
+				return predicate;
 			}
+
+		
+		public Predicate checkTeacherCondition2(Root<Teacher> root, Join< Teacher,Course> join, Predicate predicate,
+				SortCondition sortCon, CriteriaBuilder cb, Teacher teacher) {
+			// 模糊搜索
+			if (sortCon.getSearchRules() != null && sortCon.getSearchRules().size() != 0) {
+				System.out.println("search");
+				for (SearchRules rule : sortCon.getSearchRules()) {
+					if (hasProperty(teacher, rule.getKey())) {
+						predicate = cb.and(predicate, cb.like(root.get(rule.getKey()), rule.getInput()));
+					} else {
+						predicate = cb.and(predicate, cb.like(join.get(rule.getKey()), rule.getInput()));
+					}
+				}
+			}
+			// 日期範圍
+			if (sortCon.getDateRules() != null && sortCon.getDateRules().size() != 0) {
+				for (DateRules rule : sortCon.getDateRules()) {
+					System.out.println(rule.getKey());
+					if (hasProperty(teacher, rule.getKey())) {
+						predicate = cb.and(predicate, cb.between(root.get(rule.getKey()), rule.getStart(), rule.getEnd()));
+					} else {
+						predicate = cb.and(predicate, cb.between(join.get(rule.getKey()), rule.getStart(), rule.getEnd()));
+					}
+				}
+			}
+			// 數值範圍
+			if (sortCon.getNumKey() != null) {
+				System.out.println("num");
+				if (hasProperty(teacher, sortCon.getNumKey())) {
+					predicate = cb.and(predicate,
+							cb.between(root.get(sortCon.getNumKey()), sortCon.getNumStart(), sortCon.getNumEnd()));
+				} else {
+					predicate = cb.and(predicate,
+							cb.between(join.get(sortCon.getNumKey()), sortCon.getNumStart(), sortCon.getNumEnd()));
+				}
+			}
+			return predicate;
 		}
-		return predicate;
-	}
+		public Predicate checkTeacherCondition3(Root<Teacher> root, Predicate predicate,
+				SortCondition sortCon, CriteriaBuilder cb, Teacher teacher) {
+			// 模糊搜索
+			if (sortCon.getSearchRules() != null && sortCon.getSearchRules().size() != 0) {
+				System.out.println("search");
+				for (SearchRules rule : sortCon.getSearchRules()) {
+					if (hasProperty(teacher, rule.getKey())) {
+						predicate = cb.and(predicate, cb.like(root.get(rule.getKey()), rule.getInput()));
+					}
+//					} else {
+//						predicate = cb.and(predicate, cb.like(join.get(rule.getKey()), rule.getInput()));
+//					}
+				}
+			}
+			// 日期範圍
+			if (sortCon.getDateRules() != null && sortCon.getDateRules().size() != 0) {
+				for (DateRules rule : sortCon.getDateRules()) {
+					System.out.println(rule.getKey());
+					if (hasProperty(teacher, rule.getKey())) {
+						predicate = cb.and(predicate, cb.between(root.get(rule.getKey()), rule.getStart(), rule.getEnd()));
+					} 
+//					else {
+//						predicate = cb.and(predicate, cb.between(join.get(rule.getKey()), rule.getStart(), rule.getEnd()));
+//					}
+				}
+			}
+			// 數值範圍
+			if (sortCon.getNumKey() != null) {
+				System.out.println("num");
+				if (hasProperty(teacher, sortCon.getNumKey())) {
+					predicate = cb.and(predicate,
+							cb.between(root.get(sortCon.getNumKey()), sortCon.getNumStart(), sortCon.getNumEnd()));
+				} 
+//				else {
+//					predicate = cb.and(predicate,
+//							cb.between(join.get(sortCon.getNumKey()), sortCon.getNumStart(), sortCon.getNumEnd()));
+//				}
+			}
+			return predicate;
+		}
+		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 
 	// ~~~~~~~~~課程後台查詢條件~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	public Predicate checkCourseCondition(Root<Course> root, Join<Course, Teacher> join, Join<Course, Category> catJoin,

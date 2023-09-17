@@ -2,9 +2,13 @@ package com.dessertoasis.demo.controller;
 
 import java.io.File;
 import java.io.IOException;
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Optional;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -29,22 +33,16 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.dessertoasis.demo.ImageUploadUtil;
 import com.dessertoasis.demo.model.category.Category;
-import com.dessertoasis.demo.model.member.Member;
-import com.dessertoasis.demo.model.member.MemberAccess;
-import com.dessertoasis.demo.model.order.OrderCmsTable;
+import com.dessertoasis.demo.model.category.CategoryRepository;
 import com.dessertoasis.demo.model.product.ProdSearchDTO;
 import com.dessertoasis.demo.model.product.Product;
 import com.dessertoasis.demo.model.product.ProductPicture;
 import com.dessertoasis.demo.model.product.ProductPictureRepository;
 import com.dessertoasis.demo.model.product.ProductRepository;
-import com.dessertoasis.demo.model.recipe.RecipeRepository;
-import com.dessertoasis.demo.model.recipe.Recipes;
 import com.dessertoasis.demo.model.sort.SortCondition;
 import com.dessertoasis.demo.service.CategoryService;
 import com.dessertoasis.demo.service.product.ProductPictureService;
 import com.dessertoasis.demo.service.product.ProductService;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import jakarta.servlet.http.HttpSession;
 
@@ -65,6 +63,13 @@ public class ProductController {
     
     @Autowired
     private CategoryService cService;
+    
+    @Autowired
+    private CategoryRepository cRepo;
+    
+    @Autowired
+    private ProductRepository pRepo;
+    
 
     @GetMapping("/list")
     public ResponseEntity<List<Product>> listProducts() {
@@ -72,24 +77,97 @@ public class ProductController {
         return ResponseEntity.ok(products);
     }
 
-
+//
+//    @GetMapping("/details/{id}")
+//    public ResponseEntity<Product> productDetails(@PathVariable Integer id) {
+//        Product product = pService.findProductById(id);
+//        if (product != null) {
+//            return ResponseEntity.ok(product);
+//        } else {
+//            return ResponseEntity.notFound().build();
+//        }
+//    }
     @GetMapping("/details/{id}")
-    public ResponseEntity<Product> productDetails(@PathVariable Integer id) {
+    public ResponseEntity<Map<String, Object>> getProductAndCategory(@PathVariable Integer id) {
+        Map<String, Object> result = new HashMap<>();
+        
         Product product = pService.findProductById(id);
         if (product != null) {
-            return ResponseEntity.ok(product);
+            // 创建产品信息对象
+            Map<String, Object> productInfo = new HashMap<>();
+            productInfo.put("prodName", product.getProdName());
+            productInfo.put("prodDescription", product.getProdDescription());
+            productInfo.put("prodStock", product.getProdStock());
+            productInfo.put("prodPrice", product.getProdPrice());
+            productInfo.put("updateTime", product.getUpdateTime());
+            productInfo.put("prodRemark", product.getProdRemark());
+            
+            // 创建类别信息对象
+            Map<String, Object> categoryInfo = new HashMap<>();
+            Category category = product.getCategory();
+            if (category != null) {
+                categoryInfo.put("id", category.getId());
+            }
+            
+            // 将产品信息和类别信息添加到结果对象中
+            result.put("product", productInfo);
+            result.put("category", categoryInfo);
+            
+            return ResponseEntity.ok(result);
         } else {
             return ResponseEntity.notFound().build();
         }
     }
-    @PostMapping("/add")
-    public ResponseEntity<Integer> addProduct(@RequestBody Product product) {
-        Product savedProduct = pService.insert(product); // 插入并获取新创建的产品对象
-        Integer productId = savedProduct.getId(); // 获取新创建的产品的ID
 
-        return ResponseEntity.ok(productId); // 返回产品ID
+
+//    @PostMapping("/add")
+//    public ResponseEntity<Integer> addProduct(@RequestBody Product product) {
+//        Product savedProduct = pService.insert(product); // 插入并获取新创建的产品对象
+//        Integer productId = savedProduct.getId(); // 获取新创建的产品的ID
+//
+//        return ResponseEntity.ok(productId); // 返回产品ID
+//    }
+    @PostMapping("/add")
+    public ResponseEntity<Integer> addProductAndCategory(@RequestBody Map<String, Object> requestPayload) {
+        try {
+            // 从 JSON 数据中提取“Product”和“Category”的信息
+            Map<String, Object> productData = (Map<String, Object>) requestPayload.get("product");
+            Map<String, Object> categoryData = (Map<String, Object>) requestPayload.get("category");
+
+            // 创建新的 Category 实例并保存它
+            Category category = new Category();
+            category.setId((Integer) categoryData.get("id"));
+            // 设置其他 Category 属性（如果需要）
+
+            // 创建新的 Product 实例并与 Category 关联
+            Product product = new Product();
+            product.setCategory(category); // 设置关联的 Category
+            product.setProdName((String) productData.get("prodName"));
+            product.setProdDescription((String) productData.get("prodDescription"));
+            product.setProdStock((Integer) productData.get("prodStock"));
+            product.setProdPrice((Integer) productData.get("prodPrice")); // 使用 BigDecimal 存储价格
+            product.setProdPurchase((Integer) productData.get("prodPurchase"));
+            String frontendTimestamp = (String) productData.get("updateTime");
+            SimpleDateFormat frontendDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+            Date date = frontendDateFormat.parse(frontendTimestamp);
+            Timestamp backendTimestamp = new Timestamp(date.getTime());
+            product.setUpdateTime(backendTimestamp); // 设置后端格式的时间戳
+            product.setProdRemark((String) productData.get("prodRemark"));
+
+            // 保存 Category 和 Product 到数据库
+            cRepo.save(category); // 保存类别
+            pRepo.save(product); // 保存产品
+
+            // 返回新创建的 Product 的 ID
+            return ResponseEntity.ok(product.getId());
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
     }
-    
+
+
+
 //    @PostMapping("/add")
 //    public ResponseEntity<Integer> addProduct(@RequestBody Product product) {
 //        Integer categoryId = product.getCategory().getId();
@@ -207,19 +285,94 @@ System.out.println(imagePath);
 
 	    return null;
 	}
+	
+	 @PostMapping("/updateImg/{id}")
+	    public ResponseEntity<String> updateProductPictures(@PathVariable Integer id, @RequestBody List<String> pictureUrls) {
+	        try {
+	            // 根据商品ID查询商品信息
+	            Product product = pService.findById(id);
+
+	            if (product != null) {
+	                // 根据传入的图片URL列表，创建新的 ProductPicture 实例并添加到商品的图片列表中
+	                List<ProductPicture> productPictures = new ArrayList<>();
+	                for (String pictureUrl : pictureUrls) {
+	                    ProductPicture productPicture = new ProductPicture();
+	                    productPicture.setPictureURL(pictureUrl);
+	                    // 设置其他图片属性（如果需要）
+	                    productPictures.add(productPicture);
+	                }
+	                product.setPictures(productPictures);
+
+	                // 更新商品信息
+	                pService.update(product);
+
+	                return ResponseEntity.ok("商品图片信息已成功更新");
+	            } else {
+	                return ResponseEntity.notFound().build(); // 如果商品不存在，返回404响应
+	            }
+	        } catch (Exception e) {
+	            e.printStackTrace();
+	            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("更新商品图片信息时出现错误");
+	        }
+	    }
+	
+
+
 	/*----------------------﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀發送base64給前端範例﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀--------------------------*/
     
 	
+//	@PostMapping("/edit/{id}")
+//    public ResponseEntity<Product> editProduct(@PathVariable Integer id, @RequestBody Product product) {
+//        Product existingProduct = pService.findProductById(id);
+//        if (existingProduct != null) {
+//            pService.update(product); // Use the provided product object
+//            return ResponseEntity.ok(product);
+//        } else {
+//            return ResponseEntity.notFound().build();
+//        }
+//    }
 	@PostMapping("/edit/{id}")
-    public ResponseEntity<Product> editProduct(@PathVariable Integer id, @RequestBody Product product) {
-        Product existingProduct = pService.findProductById(id);
-        if (existingProduct != null) {
-            pService.update(product); // Use the provided product object
-            return ResponseEntity.ok(product);
-        } else {
-            return ResponseEntity.notFound().build();
-        }
-    }
+	public ResponseEntity<Integer> editProductAndCategory(@PathVariable Integer id, @RequestBody Map<String, Object> requestPayload) {
+	    try {
+	        // 从 JSON 数据中提取“Product”和“Category”的信息
+	        Map<String, Object> productData = (Map<String, Object>) requestPayload.get("product");
+	        Map<String, Object> categoryData = (Map<String, Object>) requestPayload.get("category");
+
+	        // 查找现有商品
+	        Product existingProduct = pService.findProductById(id);
+	        if (existingProduct == null) {
+	            return ResponseEntity.notFound().build();
+	        }
+
+	        // 更新商品属性
+	        existingProduct.setProdName((String) productData.get("prodName"));
+	        existingProduct.setProdDescription((String) productData.get("prodDescription"));
+	        existingProduct.setProdStock((Integer) productData.get("prodStock"));
+	        existingProduct.setProdPrice((Integer) productData.get("prodPrice")); // 使用 BigDecimal 存储价格
+	        existingProduct.setProdPurchase((Integer) productData.get("prodPurchase"));
+	        String frontendTimestamp = (String) productData.get("updateTime");
+	        SimpleDateFormat frontendDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+	        Date date = frontendDateFormat.parse(frontendTimestamp);
+	        Timestamp backendTimestamp = new Timestamp(date.getTime());
+	        existingProduct.setUpdateTime(backendTimestamp); // 设置后端格式的时间戳
+	        existingProduct.setProdRemark((String) productData.get("prodRemark"));
+
+	        // 更新关联的分类信息
+	        Category category = existingProduct.getCategory();
+	        category.setId((Integer) categoryData.get("id"));
+	        // 设置其他 Category 属性（如果需要）
+
+	        // 保存 Category 和更新后的 Product 到数据库
+	        cRepo.save(category); // 保存类别
+	        pRepo.save(existingProduct); // 更新产品
+
+	        // 返回编辑后的 Product 的 ID
+	        return ResponseEntity.ok(existingProduct.getId());
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+	    }
+	}
 
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<Void> deleteProduct(@PathVariable Integer id) {
