@@ -52,7 +52,8 @@ public class PageSortService {
 		}
 		return false;
 	}
-
+	
+	
 	/*-----------------------------------------v v v 範例 v v v---------------------------------------------------*/
 	// 訂單後台查詢條件
 	public Predicate checkCondition(Root<Order> root, Join<Order, Member> join, Predicate predicate,
@@ -335,8 +336,35 @@ public class PageSortService {
 		}
 		return predicate;
 	}
-	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	
+	// 會員查詢條件~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+	public Predicate checkMemberCondition(Root<Member> root, Predicate predicate,
+			SortCondition sortCon, CriteriaBuilder cb, Member member) {
+		// 模糊搜索
+	    if (sortCon.getSearchRules() != null && sortCon.getSearchRules().size() != 0) {
+	        System.out.println("search");
+	        for (SearchRules rule : sortCon.getSearchRules()) {
+	            predicate = cb.and(predicate, cb.like(root.get(rule.getKey()), "%" + rule.getInput() + "%"));
+	        }
+	    }
+	    // 日期範圍
+	    if (sortCon.getDateRules() != null && sortCon.getDateRules().size() != 0) {
+	        for (DateRules rule : sortCon.getDateRules()) {
+	        	System.out.println(rule.getKey());
+	            predicate = cb.and(predicate, cb.between(root.get(rule.getKey()), rule.getStart(), rule.getEnd()));
+	        }
+	    }
+	    // 數值範圍
+	    if (sortCon.getNumKey() != null) {
+			System.out.println("num");
+			 if (sortCon.getNumKey() != null) {
+		        predicate = cb.and(predicate, cb.between(root.get(sortCon.getNumKey()), sortCon.getNumStart(), sortCon.getNumEnd()));
+		    }
+		}
+				return predicate;
+	}
+	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	// (棄用)
 	public String getPageJson(SortCondition sortCod) throws Exception {
 		CriteriaBuilder cb = em.getCriteriaBuilder();

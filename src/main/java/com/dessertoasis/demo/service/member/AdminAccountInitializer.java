@@ -97,8 +97,8 @@ public class AdminAccountInitializer {
     		 	if(existingUser==null) {
     		 		Member user = new Member();
     		 		MemberDetail userDetail = new MemberDetail();
-    		 		userDetail.setIdNumber("A123456789");
-    		 		userDetail.setDeliveryAddress("台灣省");
+    		 		userDetail.setIdNumber("E151940389");
+    		 		userDetail.setDeliveryAddress("高雄市中正四路211號8樓之1");
     		 		
     		 		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
     		 		Date date = dateFormat.parse("1989-06-04");
@@ -127,8 +127,8 @@ public class AdminAccountInitializer {
     	        if (existingAdmin == null) {
     	            Member admin = new Member();
     	            MemberDetail adminDetail = new MemberDetail();
-    	            adminDetail.setIdNumber("B123132132");
-    	            adminDetail.setDeliveryAddress("北京");
+    	            adminDetail.setIdNumber("K254845440");
+    	            adminDetail.setDeliveryAddress("高雄市中正四路211號8樓之1");
     		 		
     		 		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
     		 		Date date = dateFormat.parse("1989-06-05");

@@ -11,6 +11,7 @@ import com.dessertoasis.demo.model.course.Teacher;
 import com.dessertoasis.demo.model.order.Order;
 import com.dessertoasis.demo.model.recipe.Recipes;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -86,9 +87,11 @@ public class Member { //與會員帳號相關
 	
 	
 	@OneToOne(cascade = CascadeType.ALL, mappedBy = "member")
+	@JsonIgnoreProperties({"member"})
     private MemberDetail memberDetail;
 	
 	@OneToOne(cascade = CascadeType.ALL, mappedBy = "member")
+	@JsonIgnoreProperties({"member"})
 	private Teacher teacher;
 	
 //	@OneToOne(cascade = CascadeType.ALL, mappedBy = "member")
