@@ -67,7 +67,9 @@ public class LoginController {
 		    	session.setAttribute("loggedInMember", memberLogin);
 		    	MemberState state = memberLogin.getMemberStatus();
 		    	MemberAccess access = memberLogin.getAccess();
-		    	
+		    	if(state ==  MemberState.BANNED) {
+		    		return "BANNED";
+		    	}
 		    	if(state ==  MemberState.INACTIVE) {
 		    		return "INACTIVE";
 		    	}
