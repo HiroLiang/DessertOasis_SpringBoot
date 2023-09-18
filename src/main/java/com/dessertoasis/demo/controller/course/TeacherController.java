@@ -433,7 +433,7 @@ public class TeacherController {
 	/*----------------------------------------------前台資料查詢Controller------------------------------------------------------------------*/
 
 	@PostMapping("/teacherFrontPagenation")
-	public List<TeacherFrontDTO> getFrontRecipePage(@RequestBody SortCondition sortCon, HttpSession session) {
+	public List<TeacherFrontDTO> getFrontTeacherPage(@RequestBody SortCondition sortCon, HttpSession session) {
 		System.out.println(sortCon);
 		// 判斷 user 存在且為 ADMIN
 		Member user = (Member) session.getAttribute("loggedInMember");

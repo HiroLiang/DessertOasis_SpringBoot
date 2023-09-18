@@ -11,16 +11,21 @@ public class TeacherFrontDTO {
 	
 	private String teacherName;
 	
-//	private String courseName;
+	private String courseName;
+	
+	private String pictureURL;
+	
+	
 
 	public TeacherFrontDTO() {
 		// TODO Auto-generated constructor stub
 	}
 
-	public TeacherFrontDTO(Integer id, String teacherName) {
+	public TeacherFrontDTO(Integer id, String teacherName,String pictureURL) {
 		super();
 		this.id = id;
 		this.teacherName = teacherName;
+		this.pictureURL = pictureURL;
 		
 	}
 

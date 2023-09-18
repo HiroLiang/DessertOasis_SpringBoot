@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 
 import com.dessertoasis.demo.model.course.Course;
 import com.dessertoasis.demo.model.course.Teacher;
-
+import com.dessertoasis.demo.model.course.TeacherPicture;
 import com.dessertoasis.demo.model.category.Category;
 
 import com.dessertoasis.demo.model.member.Member;
@@ -176,7 +176,7 @@ public class PageSortService {
 			}
 
 		
-		public Predicate checkTeacherCondition2(Root<Teacher> root, Join< Teacher,Course> join, Predicate predicate,
+		public Predicate checkTeacherCondition2(Root<Teacher> root, Join< Teacher,List<TeacherPicture>> join, Predicate predicate,
 				SortCondition sortCon, CriteriaBuilder cb, Teacher teacher) {
 			// 模糊搜索
 			if (sortCon.getSearchRules() != null && sortCon.getSearchRules().size() != 0) {

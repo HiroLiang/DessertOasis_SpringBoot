@@ -382,46 +382,48 @@ public class TeacherService {
 		        }
 			}
 	
-			/*--------------------------------------------前台Criteria ------------------------------------------------*/
+	/*--------------------------------------------前台Criteria ------------------------------------------------*/
 
-			public List<TeacherFrontDTO> getFrontTeacherPagenation(SortCondition sortCon) {
-				CriteriaBuilder cb = em.getCriteriaBuilder();
+	public List<TeacherFrontDTO> getFrontTeacherPagenation(SortCondition sortCon) {
+		CriteriaBuilder cb = em.getCriteriaBuilder();
 
-				// 決定select table
-				CriteriaQuery<TeacherFrontDTO> cq = cb.createQuery(TeacherFrontDTO.class);
+		// 決定select table
+		CriteriaQuery<TeacherFrontDTO> cq = cb.createQuery(TeacherFrontDTO.class);
 
-				// 決定select.join表格
-				Root<Teacher> root = cq.from(Teacher.class);
-				Join<Teacher, Course> join = root.join("courseList");
+		// 決定select.join表格
+		Root<Teacher> root = cq.from(Teacher.class);
+//		Join<Teacher, Course> join = root.join("courseList");
+		Join<Teacher, List<TeacherPicture>> join = root.join("pictures");
 //				
 
-				// 決定查詢 column
-				cq.multiselect(root.get("id"), root.get("teacherName"));
+		// 決定查詢 column
+//		cq.multiselect(root.get("id"), root.get("teacherName"),join.get("courseList"),join2.get("pictureURL"));
+		cq.multiselect(root.get("id"), root.get("teacherName"),join.get("pictureURL"));
 
-				// 加入查詢條件
-				Predicate predicate = cb.conjunction();
-				Teacher teacher = new Teacher();
-				Predicate pre = pService.checkTeacherCondition2(root, join, predicate, sortCon, cb, teacher);
-//				Predicate pre = pService.checkTeacherCondition3(root, predicate, sortCon, cb, teacher);
+		// 加入查詢條件
+		Predicate predicate = cb.conjunction();
+		Teacher teacher = new Teacher();
+		Predicate pre = pService.checkTeacherCondition2(root, join, predicate, sortCon, cb, teacher);
+//		Predicate pre = pService.checkTeacherCondition3(root, predicate, sortCon, cb, teacher);
 				
-				// 填入 where 條件
-				cq.where(pre);
+		// 填入 where 條件
+		cq.where(pre);
 
-				// 分頁
-				TypedQuery<TeacherFrontDTO> query = em.createQuery(cq);
-				query.setFirstResult((sortCon.getPage() - 1) * sortCon.getPageSize());
-				query.setMaxResults(sortCon.getPageSize());
+		// 分頁
+		TypedQuery<TeacherFrontDTO> query = em.createQuery(cq);
+		query.setFirstResult((sortCon.getPage() - 1) * sortCon.getPageSize());
+		query.setMaxResults(sortCon.getPageSize());
 
-				// 送出請求
-				List<TeacherFrontDTO> list = query.getResultList();
-				if (list != null) {
+		// 送出請求
+		List<TeacherFrontDTO> list = query.getResultList();
+			if (list != null) {
 					return list;
 				}
 				return null;
 			}
 			
-			@Transactional
-			public Teacher updateTeacher(Teacher teacher) {
+		@Transactional
+		public Teacher updateTeacher(Teacher teacher) {
 				Optional<Teacher> optionalTeacher = tRepo.findById(teacher.getId());
 				if (optionalTeacher.isPresent()) {
 					// 获取数据库中的老师对象
