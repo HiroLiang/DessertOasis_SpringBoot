@@ -17,16 +17,36 @@ import com.dessertoasis.demo.EmailUtil;
 import com.dessertoasis.demo.OtpUtil;
 import com.dessertoasis.demo.model.member.Member;
 import com.dessertoasis.demo.model.member.MemberAccess;
+import com.dessertoasis.demo.model.member.MemberCmsTable;
 import com.dessertoasis.demo.model.member.MemberRepository;
 import com.dessertoasis.demo.model.member.MemberState;
 import com.dessertoasis.demo.model.member.RegisterDto;
+import com.dessertoasis.demo.model.order.Order;
+import com.dessertoasis.demo.model.order.OrderCmsTable;
+import com.dessertoasis.demo.model.sort.SortCondition;
+import com.dessertoasis.demo.model.sort.SortCondition.SortWay;
+import com.dessertoasis.demo.service.PageSortService;
 
 import jakarta.mail.MessagingException;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.TypedQuery;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Root;
 import jakarta.servlet.http.HttpSession;
 
 @Service
 public class MemberService {
 
+	@PersistenceContext
+	private EntityManager em;
+
+	@Autowired
+	private PageSortService pService;
+
+	
 	@Autowired
 	private MemberRepository mRepo;
 
@@ -286,4 +306,71 @@ public class MemberService {
 			mRepo.save(member);
 		}
 	}
+	
+	
+	public List<MemberCmsTable> getMemberPagenation(SortCondition sortCon){
+		CriteriaBuilder cb = em.getCriteriaBuilder();
+		// 決定輸出表格型態
+		CriteriaQuery<MemberCmsTable> cq = cb.createQuery(MemberCmsTable.class);
+		// 決定select表格
+		Root<Member> root = cq.from(Member.class);
+		// 決定查詢 column
+		cq.multiselect(root.get("id"), root.get("account"), root.get("fullName"),
+				root.get("memberName"), root.get("email"),root.get("access"),root.get("memberStatus"),root.get("signDate"));
+		// 加入查詢條件
+		Predicate predicate = cb.conjunction();
+		Member member = new Member();
+		Predicate pre = pService.checkMemberCondition(root, predicate, sortCon, cb, member);
+		
+		// 填入 where 條件
+		cq.where(pre);
+		
+		 if (sortCon.getSortBy() != null) {
+		        System.out.println("sort");
+		        if (pService.hasProperty(member, sortCon.getSortBy())) {
+		            if (sortCon.getSortWay() != null && sortCon.getSortWay().equals(SortWay.ASC)) {
+		                cq.orderBy(cb.asc(root.get(sortCon.getSortBy())));
+		            } else if (sortCon.getSortWay() != null && sortCon.getSortWay().equals(SortWay.DESC)) {
+		                cq.orderBy(cb.desc(root.get(sortCon.getSortBy())));
+		            }
+		        }
+		    }
+		// 分頁
+		TypedQuery<MemberCmsTable> query = em.createQuery(cq);
+		query.setFirstResult((sortCon.getPage() - 1) * sortCon.getPageSize());
+		query.setMaxResults(sortCon.getPageSize());
+		// 送出請求
+		List<MemberCmsTable> list = query.getResultList();
+		if (list != null) 
+			return list;
+		return null;
+	}
+	
+	
+	
+	
+	public Integer getMemberPages(SortCondition sortCon) {
+		CriteriaBuilder cb = em.getCriteriaBuilder();
+		// 決定輸出表格型態
+		CriteriaQuery<Long> cq = cb.createQuery(Long.class);
+		// 決定select.join表格
+		Root<Member> root = cq.from(Member.class);
+		// 決定查詢 column
+		cq.select(cb.count(root));
+		// 加入查詢條件
+		Predicate predicate = cb.conjunction();
+		Member member = new Member();
+		Predicate pre = pService.checkMemberCondition(root, predicate, sortCon, cb, member);
+		cq.where(pre);
+
+		//查詢傯頁數
+		Long totalRecords = em.createQuery(cq).getSingleResult();
+		Integer totalPages = (int) Math.ceil((double) totalRecords / sortCon.getPageSize());
+		
+		return totalPages;
+	}
+	
+	
+	
+	
 }
