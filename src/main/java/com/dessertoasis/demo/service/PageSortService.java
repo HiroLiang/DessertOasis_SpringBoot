@@ -140,12 +140,18 @@ public class PageSortService {
 		if (sortCon.getSearchRules() != null && sortCon.getSearchRules().size() != 0) {
 			System.out.println("search");
 			for (SearchRules rule : sortCon.getSearchRules()) {
-				if (hasProperty(product, rule.getKey())) {
+//				if (hasProperty(product, rule.getKey())) {
+//					predicate = cb.and(predicate, cb.like(root.get(rule.getKey()), "%" + rule.getInput() + "%"));
+//				} else {
+//					predicate = cb.and(predicate,
+//							cb.like(joinCategory.get(rule.getKey()), "%" + rule.getInput() + "%"));
+//				}
+				if (rule.getKey().equals("categoryId")) {
+					predicate = cb.and(predicate, cb.like(joinCategory.get("id"), rule.getInput()));
+				} else if (hasProperty(product, rule.getKey())) {
 					predicate = cb.and(predicate, cb.like(root.get(rule.getKey()), "%" + rule.getInput() + "%"));
-				} else {
-					predicate = cb.and(predicate,
-							cb.like(joinCategory.get(rule.getKey()), "%" + rule.getInput() + "%"));
-				}
+				
+			}
 			}
 		}
 		// 日期範圍
