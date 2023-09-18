@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -31,29 +32,47 @@ public class WSController {
 	private MemberService mService;
 
 	@GetMapping("/message/history")
-	public List<ChatMessage> getChatMessages(@RequestParam Integer sender, @RequestParam Integer catcher) {
-		List<ChatMessage> messages = wsService.getChatMessages(sender, catcher);
+	public Page<ChatMessage> getChatMessages(@RequestParam Integer sender, @RequestParam Integer catcher,
+			@RequestParam Integer page) {
+		Page<ChatMessage> messages = wsService.getChatMessages(sender, catcher, page);
 		if (messages != null)
 			return messages;
 		return null;
 	}
 
+	@GetMapping("/message/unread")
+	public Integer getUnreadSum(@RequestParam Integer catcher) {
+		Integer sum = wsService.getUnreadSum(catcher);
+		if (sum > 0)
+			return sum;
+		return 0;
+	}
+
 	@GetMapping("/message/admins")
-	@Transactional
-	public List<AdminsWithLastMessage> getAllAdminsWithMsg(@RequestParam Integer id, @RequestParam Integer sender) {
+	public List<AdminsWithLastMessage> getAllAdminsWithMsg(@RequestParam Integer id) {
+		System.out.println(id);
 		List<Member> allAdmins = mService.getAllAdmin(id);
 		List<AdminsWithLastMessage> list = new ArrayList<>();
-		if (allAdmins != null) {
+		if (allAdmins != null && allAdmins.size() != 0) {
 			for (Member admin : allAdmins) {
 				AdminsWithLastMessage adWithMsg = new AdminsWithLastMessage();
+				admin.setPasswords(null);
+				admin.setCode(null);
+				admin.setCarts(null);
+				admin.setRecipes(null);
 				adWithMsg.setMember(admin);
-				ChatMessage message = wsService.findLastMessage(id, sender);
-				if (message != null)
+				ChatMessage message = wsService.findLastMessage(admin.getId(), id);
+				if (message != null && message.getChatMessage() != null) {
 					adWithMsg.setLastMessage(message);
+				} else {
+					ChatMessage emptyMsg = new ChatMessage();
+					emptyMsg.setChatMessage(" ");
+					adWithMsg.setLastMessage(emptyMsg);
+				}
+				list.add(adWithMsg);
 			}
-			return list;
 		}
-		return null;
+		return list;
 	}
 
 	@PutMapping("/message/setReaded")
@@ -66,4 +85,5 @@ public class WSController {
 		}
 		return null;
 	}
+
 }

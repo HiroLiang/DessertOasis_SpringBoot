@@ -1,16 +1,10 @@
 package com.dessertoasis.demo.controller.course;
 
-import java.awt.image.BufferedImage;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Base64;
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
-
-import javax.imageio.ImageIO;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -28,37 +22,25 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.dessertoasis.demo.ImageUploadUtil;
 import com.dessertoasis.demo.model.category.Category;
 import com.dessertoasis.demo.model.category.CategoryRepository;
-import com.dessertoasis.demo.model.course.CTag;
 import com.dessertoasis.demo.model.course.Course;
 import com.dessertoasis.demo.model.course.CourseCmsTable;
-import com.dessertoasis.demo.model.course.CourseCtag;
 import com.dessertoasis.demo.model.course.CourseDTO;
 import com.dessertoasis.demo.model.course.CoursePicture;
 import com.dessertoasis.demo.model.course.CourseSearchDTO;
-import com.dessertoasis.demo.model.course.CourseTeacherDTO;
 import com.dessertoasis.demo.model.course.Teacher;
-import com.dessertoasis.demo.model.member.Member;
-import com.dessertoasis.demo.model.member.MemberAccess;
-import com.dessertoasis.demo.model.order.OrderCmsTable;
-import com.dessertoasis.demo.model.product.ProdSearchDTO;
-import com.dessertoasis.demo.model.product.Product;
-import com.dessertoasis.demo.model.recipe.RecipeDTO;
 import com.dessertoasis.demo.model.recipe.RecipeRepository;
 import com.dessertoasis.demo.model.recipe.Recipes;
 import com.dessertoasis.demo.model.sort.SortCondition;
 import com.dessertoasis.demo.service.course.CourseService;
 import com.dessertoasis.demo.service.course.TeacherService;
-import com.dessertoasis.demo.service.recipe.RecipeService;
 
 import jakarta.servlet.annotation.MultipartConfig;
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import jakarta.transaction.Transactional;

@@ -10,26 +10,27 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.Data;
 
-@Entity 
+@Entity
 @Data
 @Table(name = "chatMessage")
 public class ChatMessage {
-	
-	@Id @Column(name = "ID" , columnDefinition = "INT")
+
+	@Id
+	@Column(name = "ID", columnDefinition = "INT")
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
-	@Column(name = "SENDER" , columnDefinition = "INT")
-	private Integer  sender;
-	@Column(name = "CATCHER" , columnDefinition = "INT")
+	@Column(name = "SENDER", columnDefinition = "INT")
+	private Integer sender;
+	@Column(name = "CATCHER", columnDefinition = "INT")
 	private Integer catcher;
-	@Column(name = "CHATMESSAGE" , columnDefinition = "NVARCHAR(255)")
+	@Column(name = "CHATMESSAGE", columnDefinition = "NVARCHAR(255)")
 	private String chatMessage;
-	@Column(name = "SENDTIME" , columnDefinition = "DATETIME2")
+	@Column(name = "SENDTIME", columnDefinition = "DATETIME2")
 	private LocalDateTime sendTime;
-	@Column(name = "MESSAGESTATE" , columnDefinition = "NVARCHAR(50)")
+	@Column(name = "MESSAGESTATE", columnDefinition = "NVARCHAR(50)")
 	private String messageState;
 
-	public ChatMessage( Integer sender, Integer catcher, String chatMessage, LocalDateTime sendTime,
+	public ChatMessage(Integer sender, Integer catcher, String chatMessage, LocalDateTime sendTime,
 			String messageState) {
 		super();
 //		this.id = id;
@@ -43,6 +44,5 @@ public class ChatMessage {
 	public ChatMessage() {
 		super();
 	}
-	
 
 }
