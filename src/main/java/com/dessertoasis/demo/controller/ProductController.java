@@ -349,7 +349,6 @@ System.out.println(imagePath);
 	        existingProduct.setProdDescription((String) productData.get("prodDescription"));
 	        existingProduct.setProdStock((Integer) productData.get("prodStock"));
 	        existingProduct.setProdPrice((Integer) productData.get("prodPrice")); // 使用 BigDecimal 存储价格
-	        existingProduct.setProdPurchase((Integer) productData.get("prodPurchase"));
 	        String frontendTimestamp = (String) productData.get("updateTime");
 	        SimpleDateFormat frontendDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
 	        Date date = frontendDateFormat.parse(frontendTimestamp);
@@ -358,12 +357,25 @@ System.out.println(imagePath);
 	        existingProduct.setProdRemark((String) productData.get("prodRemark"));
 
 	        // 更新关联的分类信息
-	        Category category = existingProduct.getCategory();
-	        category.setId((Integer) categoryData.get("id"));
+	        Category existingCategory = existingProduct.getCategory();
+	        if (categoryData != null) {
+	            Integer categoryId = (Integer) categoryData.get("id");
+	            if (categoryId != null) {
+	                // 检查分类是否存在于数据库中
+	                Category category = cRepo.findById(categoryId).orElse(null);
+	                if (category != null) {
+	                    // 分配现有分类
+	                    existingProduct.setCategory(category);
+	                }
+	            }
+	        }
+//	        Category category = existingProduct.getCategory();
+//	        category.setId((Integer) categoryData.get("id"));
 	        // 设置其他 Category 属性（如果需要）
 
 	        // 保存 Category 和更新后的 Product 到数据库
-	        cRepo.save(category); // 保存类别
+	        //cRepo.save(category); // 保存类别
+	        cRepo.save(existingCategory); 
 	        pRepo.save(existingProduct); // 更新产品
 
 	        // 返回编辑后的 Product 的 ID

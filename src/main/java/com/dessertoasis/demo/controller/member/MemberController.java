@@ -24,9 +24,12 @@ import org.springframework.web.bind.annotation.RestController;
 import com.dessertoasis.demo.ImageUploadUtil;
 import com.dessertoasis.demo.model.member.Member;
 import com.dessertoasis.demo.model.member.MemberAccess;
+import com.dessertoasis.demo.model.member.MemberCmsTable;
 import com.dessertoasis.demo.model.member.MemberDetail;
 import com.dessertoasis.demo.model.member.MemberDetailRepository;
+import com.dessertoasis.demo.model.order.OrderCmsTable;
 import com.dessertoasis.demo.model.recipe.PicturesDTO;
+import com.dessertoasis.demo.model.sort.SortCondition;
 import com.dessertoasis.demo.service.member.MemberDetailService;
 import com.dessertoasis.demo.service.member.MemberService;
 
@@ -38,7 +41,8 @@ public class MemberController {
 
 	@Autowired
 	private MemberService mService;
-
+	
+	@Autowired
 	private MemberDetailRepository mRepo;
 	
 	@Autowired
@@ -221,43 +225,53 @@ public class MemberController {
 	}
 	
 	//獲取圖片URL
-	 @GetMapping("/getImageURL")
-	    public ResponseEntity<String> getImageURL(HttpSession session) {
-	        Member member = (Member) session.getAttribute("loggedInMember");
-	        if (member != null) {
-	            MemberDetail memberDetail = member.getMemberDetail();
-	            if (memberDetail != null) {
-	                String imageURL = memberDetail.getPic();
-	                if (imageURL != null && !imageURL.isEmpty()) {
-	                    return ResponseEntity.ok().body(imageURL);
-	                }
-	            }
-	        }
-	        return ResponseEntity.notFound().build();
-	    }
+	@GetMapping("/getImageURL")
+    public ResponseEntity<String> getImageURL(HttpSession session) {
+        Member member = (Member) session.getAttribute("loggedInMember");
+        if (member != null) {
+            MemberDetail memberDetail = member.getMemberDetail();
+            if (memberDetail != null) {
+                String imageURL = memberDetail.getPic();
+                if (imageURL != null && !imageURL.isEmpty()) {
+                    return ResponseEntity.ok().body(imageURL);
+                }
+            }
+        }
+        return ResponseEntity.notFound().build();
+    }
 	
-//	 @GetMapping("/getMemberPic")
-//	    public ResponseEntity<byte[]> getMemberPic(HttpSession session) {
-//	        Member member = (Member) session.getAttribute("loggedInMember");
-//	        if (member != null) {
-//	            MemberDetail memberDetail = member.getMemberDetail();
-//	            if (memberDetail != null && memberDetail.getPic() != null) {
-//	                try {
-//	                    // 从文件系统或其他存储位置读取图片内容
-//	                    Path imagePath = Paths.get("C:/dessertoasis-vue/public/", memberDetail.getPic());
-//	                    byte[] imageBytes = Files.readAllBytes(imagePath);
-//
-//	                    HttpHeaders headers = new HttpHeaders();
-//	                    headers.setContentType(MediaType.IMAGE_JPEG); // 设置响应的Content-Type
-//
-//	                    return new ResponseEntity<>(imageBytes, headers, HttpStatus.OK);
-//	                } catch (IOException e) {
-//	                    e.printStackTrace();
-//	                    return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-//	                }
-//	            }
-//	        }
-//	        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-//	    }
+	// 訂單分頁查詢
+	 @PostMapping("/pagenation")
+	 public List<MemberCmsTable> getMemberPage(@RequestBody SortCondition sortCon, HttpSession session){
+		 System.out.println(sortCon);
+		// 判斷 user 存在且為 ADMIN
+//		Member member = (Member) session.getAttribute("loggedInMember");
+//		if (member == null || !member.getAccess().equals(MemberAccess.ADMIN)) {
+//			return null;
+//		}
+		// 送出查詢條件給service，若有結果則回傳list
+		List<MemberCmsTable> result = mService.getMemberPagenation(sortCon);
+		if (result != null) {
+			System.out.println(result);
+			return result;
+		}
+		return null;
+	}
+	 
+	 //總頁數
+	 @PostMapping("/pages")
+	 public Integer getMemberPages(@RequestBody SortCondition sortCon, HttpSession session) {
+		 System.out.println(sortCon);
+			// 判斷 user 存在且為 ADMIN
+			Member user = (Member) session.getAttribute("loggedInMember");
+			if (user == null || !user.getAccess().equals(MemberAccess.ADMIN)) {
+				return null;
+			}
+			// 送出條件查詢總頁數
+			Integer pages = mService.getMemberPages(sortCon);
+			return pages;
+	 }
+	 
+	 
 
 }
