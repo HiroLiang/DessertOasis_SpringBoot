@@ -83,7 +83,7 @@ public class TeacherController {
 		return teacherPage;
 	}
 
-	@GetMapping("/teacher-desplay")
+	@GetMapping("/teacher-display")
 	public Teacher getTeacherDetail(@RequestParam Integer id)  {
 		//取得課程資料
 		Teacher teacher = tService.getTeacherById(id);
@@ -437,9 +437,9 @@ public class TeacherController {
 		System.out.println(sortCon);
 		// 判斷 user 存在且為 ADMIN
 		Member user = (Member) session.getAttribute("loggedInMember");
-		if (user == null || (!user.getAccess().equals(MemberAccess.ADMIN) && !user.getAccess().equals(MemberAccess.TEACHER))) {
-			return null;
-		}
+//		if (user == null || (!user.getAccess().equals(MemberAccess.ADMIN) && !user.getAccess().equals(MemberAccess.TEACHER))) {
+//			return null;
+//		}
 		
 	
 		Integer memberId = user.getId();
