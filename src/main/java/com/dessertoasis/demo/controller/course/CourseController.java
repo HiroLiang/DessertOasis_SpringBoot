@@ -34,6 +34,7 @@ import com.dessertoasis.demo.model.course.CourseDTO;
 import com.dessertoasis.demo.model.course.CoursePicture;
 import com.dessertoasis.demo.model.course.CourseSearchDTO;
 import com.dessertoasis.demo.model.course.Teacher;
+import com.dessertoasis.demo.model.member.Member;
 import com.dessertoasis.demo.model.recipe.RecipeRepository;
 import com.dessertoasis.demo.model.recipe.Recipes;
 import com.dessertoasis.demo.model.sort.SortCondition;
@@ -110,24 +111,20 @@ public class CourseController {
 
 	// 新增單筆課程
 	@PostMapping("/add")
-	public ResponseEntity<Integer> addCourse(@RequestBody Course course, HttpServletRequest request) {
-		// 從請求的Cookie中獲得user 是老師的身分
-//        Cookie[] cookies = request.getCookies();
-//        if (cookies != null) {
-//            for (Cookie cookie : cookies) {
-//            	// 老師身分，允許添加課程
-//                if ("userType".equals(cookie.getName()) && "teacher".equals(cookie.getValue())) {
-		// 假设你使用Spring Data JPA进行数据访问
-//                	Teacher teacher = tService.getTeacherById(course.getTeacher().getId()); // 获取ID为3的教师
+	public ResponseEntity<String> addCourse(@RequestBody Course course, HttpSession session) {
+
+		Member member = (Member)session.getAttribute("loggedInMember");
+//		member.getTeacher().getId();
+//		Teacher teacher = tService.getTeacherById(course.getTeacher().getId()); 
 		Teacher teacher = tService.getTeacherById(1);
 //		Optional<Recipes> recipes = rRepo.findById(course.getRecipes().getId());
 		Optional<Recipes> recipes = rRepo.findById(1);
 		Recipes recipe = recipes.get();
-//                	  Optional<Category> categorys = cRepo.findById(course.getCategory().getId());
+//		Optional<Category> categorys = cRepo.findById(course.getCategory().getId());
 		Optional<Category> categorys = cRepo.findById(2);
 		Category category = categorys.get();
-
-//                	if (teacher != null) {
+//
+   if (teacher != null) {
 
 		course.setTeacher(teacher); // 将教师关联到课程中
 		course.setRecipes(recipe);
@@ -137,18 +134,10 @@ public class CourseController {
 		Course savedCourse = cService.insert(course);
 		Integer courseId = savedCourse.getId();
 		System.out.println(courseId);
-		return ResponseEntity.ok(courseId);
+		return ResponseEntity.ok("新增"+courseId+"成功");
+   }return ResponseEntity.ok("新增失敗");
 	}
-//                	else {
-//                		// 处理教师不存在的情况	
-//                	}
-//                }
-//            }
-//        }
-//        // 如果不是老師身份，返回錯誤訊息
-//        System.out.println("新增失敗");
-//        return ResponseEntity.status(HttpStatus.FORBIDDEN).body("您没有權限執行此操作");
-//    }
+
 
 	// 修改課程
 	@PostMapping("/updateCourse")
