@@ -76,7 +76,7 @@ public class RecipeController {
 
 	@Autowired
 	private RecipeStepsRepository stepRepo;
-	
+
 	@Autowired
 	private CategoryService cateService;
 
@@ -129,15 +129,14 @@ public class RecipeController {
 		return recipeRepo.findRecipeByDifficulty(difficulty);
 	}
 
-	
-	//測試取得食譜
+	// 測試取得食譜
 	@GetMapping("recipe/getRecipe")
 	@ResponseBody
 	public Recipes getRecipeById(@RequestParam String recipeId) {
 		System.out.println(recipeId);
 		Optional<Recipes> findById = recipeRepo.findById(Integer.parseInt(recipeId));
 
-		if (findById.isPresent() && findById.get().getRecipeStatus()!=-1) {
+		if (findById.isPresent() && findById.get().getRecipeStatus() != -1) {
 			return findById.get();
 		}
 		return null;
@@ -170,7 +169,7 @@ public class RecipeController {
 	// 取得特定類別的10筆食譜
 	@GetMapping("recipe/get10categoryRecipes")
 	public List<RecipeCarouselDTO> find10RecipeByCategory(@RequestParam("cid") Integer cid) {
-		
+
 		return recipeService.find10RecipeByCategory(cid);
 	}
 
@@ -254,8 +253,10 @@ public class RecipeController {
 	@PostMapping(path = "test/uploadimg")
 	public List<String> sendPic(@RequestBody List<PicturesDTO> pictures) {
 		/*---------設定儲存路徑---------*/
-//		final String uploadPath = "D:/dessertoasis-vue/public/";
-		final String uploadPath = "C:/Users/iSpan/Documents/dessertoasis-vue/public/";
+
+//TODO 調整路徑
+		final String uploadPath = "D:/dessertoasis-vue/public/";
+//		final String uploadPath = "C:/Users/iSpan/Documents/dessertoasis-vue/public/";
 //		Member member = (Member) session.getAttribute("loggedInMember");
 //		Recipes recipe = (Recipes) session.getAttribute("recipeId");
 
@@ -392,7 +393,9 @@ public class RecipeController {
 	public ResponseEntity<String> getPic(@RequestBody Integer recipeId) {
 		Optional<Recipes> findById = recipeRepo.findById(recipeId);
 		if (findById.isPresent()) {
-			String userPath = "C:\\Users\\iSpan\\Documents\\dessertoasis-vue\\public\\";
+			// TODO 調整路徑
+//			String userPath = "C:\\Users\\iSpan\\Documents\\dessertoasis-vue\\public\\";
+			String userPath = "D:/dessertoasis-vue/public/";
 			Recipes recipe = findById.get();
 			String pictureURL = recipe.getPictureURL();
 			try {
@@ -431,8 +434,9 @@ public class RecipeController {
 	public ResponseEntity<String> getPicByGetPicture(@RequestBody Integer recipeId) {
 		Optional<Recipes> findById = recipeRepo.findById(recipeId);
 		if (findById.isPresent()) {
-//			String userPath ="D:/dessertoasis-vue/public/";
-			String userPath = "C:\\Users\\iSpan\\Documents\\dessertoasis-vue\\public\\";
+			//TODO 調整路徑
+			String userPath ="D:/dessertoasis-vue/public/";
+//			String userPath = "C:\\Users\\iSpan\\Documents\\dessertoasis-vue\\public\\";
 			Recipes recipe = findById.get();
 			String pictureURL = recipe.getPictureURL();
 
@@ -450,16 +454,18 @@ public class RecipeController {
 		return ResponseEntity.ok("recipe not found");
 	}
 	/*----------------------﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀發送base64給前端範例﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀--------------------------*/
-	
-	/*取得步驟圖片 base64回傳前端*/
+
+	/* 取得步驟圖片 base64回傳前端 */
 	@PostMapping("recipe/getStepPics")
 	@ResponseBody
-	public List<String> getStepPicture(@RequestBody Integer recipeId){
+	public List<String> getStepPicture(@RequestBody Integer recipeId) {
 		Optional<Recipes> findById = recipeRepo.findById(recipeId);
 		List<String> pictureDatas = new ArrayList<>();
 		if (findById.isPresent()) {
-//			String userPath ="D:/dessertoasis-vue/public/";
-			String userPath = "C:\\Users\\iSpan\\Documents\\dessertoasis-vue\\public\\";
+			
+			//TODO 調整路徑
+			String userPath ="D:/dessertoasis-vue/public/";
+//			String userPath = "C:\\Users\\iSpan\\Documents\\dessertoasis-vue\\public\\";
 			Recipes recipe = findById.get();
 			for (int i = 0; i < recipe.getRecipeSteps().size(); i++) {
 				String stepPicPath = recipe.getRecipeSteps().get(i).getStepPicture();
@@ -470,14 +476,14 @@ public class RecipeController {
 			}
 			System.out.println(pictureDatas.size());
 			return pictureDatas;
-			
+
 		}
 		pictureDatas.add("recipe not found");
 		return pictureDatas;
 	}
-	
+
 	/*----------------------------------------------處理前端請求回傳base64給前端顯示Controller------------------------------------------------------------------*/
-	
+
 //	public List<Category> getRecipeCategory(@RequestBody Integer categoryId){
 //		
 //	}
@@ -488,11 +494,11 @@ public class RecipeController {
 	public String updateRecipe(@RequestBody Recipes recipe, HttpSession session) {
 		Member member = (Member) session.getAttribute("loggedInMember");
 //		if (member != null) {
-			Boolean update = recipeService.updateRecipe(recipe);
-			if (update) {
-				return "Y";
-			}
-			return "F";
+		Boolean update = recipeService.updateRecipe(recipe);
+		if (update) {
+			return "Y";
+		}
+		return "F";
 //		}
 //		return "N";
 	}
@@ -503,7 +509,7 @@ public class RecipeController {
 
 		Member member = (Member) session.getAttribute("loggedInMember");
 		if (member != null && member.getAccess().equals(MemberAccess.ADMIN)) {
-			Boolean delete = recipeService.deleteById(recipeId,member.getId());
+			Boolean delete = recipeService.deleteById(recipeId, member.getId());
 			if (delete) {
 				return "Y";
 			}
