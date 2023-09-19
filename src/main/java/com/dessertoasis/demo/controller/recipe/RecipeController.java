@@ -254,8 +254,8 @@ public class RecipeController {
 	@PostMapping(path = "test/uploadimg")
 	public List<String> sendPic(@RequestBody List<PicturesDTO> pictures) {
 		/*---------設定儲存路徑---------*/
-		final String uploadPath = "D:/dessertoasis-vue/public/";
-//		final String uploadPath = "C:/Users/iSpan/Documents/dessertoasis-vue/public/";
+//		final String uploadPath = "D:/dessertoasis-vue/public/";
+		final String uploadPath = "C:/Users/iSpan/Documents/dessertoasis-vue/public/";
 //		Member member = (Member) session.getAttribute("loggedInMember");
 //		Recipes recipe = (Recipes) session.getAttribute("recipeId");
 
@@ -431,8 +431,8 @@ public class RecipeController {
 	public ResponseEntity<String> getPicByGetPicture(@RequestBody Integer recipeId) {
 		Optional<Recipes> findById = recipeRepo.findById(recipeId);
 		if (findById.isPresent()) {
-			String userPath ="D:/dessertoasis-vue/public/";
-//			String userPath = "C:\\Users\\iSpan\\Documents\\dessertoasis-vue\\public\\";
+//			String userPath ="D:/dessertoasis-vue/public/";
+			String userPath = "C:\\Users\\iSpan\\Documents\\dessertoasis-vue\\public\\";
 			Recipes recipe = findById.get();
 			String pictureURL = recipe.getPictureURL();
 
@@ -458,8 +458,8 @@ public class RecipeController {
 		Optional<Recipes> findById = recipeRepo.findById(recipeId);
 		List<String> pictureDatas = new ArrayList<>();
 		if (findById.isPresent()) {
-			String userPath ="D:/dessertoasis-vue/public/";
-//			String userPath = "C:\\Users\\iSpan\\Documents\\dessertoasis-vue\\public\\";
+//			String userPath ="D:/dessertoasis-vue/public/";
+			String userPath = "C:\\Users\\iSpan\\Documents\\dessertoasis-vue\\public\\";
 			Recipes recipe = findById.get();
 			for (int i = 0; i < recipe.getRecipeSteps().size(); i++) {
 				String stepPicPath = recipe.getRecipeSteps().get(i).getStepPicture();
@@ -484,16 +484,17 @@ public class RecipeController {
 
 	// 更新食譜
 	@PutMapping("recipe/updaterecipe")
-	public String updateRecipe(@RequestParam("recipeId") Integer recipeId, HttpSession session) {
+	@ResponseBody
+	public String updateRecipe(@RequestBody Recipes recipe, HttpSession session) {
 		Member member = (Member) session.getAttribute("loggedInMember");
-		if (member != null) {
-			Boolean update = recipeService.updateRecipe(recipeId, 4);
+//		if (member != null) {
+			Boolean update = recipeService.updateRecipe(recipe);
 			if (update) {
 				return "Y";
 			}
 			return "F";
-		}
-		return "N";
+//		}
+//		return "N";
 	}
 
 	// 刪除食譜
@@ -501,14 +502,14 @@ public class RecipeController {
 	public String deleteRecipe(@RequestParam("recipeId") Integer recipeId, HttpSession session) {
 
 		Member member = (Member) session.getAttribute("loggedInMember");
-//		if (member != null) {
-			Boolean delete = recipeService.deleteById(recipeId,2);
+		if (member != null && member.getAccess().equals(MemberAccess.ADMIN)) {
+			Boolean delete = recipeService.deleteById(recipeId,member.getId());
 			if (delete) {
 				return "Y";
 			}
 			return "F";
-//		}
-//		return "N";
+		}
+		return "N";
 	}
 
 	/*----------------------------------------------處理食譜總頁數Controller------------------------------------------------------------------*/

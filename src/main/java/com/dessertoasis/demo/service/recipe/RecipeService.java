@@ -271,32 +271,28 @@ public class RecipeService {
 	}
 
 	// 修改食譜
-	public Boolean updateRecipe(Integer recipeId, Integer memberId) {
-		Optional<Member> member = memberRepo.findById(memberId);
-		Optional<Recipes> optional = recipeRepo.findById(recipeId);
-
+	public Boolean updateRecipe(Recipes recipe) {
+//		Optional<Member> member = memberRepo.findById(memberId);
+		Optional<Recipes> optional = recipeRepo.findById(recipe.getId());
 		if (optional.isPresent()) {
-			Recipes recipeData = optional.get();
-//			if (recipeData.getRecipeAuthor().getId().equals(member.get().getId())) {
-				recipeRepo.save(recipeData);
-//			}
-
-//			RecipeDTO rDto = new RecipeDTO();
-//			rDto.setId(recipe.getId());
-//			rDto.setRecipeAuthorId(recipe.getRecipeAuthor().getId());
-//			rDto.setRecipeTitle(recipe.getRecipeTitle());
-//			List<RecipeCategory> recipeCategories = recipe.getRecipeCategories();
-//			List<Integer> categoryIds = new ArrayList<>();
-//			for (RecipeCategory rc : recipeCategories) {
-//                categoryIds.add(rc.getCategory().getId());
-//            }
-//			rDto.setRecipeCategoryIds(categoryIds);
-//			rDto.setPictureURL(recipe.getPictureURL());
-//			rDto.setRecipeIntroduction(recipe.getRecipeIntroduction());
-//			rDto.setCookingTime(recipe.getCookingTime());
-//			rDto.setDifficulty(recipe.getDifficulty());
-//			rDto.setRecipeStatus(recipe.getRecipeStatus());
-//			
+			Recipes existRecipe = optional.get();
+			if(existRecipe!=null) {
+				existRecipe.setRecipeTitle(recipe.getRecipeTitle());
+				existRecipe.setRecipeIntroduction(recipe.getRecipeIntroduction());
+				existRecipe.setCookingTime(recipe.getCookingTime());
+				List<IngredientList> existIngredientList = existRecipe.getIngredientList();
+				for (int i = 0; i < recipe.getIngredientList().size(); i++) {
+					Ingredient findByIngredient = ingreRepo.findByIngredientName(recipe.getIngredientList().get(i).getIngredient().getIngredientName());
+					if(findByIngredient != null) {
+						recipe.getIngredientList().get(i).setIngredient(findByIngredient);
+					}else {
+						Ingredient savedIngre = ingreRepo.save(recipe.getIngredientList().get(i).getIngredient());
+						recipe.getIngredientList().get(i).setIngredient(savedIngre);
+					}
+				}
+				existRecipe.setRecipeSteps(recipe.getRecipeSteps());
+				recipeRepo.save(existRecipe);
+			}
 			return true;
 		}
 		return false;

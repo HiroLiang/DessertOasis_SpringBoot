@@ -18,7 +18,7 @@ import lombok.Data;
 public class RecipeSteps {
 
 	//食譜步驟id
-	@JsonIgnore
+//	@JsonIgnore
 	@Id @Column(name = "id")
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
