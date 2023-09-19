@@ -50,6 +50,7 @@ public class AdminAccountInitializer {
     	try {
     		 Member existingUser = mRepo.findByAccount("user");
     		 Member existingAdmin = mRepo.findByAccount("admin");
+    		 Member existingAdmin2 = mRepo.findByAccount("admin2");
     		 Member existingTeacher = mRepo.findByAccount("teacher");
     		 Member existingInactive = mRepo.findByAccount("inact");
     		 Member existingBanned = mRepo.findByAccount("banned");
@@ -58,8 +59,10 @@ public class AdminAccountInitializer {
 	 		 	if(existingBanned==null) {
 	 		 		Member banned = new Member();
 	 		 		banned.setFullName("註銷帳號");
+	 		 		banned.setMemberName("註銷帳號");
 	 		 		banned.setAccount("banned");
-	 		 		banned.setMemberStatus(MemberState.BANDED);
+	 		 		banned.setEmail("WrHsjNJPOyBxh9eZ@google.com");
+	 		 		banned.setMemberStatus(MemberState.BANNED);
 	 		 		banned.setAccess(MemberAccess.USER);
 	 		 		String password = "banned";
 	 		 		banned.setPasswords(passwordEncoder.encode(password));
@@ -71,7 +74,9 @@ public class AdminAccountInitializer {
     		 	if(existingInactive==null) {
 	 		 		Member inactive = new Member();
 	 		 		inactive.setFullName("未啟用帳號");
+	 		 		inactive.setMemberName("未啟用");
 	 		 		inactive.setAccount("inact");
+	 		 		inactive.setEmail("wa8bbWaqfqzGoGcs@google.com");
 	 		 		inactive.setMemberStatus(MemberState.INACTIVE);
 	 		 		inactive.setAccess(MemberAccess.USER);
 	 		 		String password = "inact";
@@ -84,7 +89,9 @@ public class AdminAccountInitializer {
 	    		if(existingTeacher==null) {
 	 		 		Member teacher = new Member();
 	 		 		teacher.setFullName("教師");
+	 		 		teacher.setMemberName("教師");
 	 		 		teacher.setAccount("teacher");
+	 		 		teacher.setEmail("RluxrT0oeZPDuVPB@google.com");
 	 		 		teacher.setMemberStatus(MemberState.ACTIVE);
 	 		 		teacher.setAccess(MemberAccess.TEACHER);
 	 		 		String password = "teacher";
@@ -108,7 +115,7 @@ public class AdminAccountInitializer {
     		 		user.setFullName("一般使用者");
     		 		user.setAccount("user");
     		 		user.setMemberName("一般");
-    		 		user.setEmail("123@google.com");
+    		 		user.setEmail("1pjeLnzZ7G5wQ2gR@google.com");
     		 		user.setMemberStatus(MemberState.ACTIVE);
     		 		user.setAccess(MemberAccess.USER);
     		 		String password = "user";
@@ -137,10 +144,37 @@ public class AdminAccountInitializer {
     	            admin.setFullName("管理人員");
     	            admin.setAccount("admin");
     	            admin.setMemberName("管理");
-    	            admin.setEmail("3345678@google.com");
+    	            admin.setEmail("9m2XljDiDvjA75cO@google.com");
     	            admin.setMemberStatus(MemberState.ACTIVE);
     	            admin.setAccess(MemberAccess.ADMIN);
     	            String password = "admin";
+    	            admin.setPasswords(passwordEncoder.encode(password));
+    	            admin.setSignDate(new Date());
+
+    	            admin.setMemberDetail(adminDetail);
+    	            adminDetail.setMember(admin);
+//    		 		
+    		 		mRepo.save(admin);
+
+    	    
+    	            
+    	        }if (existingAdmin2 == null) {
+    	            Member admin = new Member();
+    	            MemberDetail adminDetail = new MemberDetail();
+    	            adminDetail.setIdNumber("N187277747");
+    	            adminDetail.setDeliveryAddress("高雄市中正四路211號8樓之1");
+    		 		
+    		 		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+    		 		Date date = dateFormat.parse("1988-06-05");
+    		 		adminDetail.setBirthday(date);
+    		 		
+    	            admin.setFullName("管理人員2");
+    	            admin.setAccount("admin2");
+    	            admin.setMemberName("管理2");
+    	            admin.setEmail("a4oIdq7nrHUZaI8K@google.com");
+    	            admin.setMemberStatus(MemberState.ACTIVE);
+    	            admin.setAccess(MemberAccess.ADMIN);
+    	            String password = "admin2";
     	            admin.setPasswords(passwordEncoder.encode(password));
     	            admin.setSignDate(new Date());
 

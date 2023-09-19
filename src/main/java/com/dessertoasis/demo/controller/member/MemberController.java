@@ -8,6 +8,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.Base64;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
@@ -97,7 +98,7 @@ public class MemberController {
 	}
 
 	// 更新詳細資料
-	@PutMapping("/update")
+	@PutMapping("/update/detail")
 	public ResponseEntity<MemberDetail> updateMemberDetail(@RequestBody MemberDetail updatedMemberDetail,
 			HttpSession session) {
 		try {
@@ -111,9 +112,7 @@ public class MemberController {
 				member.getMemberDetail().setIdNumber(updatedMemberDetail.getIdNumber());
 				member.getMemberDetail().setBirthday(updatedMemberDetail.getBirthday());
 				member.getMemberDetail().setDeliveryAddress(updatedMemberDetail.getDeliveryAddress());
-				member.getMemberDetail().setFolderURL(updatedMemberDetail.getFolderURL());
-				member.getMemberDetail().setPic(updatedMemberDetail.getPic());
-
+				
 				// 調用服務層方法更新 MemberDetail
 				MemberDetail updatedDetail = mdService.updateMemberDetail(member.getId(), member.getMemberDetail());
 
@@ -131,7 +130,59 @@ public class MemberController {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
 		}
 	}
+	//使用者更新
+	@PutMapping("/update")
+	public ResponseEntity<Member> updateMember(@RequestBody Member updatedMember,
+	        HttpSession session) {
+	    try {
+	        // 獲取已登入的 Member
+	        Member member = (Member) session.getAttribute("loggedInMember");
 
+	        // 確認用戶已登入
+	        if (member != null) {
+	            // 設置更新後的屬性
+	            Integer memberId = member.getId();
+	            System.out.println("我ID是" + memberId);
+
+	            // 使用成员对象的ID从数据库中获取原始成员信息
+	            Member existingMember = mService.findByMemberId(memberId);
+	            
+	            if (existingMember != null) {
+	                // 更新原始成员信息
+	                existingMember.setEmail(updatedMember.getEmail());
+	                existingMember.setFullName(updatedMember.getFullName());
+	                existingMember.setMemberName(updatedMember.getMemberName());
+	                if (updatedMember.getAccess() != null) {
+	                    existingMember.setAccess(updatedMember.getAccess());
+	                }
+	                if (updatedMember.getMemberStatus() != null) {
+	                    existingMember.setMemberStatus(updatedMember.getMemberStatus());
+	                }
+
+	                // 调用更新方法来执行更新操作
+	                mService.updateMember(existingMember);
+
+	                // 返回更新後的 MemberDetail
+	                return ResponseEntity.ok(updatedMember);
+	            } else {
+	                // 未找到原始成员，返回 404 Not Found
+	                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+	            }
+	        } else {
+	            // 未登入，返回未授權狀態碼
+	            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
+	        }
+	    } catch (ResourceNotFoundException e) {
+	        // MemberDetail 未找到，返回 404 Not Found
+	        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+	    } catch (Exception e) {
+	        // 其他錯誤處理，返回 500 Internal Server Error 或其他錯誤訊息
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+	    }
+	}
+
+	
+	
 	// 更新密碼
 	@PostMapping("/changepassword")
 	public ResponseEntity<String> changePassword(@RequestBody Map<String, String> requestBody, HttpSession session) {

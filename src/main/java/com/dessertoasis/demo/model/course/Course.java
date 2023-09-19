@@ -43,7 +43,7 @@ public class Course {
 	
 	//食譜ID FK(連接食譜ID)
 	@ManyToOne 
-	@JsonIgnoreProperties({"recipeCategories","recipeSteps","ingredientList","course"})
+	@JsonIgnoreProperties({"recipeCategories","recipeSteps","ingredientList","course","recipeAuthor"})
 	@JoinColumn(name = "recipesId")
 	private Recipes recipes;
 	
