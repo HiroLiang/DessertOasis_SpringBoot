@@ -40,5 +40,5 @@ public interface RecipeRepository extends JpaRepository<Recipes, Integer> {
 	 
 	 /*--------------------------------------------食譜建立頁使用query ------------------------------------------------*/
 	 
-	Integer countByRecipeStatusNot(Integer recipeStatus);
+	Integer countByRecipeStatus(Integer recipeStatus);
 }

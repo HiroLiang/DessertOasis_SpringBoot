@@ -17,6 +17,8 @@ public interface CourseRepository extends JpaRepository<Course, Integer>, JpaSpe
 	
 	public List<Course> findByTeacherId(Integer teacherid);
 	
+	Integer countByCourseStatus(String courseStatus);
+	
 //	@Query("SELECT NEW com.dessertoasis.demo.model.course.CourseTeacherDTO(c.courseName, t.teacherName) FROM Course c JOIN c.teacher t")
 //	List<CourseTeacherDTO> findAllCoursesWithTeacherNames();
 	

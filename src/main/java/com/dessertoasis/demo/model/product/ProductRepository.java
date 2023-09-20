@@ -29,7 +29,7 @@ public interface ProductRepository extends JpaRepository<Product,Integer>, JpaSp
     @Modifying
     @Query("DELETE FROM Product p WHERE p.id = :productId")
     void deleteProductAndRelatedPictures(@Param("productId") Integer productId);
-
+	
 	}
 	
 

@@ -30,8 +30,8 @@ public class RecordController {
 	
 	@GetMapping("/record/targetSum")
 	public Map<String, Integer> getTargetNumberGroupByCategoryId(){
-		
-		return null;
+		Map<String,Integer> targetCount = rService.getTargetCount();
+		return targetCount;
 	}
 
 	@PutMapping("/record/set")
