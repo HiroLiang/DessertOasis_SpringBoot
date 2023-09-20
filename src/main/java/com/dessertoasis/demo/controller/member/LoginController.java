@@ -1,6 +1,7 @@
 package com.dessertoasis.demo.controller.member;
 
 import java.util.Base64;
+import java.util.Date;
 
 import javax.crypto.SecretKey;
 
@@ -20,8 +21,10 @@ import org.springframework.web.util.WebUtils;
 import com.dessertoasis.demo.model.member.Member;
 import com.dessertoasis.demo.model.member.MemberAccess;
 import com.dessertoasis.demo.model.member.MemberState;
+import com.dessertoasis.demo.model.record.Record;
 import com.dessertoasis.demo.service.member.CookieEncryptionUtil;
 import com.dessertoasis.demo.service.member.MemberService;
+import com.dessertoasis.demo.service.record.RecordService;
 
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
@@ -30,6 +33,9 @@ import jakarta.servlet.http.HttpSession;
 
 @RestController
 public class LoginController {
+	
+	@Autowired
+	private RecordService rService;
 	
 	@Autowired
     private MemberService mService;
@@ -104,7 +110,13 @@ public class LoginController {
 		
 		 //取得權限
 		 @GetMapping("/checkUserPermission")
-		    public String checkUserPermission(HttpServletRequest request) {
+		    public String checkUserPermission(HttpServletRequest request,HttpSession session) {
+			 if(session.getAttribute("visitRecord")==null) {
+				 Record record = new Record(0,0,new Date());
+				 Record setRecord = rService.setRecord(record);
+				 session.setAttribute("visitRecord", setRecord);
+			 }
+			 
 		        // 從請求中獲取Cookie
 		        Cookie cookie = WebUtils.getCookie(request, "isLogin");
 

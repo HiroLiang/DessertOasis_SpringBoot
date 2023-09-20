@@ -92,6 +92,10 @@ public class Member { //與會員帳號相關
 	
 	@OneToOne(cascade = CascadeType.ALL, mappedBy = "member")
 	@JsonIgnoreProperties({"member"})
+    private Bank bank;
+	
+	@OneToOne(cascade = CascadeType.ALL, mappedBy = "member")
+	@JsonIgnoreProperties({"member"})
 	private Teacher teacher;
 	
 //	@OneToOne(cascade = CascadeType.ALL, mappedBy = "member")
@@ -251,6 +255,15 @@ public class Member { //與會員帳號相關
 	public void setCarts(List<Cart> carts) {
 		this.carts = carts;
 	}
+
+	public Bank getBank() {
+		return bank;
+	}
+
+	public void setBank(Bank bank) {
+		this.bank = bank;
+	}
+	
 
 //	public Company getCompany() {
 //		return company;

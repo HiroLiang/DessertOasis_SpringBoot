@@ -23,6 +23,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.dessertoasis.demo.ImageUploadUtil;
+import com.dessertoasis.demo.model.member.Bank;
+import com.dessertoasis.demo.model.member.BankRepository;
 import com.dessertoasis.demo.model.member.Member;
 import com.dessertoasis.demo.model.member.MemberAccess;
 import com.dessertoasis.demo.model.member.MemberCmsTable;
@@ -31,6 +33,7 @@ import com.dessertoasis.demo.model.member.MemberDetailRepository;
 import com.dessertoasis.demo.model.order.OrderCmsTable;
 import com.dessertoasis.demo.model.recipe.PicturesDTO;
 import com.dessertoasis.demo.model.sort.SortCondition;
+import com.dessertoasis.demo.service.member.BankService;
 import com.dessertoasis.demo.service.member.MemberDetailService;
 import com.dessertoasis.demo.service.member.MemberService;
 
@@ -51,6 +54,8 @@ public class MemberController {
 	
 	@Autowired
 	private ImageUploadUtil imgUtil;
+	@Autowired
+	private BankService bService;
 
 
 	// 多筆
@@ -83,6 +88,19 @@ public class MemberController {
 		} else {
 			// 如果找不到會員詳細資訊，可以返回一個特殊的 "未找到" 或空的 MemberDetail 物件
 			return new MemberDetail(); // 或者返回 null，視情況而定
+		}
+	}
+	
+	@GetMapping("/{id}/bank")
+	public Bank getMemberBank(@PathVariable Integer id) {
+		
+		Bank bank = bService.getMemberBankByMemberId(id);
+
+		if (bank != null) {
+			return bank; 
+		} else {
+			
+			return new Bank(); 
 		}
 	}
 
