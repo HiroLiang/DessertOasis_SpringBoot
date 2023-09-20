@@ -33,8 +33,8 @@ public class MemberDetailService {
 	        	memberDetail.setIdNumber(newMemberDetail.getIdNumber());
 	        	memberDetail.setBirthday(newMemberDetail.getBirthday());
 	        	memberDetail.setDeliveryAddress(newMemberDetail.getDeliveryAddress());
-	        	memberDetail.setFolderURL(newMemberDetail.getFolderURL());
-	        	memberDetail.setPic(newMemberDetail.getPic());
+//	        	memberDetail.setFolderURL(newMemberDetail.getFolderURL());
+//	        	memberDetail.setPic(newMemberDetail.getPic());
 
 	        // 保存更新後的 MemberDetail
 	        return memberDetailRepository.save(memberDetail);
