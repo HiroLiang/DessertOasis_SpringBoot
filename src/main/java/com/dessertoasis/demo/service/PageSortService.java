@@ -52,8 +52,7 @@ public class PageSortService {
 		}
 		return false;
 	}
-	
-	
+
 	/*-----------------------------------------v v v 範例 v v v---------------------------------------------------*/
 	// 訂單後台查詢條件
 	public Predicate checkCondition(Root<Order> root, Join<Order, Member> join, Predicate predicate,
@@ -102,7 +101,9 @@ public class PageSortService {
 		if (sortCon.getSearchRules() != null && sortCon.getSearchRules().size() != 0) {
 			System.out.println("search");
 			for (SearchRules rule : sortCon.getSearchRules()) {
-				if (hasProperty(recipes, rule.getKey())) {
+				if (rule.getKey().equals("recipeStatus")) {
+					predicate = cb.and(predicate, cb.notEqual(root.get(rule.getKey()), rule.getInput()));
+				} else if (hasProperty(recipes, rule.getKey())) {
 					predicate = cb.and(predicate, cb.like(root.get(rule.getKey()), "%" + rule.getInput() + "%"));
 				} else {
 					predicate = cb.and(predicate, cb.like(join.get(rule.getKey()), "%" + rule.getInput() + "%"));
@@ -151,8 +152,8 @@ public class PageSortService {
 					predicate = cb.and(predicate, cb.like(joinCategory.get("id"), rule.getInput()));
 				} else if (hasProperty(product, rule.getKey())) {
 					predicate = cb.and(predicate, cb.like(root.get(rule.getKey()), "%" + rule.getInput() + "%"));
-				
-			}
+
+				}
 			}
 		}
 		// 日期範圍
@@ -167,101 +168,100 @@ public class PageSortService {
 				}
 			}
 		}
-		
-		// 數值範圍
-				if (sortCon.getNumKey() != null) {
-					System.out.println("num");
-					if (hasProperty(product, sortCon.getNumKey())) {
-						predicate = cb.and(predicate,
-								cb.between(root.get(sortCon.getNumKey()), sortCon.getNumStart(), sortCon.getNumEnd()));
-					} else {
-						predicate = cb.and(predicate,
-								cb.between(joinCategory.get(sortCon.getNumKey()), sortCon.getNumStart(), sortCon.getNumEnd()));
-					}
-				}
-				return predicate;
-			}
 
-		
-		public Predicate checkTeacherCondition2(Root<Teacher> root, Join< Teacher,List<TeacherPicture>> join, Predicate predicate,
-				SortCondition sortCon, CriteriaBuilder cb, Teacher teacher) {
-			// 模糊搜索
-			if (sortCon.getSearchRules() != null && sortCon.getSearchRules().size() != 0) {
-				System.out.println("search");
-				for (SearchRules rule : sortCon.getSearchRules()) {
-					if (hasProperty(teacher, rule.getKey())) {
-						predicate = cb.and(predicate, cb.like(root.get(rule.getKey()), rule.getInput()));
-					} else {
-						predicate = cb.and(predicate, cb.like(join.get(rule.getKey()), rule.getInput()));
-					}
-				}
+		// 數值範圍
+		if (sortCon.getNumKey() != null) {
+			System.out.println("num");
+			if (hasProperty(product, sortCon.getNumKey())) {
+				predicate = cb.and(predicate,
+						cb.between(root.get(sortCon.getNumKey()), sortCon.getNumStart(), sortCon.getNumEnd()));
+			} else {
+				predicate = cb.and(predicate,
+						cb.between(joinCategory.get(sortCon.getNumKey()), sortCon.getNumStart(), sortCon.getNumEnd()));
 			}
-			// 日期範圍
-			if (sortCon.getDateRules() != null && sortCon.getDateRules().size() != 0) {
-				for (DateRules rule : sortCon.getDateRules()) {
-					System.out.println(rule.getKey());
-					if (hasProperty(teacher, rule.getKey())) {
-						predicate = cb.and(predicate, cb.between(root.get(rule.getKey()), rule.getStart(), rule.getEnd()));
-					} else {
-						predicate = cb.and(predicate, cb.between(join.get(rule.getKey()), rule.getStart(), rule.getEnd()));
-					}
-				}
-			}
-			// 數值範圍
-			if (sortCon.getNumKey() != null) {
-				System.out.println("num");
-				if (hasProperty(teacher, sortCon.getNumKey())) {
-					predicate = cb.and(predicate,
-							cb.between(root.get(sortCon.getNumKey()), sortCon.getNumStart(), sortCon.getNumEnd()));
-				} else {
-					predicate = cb.and(predicate,
-							cb.between(join.get(sortCon.getNumKey()), sortCon.getNumStart(), sortCon.getNumEnd()));
-				}
-			}
-			return predicate;
 		}
-		public Predicate checkTeacherCondition3(Root<Teacher> root, Predicate predicate,
-				SortCondition sortCon, CriteriaBuilder cb, Teacher teacher) {
-			// 模糊搜索
-			if (sortCon.getSearchRules() != null && sortCon.getSearchRules().size() != 0) {
-				System.out.println("search");
-				for (SearchRules rule : sortCon.getSearchRules()) {
-					if (hasProperty(teacher, rule.getKey())) {
-						predicate = cb.and(predicate, cb.like(root.get(rule.getKey()), rule.getInput()));
-					}
+		return predicate;
+	}
+
+	public Predicate checkTeacherCondition2(Root<Teacher> root, Join<Teacher, List<TeacherPicture>> join,
+			Predicate predicate, SortCondition sortCon, CriteriaBuilder cb, Teacher teacher) {
+		// 模糊搜索
+		if (sortCon.getSearchRules() != null && sortCon.getSearchRules().size() != 0) {
+			System.out.println("search");
+			for (SearchRules rule : sortCon.getSearchRules()) {
+				if (hasProperty(teacher, rule.getKey())) {
+					predicate = cb.and(predicate, cb.like(root.get(rule.getKey()), rule.getInput()));
+				} else {
+					predicate = cb.and(predicate, cb.like(join.get(rule.getKey()), rule.getInput()));
+				}
+			}
+		}
+		// 日期範圍
+		if (sortCon.getDateRules() != null && sortCon.getDateRules().size() != 0) {
+			for (DateRules rule : sortCon.getDateRules()) {
+				System.out.println(rule.getKey());
+				if (hasProperty(teacher, rule.getKey())) {
+					predicate = cb.and(predicate, cb.between(root.get(rule.getKey()), rule.getStart(), rule.getEnd()));
+				} else {
+					predicate = cb.and(predicate, cb.between(join.get(rule.getKey()), rule.getStart(), rule.getEnd()));
+				}
+			}
+		}
+		// 數值範圍
+		if (sortCon.getNumKey() != null) {
+			System.out.println("num");
+			if (hasProperty(teacher, sortCon.getNumKey())) {
+				predicate = cb.and(predicate,
+						cb.between(root.get(sortCon.getNumKey()), sortCon.getNumStart(), sortCon.getNumEnd()));
+			} else {
+				predicate = cb.and(predicate,
+						cb.between(join.get(sortCon.getNumKey()), sortCon.getNumStart(), sortCon.getNumEnd()));
+			}
+		}
+		return predicate;
+	}
+
+	public Predicate checkTeacherCondition3(Root<Teacher> root, Predicate predicate, SortCondition sortCon,
+			CriteriaBuilder cb, Teacher teacher) {
+		// 模糊搜索
+		if (sortCon.getSearchRules() != null && sortCon.getSearchRules().size() != 0) {
+			System.out.println("search");
+			for (SearchRules rule : sortCon.getSearchRules()) {
+				if (hasProperty(teacher, rule.getKey())) {
+					predicate = cb.and(predicate, cb.like(root.get(rule.getKey()), rule.getInput()));
+				}
 //					} else {
 //						predicate = cb.and(predicate, cb.like(join.get(rule.getKey()), rule.getInput()));
 //					}
-				}
 			}
-			// 日期範圍
-			if (sortCon.getDateRules() != null && sortCon.getDateRules().size() != 0) {
-				for (DateRules rule : sortCon.getDateRules()) {
-					System.out.println(rule.getKey());
-					if (hasProperty(teacher, rule.getKey())) {
-						predicate = cb.and(predicate, cb.between(root.get(rule.getKey()), rule.getStart(), rule.getEnd()));
-					} 
+		}
+		// 日期範圍
+		if (sortCon.getDateRules() != null && sortCon.getDateRules().size() != 0) {
+			for (DateRules rule : sortCon.getDateRules()) {
+				System.out.println(rule.getKey());
+				if (hasProperty(teacher, rule.getKey())) {
+					predicate = cb.and(predicate, cb.between(root.get(rule.getKey()), rule.getStart(), rule.getEnd()));
+				}
 //					else {
 //						predicate = cb.and(predicate, cb.between(join.get(rule.getKey()), rule.getStart(), rule.getEnd()));
 //					}
-				}
 			}
-			// 數值範圍
-			if (sortCon.getNumKey() != null) {
-				System.out.println("num");
-				if (hasProperty(teacher, sortCon.getNumKey())) {
-					predicate = cb.and(predicate,
-							cb.between(root.get(sortCon.getNumKey()), sortCon.getNumStart(), sortCon.getNumEnd()));
-				} 
+		}
+		// 數值範圍
+		if (sortCon.getNumKey() != null) {
+			System.out.println("num");
+			if (hasProperty(teacher, sortCon.getNumKey())) {
+				predicate = cb.and(predicate,
+						cb.between(root.get(sortCon.getNumKey()), sortCon.getNumStart(), sortCon.getNumEnd()));
+			}
 //				else {
 //					predicate = cb.and(predicate,
 //							cb.between(join.get(sortCon.getNumKey()), sortCon.getNumStart(), sortCon.getNumEnd()));
 //				}
-			}
-			return predicate;
 		}
-		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
+		return predicate;
+	}
+	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 	// ~~~~~~~~~課程後台查詢條件~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	public Predicate checkCourseCondition(Root<Course> root, Join<Course, Teacher> join, Join<Course, Category> catJoin,
@@ -342,35 +342,37 @@ public class PageSortService {
 		}
 		return predicate;
 	}
-	
+
 	// 會員查詢條件~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-	public Predicate checkMemberCondition(Root<Member> root, Predicate predicate,
-			SortCondition sortCon, CriteriaBuilder cb, Member member) {
+	public Predicate checkMemberCondition(Root<Member> root, Predicate predicate, SortCondition sortCon,
+			CriteriaBuilder cb, Member member) {
 		// 模糊搜索
-	    if (sortCon.getSearchRules() != null && sortCon.getSearchRules().size() != 0) {
-	        System.out.println("search");
-	        for (SearchRules rule : sortCon.getSearchRules()) {
-	            predicate = cb.and(predicate, cb.like(root.get(rule.getKey()), "%" + rule.getInput() + "%"));
-	        }
-	    }
-	    // 日期範圍
-	    if (sortCon.getDateRules() != null && sortCon.getDateRules().size() != 0) {
-	        for (DateRules rule : sortCon.getDateRules()) {
-	        	System.out.println(rule.getKey());
-	            predicate = cb.and(predicate, cb.between(root.get(rule.getKey()), rule.getStart(), rule.getEnd()));
-	        }
-	    }
-	    // 數值範圍
-	    if (sortCon.getNumKey() != null) {
-			System.out.println("num");
-			 if (sortCon.getNumKey() != null) {
-		        predicate = cb.and(predicate, cb.between(root.get(sortCon.getNumKey()), sortCon.getNumStart(), sortCon.getNumEnd()));
-		    }
+		if (sortCon.getSearchRules() != null && sortCon.getSearchRules().size() != 0) {
+			System.out.println("search");
+			for (SearchRules rule : sortCon.getSearchRules()) {
+				predicate = cb.and(predicate, cb.like(root.get(rule.getKey()), "%" + rule.getInput() + "%"));
+			}
 		}
-				return predicate;
+		// 日期範圍
+		if (sortCon.getDateRules() != null && sortCon.getDateRules().size() != 0) {
+			for (DateRules rule : sortCon.getDateRules()) {
+				System.out.println(rule.getKey());
+				predicate = cb.and(predicate, cb.between(root.get(rule.getKey()), rule.getStart(), rule.getEnd()));
+			}
+		}
+		// 數值範圍
+		if (sortCon.getNumKey() != null) {
+			System.out.println("num");
+			if (sortCon.getNumKey() != null) {
+				predicate = cb.and(predicate,
+						cb.between(root.get(sortCon.getNumKey()), sortCon.getNumStart(), sortCon.getNumEnd()));
+			}
+		}
+		return predicate;
 	}
-	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	// (棄用)
 	public String getPageJson(SortCondition sortCod) throws Exception {
 		CriteriaBuilder cb = em.getCriteriaBuilder();

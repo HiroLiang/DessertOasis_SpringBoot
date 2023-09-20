@@ -255,8 +255,8 @@ public class RecipeController {
 		/*---------設定儲存路徑---------*/
 
 //TODO 調整路徑
-		final String uploadPath = "D:/dessertoasis-vue/public/";
-//		final String uploadPath = "C:/Users/iSpan/Documents/dessertoasis-vue/public/";
+//		final String uploadPath = "D:/dessertoasis-vue/public/";
+		final String uploadPath = "C:/Users/iSpan/Documents/dessertoasis-vue/public/";
 //		Member member = (Member) session.getAttribute("loggedInMember");
 //		Recipes recipe = (Recipes) session.getAttribute("recipeId");
 
@@ -394,8 +394,8 @@ public class RecipeController {
 		Optional<Recipes> findById = recipeRepo.findById(recipeId);
 		if (findById.isPresent()) {
 			// TODO 調整路徑
-//			String userPath = "C:\\Users\\iSpan\\Documents\\dessertoasis-vue\\public\\";
-			String userPath = "D:/dessertoasis-vue/public/";
+			String userPath = "C:\\Users\\iSpan\\Documents\\dessertoasis-vue\\public\\";
+//			String userPath = "D:/dessertoasis-vue/public/";
 			Recipes recipe = findById.get();
 			String pictureURL = recipe.getPictureURL();
 			try {
@@ -435,8 +435,8 @@ public class RecipeController {
 		Optional<Recipes> findById = recipeRepo.findById(recipeId);
 		if (findById.isPresent()) {
 			//TODO 調整路徑
-			String userPath ="D:/dessertoasis-vue/public/";
-//			String userPath = "C:\\Users\\iSpan\\Documents\\dessertoasis-vue\\public\\";
+//			String userPath ="D:/dessertoasis-vue/public/";
+			String userPath = "C:\\Users\\iSpan\\Documents\\dessertoasis-vue\\public\\";
 			Recipes recipe = findById.get();
 			String pictureURL = recipe.getPictureURL();
 
@@ -464,8 +464,8 @@ public class RecipeController {
 		if (findById.isPresent()) {
 			
 			//TODO 調整路徑
-			String userPath ="D:/dessertoasis-vue/public/";
-//			String userPath = "C:\\Users\\iSpan\\Documents\\dessertoasis-vue\\public\\";
+//			String userPath ="D:/dessertoasis-vue/public/";
+			String userPath = "C:\\Users\\iSpan\\Documents\\dessertoasis-vue\\public\\";
 			Recipes recipe = findById.get();
 			for (int i = 0; i < recipe.getRecipeSteps().size(); i++) {
 				String stepPicPath = recipe.getRecipeSteps().get(i).getStepPicture();
