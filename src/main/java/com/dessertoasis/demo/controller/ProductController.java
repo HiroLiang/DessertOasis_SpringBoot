@@ -9,6 +9,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TimeZone;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -149,6 +150,7 @@ public class ProductController {
             product.setProdPurchase((Integer) productData.get("prodPurchase"));
             String frontendTimestamp = (String) productData.get("updateTime");
             SimpleDateFormat frontendDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+            frontendDateFormat.setTimeZone(TimeZone.getTimeZone("UTC")); 
             Date date = frontendDateFormat.parse(frontendTimestamp);
             Timestamp backendTimestamp = new Timestamp(date.getTime());
             product.setUpdateTime(backendTimestamp); // 设置后端格式的时间戳
@@ -226,7 +228,7 @@ System.out.println(imagePath);
 		System.out.println("start");
 		 if (!productPictures.getPictures().isEmpty()) {
 		        System.out.println("if");
-		        String userPath = "C:\\workspace\\dessertoasis-vue\\public";
+		        String userPath = "C:/workspace/dessertoasis-vue/public";
 		        // String userPath = "C:\\Users\\iSpan\\Documents\\dessertoasis-vue\\public\\";
 		        
 		       

@@ -47,6 +47,51 @@ public class ProductPicture {
 		super();
 	}
 
+	public void deleteImageFile() {
+		  if (pictureURL != null && !pictureURL.isEmpty()) {
+		        try {
+		            // 圖片儲存的根路徑，根據你的實際情況修改
+		            String rootPath = "C:/workspace/dessertoasis-vue/public/images/product/";
+		            Integer productId = product.getId();
+		            
+		            // 獲取完整的資料夾路徑（資料夾名稱即為productId）
+		            String folderPath = rootPath + productId;
+		            
+		            // 創建File對象表示要刪除的資料夾
+		            File folder = new File(folderPath);
+
+		            // 檢查資料夾是否存在
+		            if (folder.exists()) {
+		                deleteRecursive(folder); // 刪除資料夾及其內容
+		                System.out.println("圖片文件及其資料夾刪除成功：" + folderPath);
+		            } else {
+		                System.out.println("圖片資料夾不存在：" + folderPath);
+		            }
+		        } catch (Exception e) {
+		            System.err.println("刪除圖片文件及其資料夾時出現異常：" + e.getMessage());
+		        }
+		    } else {
+		        System.out.println("圖片URL為空，無法刪除圖片文件及其資料夾");
+		    }
+		}
+
+		private void deleteRecursive(File file) {
+		    if (file.isDirectory()) {
+		        File[] contents = file.listFiles();
+		        if (contents != null) {
+		            for (File f : contents) {
+		                deleteRecursive(f);
+		            }
+		        }
+		    }
+
+		    if (file.delete()) {
+		        System.out.println("文件或資料夾刪除成功：" + file.getAbsolutePath());
+		    } else {
+		        System.out.println("文件或資料夾刪除失敗：" + file.getAbsolutePath());
+		    }
+		}
+
 	
 	
 	
