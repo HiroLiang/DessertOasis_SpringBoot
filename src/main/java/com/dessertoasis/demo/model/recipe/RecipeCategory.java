@@ -27,13 +27,15 @@ public class RecipeCategory {
 	@GeneratedValue(strategy = GenerationType.IDENTITY )
 	private Integer id;
 	
-	@JsonIgnoreProperties("recipeCategories")
+//	@JsonIgnoreProperties("recipeCategories")
+	@JsonIgnore
 	@ManyToOne
 //	@MapsId("recipeId")
 	@JoinColumn(name = "recipeId",referencedColumnName = "id")
 	private Recipes recipe;
 	
-	@JsonIgnoreProperties("recipeCategories")
+//	@JsonIgnoreProperties("recipeCategories")
+	@JsonIgnore
 	@ManyToOne
 //	@MapsId("categoryId")
 	@JoinColumn(name = "categoryId",referencedColumnName = "id")

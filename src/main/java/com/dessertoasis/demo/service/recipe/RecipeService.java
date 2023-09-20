@@ -271,32 +271,78 @@ public class RecipeService {
 	}
 
 	// 修改食譜
-	public Boolean updateRecipe(Integer recipeId, Integer memberId) {
-		Optional<Member> member = memberRepo.findById(memberId);
-		Optional<Recipes> optional = recipeRepo.findById(recipeId);
-
+	public Boolean updateRecipe(Recipes recipe) {
+//		Optional<Member> member = memberRepo.findById(memberId);
+		Optional<Recipes> optional = recipeRepo.findById(recipe.getId());
 		if (optional.isPresent()) {
-			Recipes recipeData = optional.get();
-//			if (recipeData.getRecipeAuthor().getId().equals(member.get().getId())) {
-				recipeRepo.save(recipeData);
-//			}
+			Recipes existRecipe = optional.get();
+			if (existRecipe != null) {
+				existRecipe.setRecipeTitle(recipe.getRecipeTitle());
+				existRecipe.setRecipeIntroduction(recipe.getRecipeIntroduction());
+				existRecipe.setCookingTime(recipe.getCookingTime());
+				existRecipe.setIngredientPersons(recipe.getIngredientPersons());
+//				System.err.println(recipe.getIngredientPersons());
+//				List<IngredientList> existIngredientList = existRecipe.getIngredientList();
+				for (int i = 0; i < recipe.getIngredientList().size(); i++) {
+					IngredientList newIngredientList = recipe.getIngredientList().get(i);
 
-//			RecipeDTO rDto = new RecipeDTO();
-//			rDto.setId(recipe.getId());
-//			rDto.setRecipeAuthorId(recipe.getRecipeAuthor().getId());
-//			rDto.setRecipeTitle(recipe.getRecipeTitle());
-//			List<RecipeCategory> recipeCategories = recipe.getRecipeCategories();
-//			List<Integer> categoryIds = new ArrayList<>();
-//			for (RecipeCategory rc : recipeCategories) {
-//                categoryIds.add(rc.getCategory().getId());
-//            }
-//			rDto.setRecipeCategoryIds(categoryIds);
-//			rDto.setPictureURL(recipe.getPictureURL());
-//			rDto.setRecipeIntroduction(recipe.getRecipeIntroduction());
-//			rDto.setCookingTime(recipe.getCookingTime());
-//			rDto.setDifficulty(recipe.getDifficulty());
-//			rDto.setRecipeStatus(recipe.getRecipeStatus());
-//			
+					if (newIngredientList.getIngredient().getIngredientName() != null) {
+						Ingredient findByIngredientName = ingreRepo
+								.findByIngredientName(newIngredientList.getIngredient().getIngredientName());
+						System.err.println(findByIngredientName);
+						if (findByIngredientName != null) {
+//							Ingredient existIngredient = ingredientFindById.get();
+//							System.err.println(findByIngredientName);
+//							System.err.println("find exist ingre");
+							recipe.getIngredientList().get(i).setIngredient(findByIngredientName);
+						} else {
+							//初始化原先帶有的id 
+							newIngredientList.getIngredient().setId(null);
+							Ingredient savedIngre = ingreRepo.save(newIngredientList.getIngredient());
+//							System.err.println(savedIngre);
+							recipe.getIngredientList().get(i).setIngredient(savedIngre);
+//							System.err.println("new ingre");
+//							System.err.println(savedIngre.getIngredientName());
+						}
+					}
+
+					if (newIngredientList.getId() != null) {
+						
+						Optional<IngredientList> findOldIngreList = ingreListRepo.findById(newIngredientList.getId());
+						if (findOldIngreList.isPresent()) {
+							
+							IngredientList oldIngreList = findOldIngreList.get();
+							oldIngreList.setIngredient(recipe.getIngredientList().get(i).getIngredient());
+							oldIngreList
+									.setIngredientQuantity(recipe.getIngredientList().get(i).getIngredientQuantity());
+							oldIngreList.setIngredientUnit(recipe.getIngredientList().get(i).getIngredientUnit());
+						}
+					} else {
+						ingreListRepo.save(newIngredientList);
+					}
+				}
+//				List<Integer> stepIds = new ArrayList<>();
+				List<RecipeSteps> newRecipeSteps = recipe.getRecipeSteps();
+				for (int i = 0; i < recipe.getRecipeSteps().size(); i++) {
+//					stepIds.add(newRecipeSteps.get(i).getId());
+					if (newRecipeSteps.get(i).getId() != null) {
+						System.err.println("have id");
+						Optional<RecipeSteps> stepFindById = stepRepo.findById(newRecipeSteps.get(i).getId());
+						if (stepFindById.isPresent()) {
+							System.err.println("find old");
+							RecipeSteps oldRecipeSteps = stepFindById.get();
+							oldRecipeSteps.setStepContext(newRecipeSteps.get(i).getStepContext());
+							oldRecipeSteps.setStepPicture(newRecipeSteps.get(i).getStepPicture());
+						}
+					} else {
+						stepRepo.save(newRecipeSteps.get(i));
+						System.err.println("save new ");
+					}
+				}
+
+				existRecipe.setRecipeSteps(recipe.getRecipeSteps());
+				recipeRepo.save(existRecipe);
+			}
 			return true;
 		}
 		return false;
@@ -309,12 +355,12 @@ public class RecipeService {
 
 		if (recipe.isPresent()) {
 			Recipes recipeData = recipe.get();
-			if (recipeData.getRecipeAuthor().getId().equals(member.get().getId())) {
-				//註銷食譜  使狀態設為-1
-				recipeData.setRecipeStatus(-1);
-				recipeRepo.save(recipeData);
-				return true;
-			}
+//			if (recipeData.getRecipeAuthor().getId().equals(member.get().getId())) {
+			// 註銷食譜 使狀態設為-1
+			recipeData.setRecipeStatus(-1);
+			recipeRepo.save(recipeData);
+			return true;
+//			}
 		}
 		return false;
 	}

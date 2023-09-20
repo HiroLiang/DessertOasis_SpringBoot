@@ -257,6 +257,7 @@ System.out.println(imagePath);
 	    Product productPictures = pService.findById(id);
 	    System.out.println("start");
 	    List<List<String>> allPictures = new ArrayList<>(); // 創建用於存儲所有圖片資訊的列表
+	    List<String> pictureURLs = new ArrayList<>();
 
 	    if (!productPictures.getPictures().isEmpty()) {
 	        String userPath = "C:\\workspace\\dessertoasis-vue\\public";
@@ -272,6 +273,7 @@ System.out.println(imagePath);
 
 	            if (!pictureInfo.isEmpty()) {
 	                allPictures.add(pictureInfo); // 添加圖片資訊到列表中
+	                pictureURLs.add(pictureURL);
 	            }
 	        }
 
@@ -279,6 +281,7 @@ System.out.println(imagePath);
 	            HttpHeaders headers = new HttpHeaders();
 	            /*-------------------設定 headers，這裡使用第一張圖片的 MIME 類型---------------------*/
 	            headers.setContentType(MediaType.parseMediaType(allPictures.get(0).get(0)));
+	            allPictures.add(pictureURLs); // 添加图片URL列表到返回数据中
 	            return allPictures; 
 	        }
 	    }

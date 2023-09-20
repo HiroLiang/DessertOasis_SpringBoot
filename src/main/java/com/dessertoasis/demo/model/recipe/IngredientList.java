@@ -56,6 +56,14 @@ public class IngredientList {
 	// 食材單位
 	@Column(name = "ingredientUnit", nullable = false, columnDefinition = "nvarchar(20)")
 	private String ingredientUnit;
+	
+	public Integer getId() {
+		return id;
+	}
+
+	public void setId(Integer id) {
+		this.id = id;
+	}
 
 	public IngredientList() {
 	}
