@@ -381,6 +381,22 @@ public class RecipeService {
 		}
 		return false;
 	}
+	
+	public Boolean republishById(Integer recipeId, Integer memberId) {
+		Optional<Member> member = memberRepo.findById(memberId);
+		Optional<Recipes> recipe = recipeRepo.findById(recipeId);
+
+		if (recipe.isPresent()) {
+			Recipes recipeData = recipe.get();
+//			if (recipeData.getRecipeAuthor().getId().equals(member.get().getId())) {
+			// 註銷食譜 使狀態設為-1
+			recipeData.setRecipeStatus(1);
+			recipeRepo.save(recipeData);
+			return true;
+//			}
+		}
+		return false;
+	}
 
 	/*--------------------------------------------後台Criteria ------------------------------------------------*/
 	@PersistenceContext

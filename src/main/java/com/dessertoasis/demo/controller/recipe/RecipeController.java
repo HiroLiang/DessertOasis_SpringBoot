@@ -517,6 +517,20 @@ public class RecipeController {
 		}
 		return "N";
 	}
+	
+	//重新啟用食譜
+	@PostMapping("recipe/republishrecipe")
+	public String republishRecipe(@RequestParam("recipeId") Integer recipeId, HttpSession session) {
+		Member member = (Member) session.getAttribute("loggedInMember");
+		if (member != null && member.getAccess().equals(MemberAccess.ADMIN)) {
+			Boolean republish = recipeService.republishById(recipeId, member.getId());
+			if (republish) {
+				return "Y";
+			}
+			return "F";
+		}
+		return "N";
+	}
 
 	/*----------------------------------------------處理食譜總頁數Controller------------------------------------------------------------------*/
 	@PostMapping("/recipe/pages")
