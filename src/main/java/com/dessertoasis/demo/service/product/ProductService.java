@@ -67,14 +67,34 @@ public class ProductService {
     	prodRepo.save(product);
     }
 
-    public boolean deleteProductById(Integer id) {
-        Optional<Product> optional = prodRepo.findById(id);
-        if (optional.isPresent()) {
-        	prodRepo.deleteById(id);
-            return true;
-        }
-        return false;
+//    public boolean deleteProductById(Integer id) {
+//        Optional<Product> optional = prodRepo.findById(id);
+//        if (optional.isPresent()) {
+//        	prodRepo.deleteById(id);
+//            return true;
+//        }
+//        return false;
+//    }
+    
+    @Transactional
+    public void deleteProductById(Integer id) {
+        Optional<Product> productOptional = prodRepo.findById(id);
+        productOptional.ifPresent(product -> {
+            // 获取产品关联的图片数据
+            List<ProductPicture> pictures = product.getPictures();
+
+            for (ProductPicture picture : pictures) {
+                picture.deleteImageFile(); // 调用删除图片文件的方法
+            }
+
+            // 删除关联的图片数据
+            ProdPicRepo.deleteAll(pictures);
+
+            // 最后删除产品
+            prodRepo.delete(product);
+        });
     }
+
    
     public Page<Product> searchProducts(ProdSearchDTO criteria, Pageable pageable) {
         return prodRepo.findAll((root, query, builder) -> {
@@ -158,7 +178,7 @@ public class ProductService {
 
     
  
- 	
+    
 
 	public List<ProdSearchDTO> getProductPagenation(SortCondition sortCon) {
 		CriteriaBuilder cb = em.getCriteriaBuilder();

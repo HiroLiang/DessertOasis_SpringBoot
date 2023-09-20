@@ -394,11 +394,12 @@ public class TeacherService {
 		Root<Teacher> root = cq.from(Teacher.class);
 //		Join<Teacher, Course> join = root.join("courseList");
 		Join<Teacher, List<TeacherPicture>> join = root.join("pictures");
+		Join<Teacher,List<Course>> join2 = root.join("courseList");
 //				
 
 		// 決定查詢 column
 //		cq.multiselect(root.get("id"), root.get("teacherName"),join.get("courseList"),join2.get("pictureURL"));
-		cq.multiselect(root.get("id"), root.get("teacherName"),join.get("pictureURL"));
+		cq.multiselect(root.get("id"), root.get("teacherName"),join.get("pictureURL"),join2.get("courseName"));
 
 		// 加入查詢條件
 		Predicate predicate = cb.conjunction();

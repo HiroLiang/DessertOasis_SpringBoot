@@ -80,23 +80,26 @@ public class RecipeService {
 
 		if (optional.isPresent()) {
 			Recipes recipe = optional.get();
-			RecipeDTO rDto = new RecipeDTO();
-			rDto.setId(recipe.getId());
-			rDto.setRecipeAuthorId(recipe.getRecipeAuthor().getId());
-			rDto.setRecipeTitle(recipe.getRecipeTitle());
-			List<RecipeCategory> recipeCategories = recipe.getRecipeCategories();
-			List<Integer> categoryIds = new ArrayList<>();
-			for (RecipeCategory rc : recipeCategories) {
-				categoryIds.add(rc.getCategory().getId());
-			}
-			rDto.setRecipeCategoryIds(categoryIds);
-			rDto.setPictureURL(recipe.getPictureURL());
-			rDto.setRecipeIntroduction(recipe.getRecipeIntroduction());
-			rDto.setCookingTime(recipe.getCookingTime());
-			rDto.setDifficulty(recipe.getDifficulty());
-			rDto.setRecipeStatus(recipe.getRecipeStatus());
+			if (recipe.getRecipeStatus() != 2) {
 
-			return rDto;
+				RecipeDTO rDto = new RecipeDTO();
+				rDto.setId(recipe.getId());
+				rDto.setRecipeAuthorId(recipe.getRecipeAuthor().getId());
+				rDto.setRecipeTitle(recipe.getRecipeTitle());
+				List<RecipeCategory> recipeCategories = recipe.getRecipeCategories();
+				List<Integer> categoryIds = new ArrayList<>();
+				for (RecipeCategory rc : recipeCategories) {
+					categoryIds.add(rc.getCategory().getId());
+				}
+				rDto.setRecipeCategoryIds(categoryIds);
+				rDto.setPictureURL(recipe.getPictureURL());
+				rDto.setRecipeIntroduction(recipe.getRecipeIntroduction());
+				rDto.setCookingTime(recipe.getCookingTime());
+				rDto.setDifficulty(recipe.getDifficulty());
+				rDto.setRecipeStatus(recipe.getRecipeStatus());
+
+				return rDto;
+			}
 		}
 		return null;
 	}
@@ -121,20 +124,23 @@ public class RecipeService {
 
 		if (latest10Recipes != null && !latest10Recipes.isEmpty()) {
 			for (int i = 0; i < latest10Recipes.size(); i++) {
-				Recipes recipe = latest10Recipes.get(i);
-				RecipeCarouselDTO rcDto = new RecipeCarouselDTO();
-				rcDto.setId(recipe.getId());
-				rcDto.setRecipeTitle(recipe.getRecipeTitle());
-				List<RecipeCategory> recipeCategories = recipe.getRecipeCategories();
-				List<Integer> categoryIds = new ArrayList<>();
-				for (RecipeCategory rc : recipeCategories) {
-					categoryIds.add(rc.getCategory().getId());
-				}
-				rcDto.setRecipeCategoryIds(categoryIds);
-				rcDto.setPictureURL(recipe.getPictureURL());
-				rcDto.setRecipeIntroduction(recipe.getRecipeIntroduction());
+				if (latest10Recipes.get(i).getRecipeStatus() != 2) {
 
-				latest10RecipeDTO.add(rcDto);
+					Recipes recipe = latest10Recipes.get(i);
+					RecipeCarouselDTO rcDto = new RecipeCarouselDTO();
+					rcDto.setId(recipe.getId());
+					rcDto.setRecipeTitle(recipe.getRecipeTitle());
+					List<RecipeCategory> recipeCategories = recipe.getRecipeCategories();
+					List<Integer> categoryIds = new ArrayList<>();
+					for (RecipeCategory rc : recipeCategories) {
+						categoryIds.add(rc.getCategory().getId());
+					}
+					rcDto.setRecipeCategoryIds(categoryIds);
+					rcDto.setPictureURL(recipe.getPictureURL());
+					rcDto.setRecipeIntroduction(recipe.getRecipeIntroduction());
+
+					latest10RecipeDTO.add(rcDto);
+				}
 			}
 		}
 		return latest10RecipeDTO;
@@ -147,20 +153,23 @@ public class RecipeService {
 
 		if (hottest10Recipes != null && !hottest10Recipes.isEmpty()) {
 			for (int i = 0; i < hottest10Recipes.size(); i++) {
-				Recipes recipe = hottest10Recipes.get(i);
-				RecipeCarouselDTO rcDto = new RecipeCarouselDTO();
-				rcDto.setId(recipe.getId());
-				rcDto.setRecipeTitle(recipe.getRecipeTitle());
-				List<RecipeCategory> recipeCategories = recipe.getRecipeCategories();
-				List<Integer> categoryIds = new ArrayList<>();
-				for (RecipeCategory rc : recipeCategories) {
-					categoryIds.add(rc.getCategory().getId());
-				}
-				rcDto.setRecipeCategoryIds(categoryIds);
-				rcDto.setPictureURL(recipe.getPictureURL());
-				rcDto.setRecipeIntroduction(recipe.getRecipeIntroduction());
+				if (hottest10Recipes.get(i).getRecipeStatus() != 2) {
 
-				hottest10RecipeDTO.add(rcDto);
+					Recipes recipe = hottest10Recipes.get(i);
+					RecipeCarouselDTO rcDto = new RecipeCarouselDTO();
+					rcDto.setId(recipe.getId());
+					rcDto.setRecipeTitle(recipe.getRecipeTitle());
+					List<RecipeCategory> recipeCategories = recipe.getRecipeCategories();
+					List<Integer> categoryIds = new ArrayList<>();
+					for (RecipeCategory rc : recipeCategories) {
+						categoryIds.add(rc.getCategory().getId());
+					}
+					rcDto.setRecipeCategoryIds(categoryIds);
+					rcDto.setPictureURL(recipe.getPictureURL());
+					rcDto.setRecipeIntroduction(recipe.getRecipeIntroduction());
+
+					hottest10RecipeDTO.add(rcDto);
+				}
 			}
 		}
 		return hottest10RecipeDTO;
@@ -175,20 +184,23 @@ public class RecipeService {
 			List<RecipeCarouselDTO> categoryRecipeDTO = new ArrayList<>();
 			if (recipes != null && !recipes.isEmpty()) {
 				for (int i = 0; i < Math.min(10, recipes.size()); i++) {
-					Recipes recipe = recipes.get(i);
-					RecipeCarouselDTO rcDto = new RecipeCarouselDTO();
-					rcDto.setId(recipe.getId());
-					rcDto.setRecipeTitle(recipe.getRecipeTitle());
-					List<RecipeCategory> recipeCategories = recipe.getRecipeCategories();
-					List<Integer> categoryIds = new ArrayList<>();
-					for (RecipeCategory rc : recipeCategories) {
-						categoryIds.add(rc.getCategory().getId());
-					}
-					rcDto.setRecipeCategoryIds(categoryIds);
-					rcDto.setPictureURL(recipe.getPictureURL());
-					rcDto.setRecipeIntroduction(recipe.getRecipeIntroduction());
+					if (recipes.get(i).getRecipeStatus() != 2) {
 
-					categoryRecipeDTO.add(rcDto);
+						Recipes recipe = recipes.get(i);
+						RecipeCarouselDTO rcDto = new RecipeCarouselDTO();
+						rcDto.setId(recipe.getId());
+						rcDto.setRecipeTitle(recipe.getRecipeTitle());
+						List<RecipeCategory> recipeCategories = recipe.getRecipeCategories();
+						List<Integer> categoryIds = new ArrayList<>();
+						for (RecipeCategory rc : recipeCategories) {
+							categoryIds.add(rc.getCategory().getId());
+						}
+						rcDto.setRecipeCategoryIds(categoryIds);
+						rcDto.setPictureURL(recipe.getPictureURL());
+						rcDto.setRecipeIntroduction(recipe.getRecipeIntroduction());
+
+						categoryRecipeDTO.add(rcDto);
+					}
 				}
 			}
 			return categoryRecipeDTO;
@@ -203,11 +215,11 @@ public class RecipeService {
 		if (optional.isPresent()) {
 
 			int counter = 0;
-			System.out.println("out for");
+//			System.out.println("out for");
 			for (Ingredient ingredientData : cDto.getIngredients()) {
-				System.out.println("in for");
-				System.out.println(
-						"name-------------------------------------------" + ingredientData.getIngredientName());
+//				System.out.println("in for");
+//				System.out.println(
+//						"name-------------------------------------------" + ingredientData.getIngredientName());
 				Ingredient existIngredient = ingreRepo.findByIngredientName(ingredientData.getIngredientName());
 				if (existIngredient != null) {
 					ingredientData = existIngredient;
@@ -224,9 +236,9 @@ public class RecipeService {
 			if (cDto.getRecipe().getCookingTime() == null) {
 				cDto.getRecipe().setCookingTime(0);
 			}
-			System.out.println(cDto.getRecipe().getId()); // 持久化前沒有id
+//			System.out.println(cDto.getRecipe().getId()); // 持久化前沒有id
 			Recipes save = recipeRepo.save(cDto.getRecipe());
-			System.out.println(cDto.getRecipe().getId()); // 持久化後能取得id
+//			System.out.println(cDto.getRecipe().getId()); // 持久化後能取得id
 			/*--------------------------------------------儲存食譜類別區塊-----------------------------------------------------*/
 			List<RecipeCategory> recipecategories = new ArrayList<>();
 			List<Category> categories = cDto.getCategories();
@@ -237,11 +249,11 @@ public class RecipeService {
 			defualtCategory.setCategory(cateForReci);
 			defualtCategory.setRecipe(save);
 			/*------無論有無設定分類一律設定為食譜分類---------*/
-			System.out.println("before for");
+//			System.out.println("before for");
 
 			/*------有設定分類則將分類逐一設定---------*/
 			if (!categories.isEmpty()) {
-				System.out.println("in if");
+//				System.out.println("in if");
 				for (int i = 0; i < categories.size(); i++) {
 //				System.out.println("for");
 					Integer categoryId = categories.get(i).getId();
@@ -281,6 +293,7 @@ public class RecipeService {
 				existRecipe.setRecipeIntroduction(recipe.getRecipeIntroduction());
 				existRecipe.setCookingTime(recipe.getCookingTime());
 				existRecipe.setIngredientPersons(recipe.getIngredientPersons());
+				existRecipe.setPictureURL(recipe.getPictureURL());
 //				System.err.println(recipe.getIngredientPersons());
 //				List<IngredientList> existIngredientList = existRecipe.getIngredientList();
 				for (int i = 0; i < recipe.getIngredientList().size(); i++) {
@@ -296,7 +309,7 @@ public class RecipeService {
 //							System.err.println("find exist ingre");
 							recipe.getIngredientList().get(i).setIngredient(findByIngredientName);
 						} else {
-							//初始化原先帶有的id 
+							// 初始化原先帶有的id
 							newIngredientList.getIngredient().setId(null);
 							Ingredient savedIngre = ingreRepo.save(newIngredientList.getIngredient());
 //							System.err.println(savedIngre);
@@ -307,10 +320,10 @@ public class RecipeService {
 					}
 
 					if (newIngredientList.getId() != null) {
-						
+
 						Optional<IngredientList> findOldIngreList = ingreListRepo.findById(newIngredientList.getId());
 						if (findOldIngreList.isPresent()) {
-							
+
 							IngredientList oldIngreList = findOldIngreList.get();
 							oldIngreList.setIngredient(recipe.getIngredientList().get(i).getIngredient());
 							oldIngreList
@@ -323,7 +336,7 @@ public class RecipeService {
 				}
 //				List<Integer> stepIds = new ArrayList<>();
 				List<RecipeSteps> newRecipeSteps = recipe.getRecipeSteps();
-				for (int i = 0; i < recipe.getRecipeSteps().size(); i++) {
+				for (int i = 0; i < newRecipeSteps.size(); i++) {
 //					stepIds.add(newRecipeSteps.get(i).getId());
 					if (newRecipeSteps.get(i).getId() != null) {
 						System.err.println("have id");
@@ -332,7 +345,11 @@ public class RecipeService {
 							System.err.println("find old");
 							RecipeSteps oldRecipeSteps = stepFindById.get();
 							oldRecipeSteps.setStepContext(newRecipeSteps.get(i).getStepContext());
-							oldRecipeSteps.setStepPicture(newRecipeSteps.get(i).getStepPicture());
+							if (newRecipeSteps.get(i).getStepPicture() != null
+									&& !newRecipeSteps.get(i).getStepPicture().isEmpty()) {
+								oldRecipeSteps.setStepPicture(newRecipeSteps.get(i).getStepPicture());
+								System.err.println("get new pic");
+							}
 						}
 					} else {
 						stepRepo.save(newRecipeSteps.get(i));
@@ -357,7 +374,7 @@ public class RecipeService {
 			Recipes recipeData = recipe.get();
 //			if (recipeData.getRecipeAuthor().getId().equals(member.get().getId())) {
 			// 註銷食譜 使狀態設為-1
-			recipeData.setRecipeStatus(-1);
+			recipeData.setRecipeStatus(2);
 			recipeRepo.save(recipeData);
 			return true;
 //			}

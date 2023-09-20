@@ -11,6 +11,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -80,7 +81,7 @@ public class Product {
 	private String prodRemark;
 	
 	@JsonIgnoreProperties({"product"})
-	 @OneToMany(mappedBy = "product")
+	 @OneToMany(mappedBy = "product",cascade = CascadeType.REMOVE)
 	   private List<ProductPicture> pictures;
 	 
 	@JsonIgnoreProperties({"product"})
