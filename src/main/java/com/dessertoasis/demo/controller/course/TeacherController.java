@@ -88,61 +88,7 @@ public class TeacherController {
 		//取得課程資料
 		Teacher teacher = tService.getTeacherById(id);
 		return teacher;}
-	
-//	// 新增教師
-//	@PostMapping("/becomeTeacher")
-//    public ResponseEntity<String> becomeTeacher(@RequestBody Teacher teacher, @RequestParam("memberId") Integer memberId) {
-//        try {
-//        	// 創建一個新的 Teacher 實例，設定 memberId 和 teacherAccountStatus
-//            Teacher newTeacher = tService.becomeTeacher(memberId);
-//            
-//         // 設定其他 Teacher 相關屬性
-//            newTeacher.setTeacherName(teacher.getTeacherName());
-////            newTeacher.setTeacherProfilePic(teacher.getTeacherProfilePic());
-//            newTeacher.setTeacherAccountStatus("已啟用");
-//            newTeacher.setTeacherContract("YES");
-//            newTeacher.setTeacherProfile(teacher.getTeacherProfile());
-//            newTeacher.setTeacherMail(teacher.getTeacherMail());
-//            newTeacher.setTeacherTel(teacher.getTeacherTel());
-//        	
-//        	 tService.addTeacher(newTeacher);
-//
-//            return ResponseEntity.ok("教師資料已成功新增");
-//        } catch (Exception e) {
-//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("新增教師資料時發生錯誤：" + e.getMessage());
-//        }
-//    }
-	
-//	@PutMapping("/beaomeTeacher")
-//	public ResponseEntity<String>  becomeTeacher(@RequestBody TeacherDTO teacherDTO,HttpSession session){
-//		// 判斷 user 不存在且不為 ADMIN 且不為 TEACHER
-//		Member user = (Member) session.getAttribute("loggedInMember");
-//		if (user == null || !user.getAccess().equals(MemberAccess.ADMIN) || user.getAccess().equals(MemberAccess.TEACHER)) {
-//			return null;
-//		}
-//		
-//		//將TeacherDTO 資料映射到Teacher實體
-//		Teacher teacher = new Teacher();
-//		teacher.setTeacherName(teacherDTO.getTeacherName());
-//		teacher.setTeacherContract(teacherDTO.getTeacherContract());
-//		teacher.setTeacherTel(teacherDTO.getTeacherTel());
-//		teacher.setTeacherMail(teacherDTO.getTeacherMail());
-//		teacher.setTeacherProfile(teacherDTO.getTeacherProfile());
-//		
-//		teacher.setMember(user);
-//		
-//		List<TeacherPicture> pictures = new ArrayList<>();
-//		if(teacherDTO.getPictures() != null) {
-//			for (TeacherPicture pictureURL: teacherDTO.getPictures()) {
-//				TeacherPicture picture = new TeacherPicture();
-//				picture.setPictureURL(pictureURL.getPictureURL());
-//				picture.setTeacher(teacher);
-//				pictures.add(picture);
-//			}
-//		}
-//		teacher.setPictures(pictures);
-//		return ResponseEntity.ok("教師已成功新增");
-//	}
+
 
 	// 查詢老師個人資料by id
 	@GetMapping("/{id}")
@@ -275,37 +221,7 @@ public class TeacherController {
 
 	}
 
-//	@GetMapping("/check-teacher")
-//	public ResponseEntity<String> checkTeacher(HttpServletRequest request) {
-//		// 從Cookie中獲得身份訊息
-//		Cookie[] cookies = request.getCookies();
-//		if (cookies != null) {
-//			for (Cookie cookie : cookies) {
-//				if ("userType".equals(cookie.getName()) && "teacher".equals(cookie.getValue())) {
-//					// 是教師身分
-//					return ResponseEntity.ok("You are a teacher.");
-//				}
-//			}
-//		}
-//
-//		// 不是教師身分
-//		return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Access denied.");
-//	}
 
-//	@GetMapping("/set-teacher-cookie")
-//	public ResponseEntity<String> setTeacherCookie(HttpServletResponse response) {
-//		// 創建一個名為"userType"的Cookie，並將值設置為"teacher"
-//		Cookie userTypeCookie = new Cookie("userType", "teacher");
-//
-//		// 可以設置Cookie的其他屬性，如過期時間、域等
-//		// userTypeCookie.setMaxAge(3600); // 過期时間設為1小時
-//
-//		// 添加Cookie到response
-//		response.addCookie(userTypeCookie);
-//
-//		return ResponseEntity.ok("Teacher cookie set successfully.");
-//	}
-//
 //	// 課程分頁查詢
 	@PostMapping("/pagenation")
 	public List<TeacherCmsTable> getTeacherPage(@RequestBody SortCondition sortCon, HttpSession session) {
@@ -362,6 +278,7 @@ public class TeacherController {
 				/*-------------------getPicture回傳值[0]為檔案MIME字串(如image/png 等)  將其設定到 headers中----------------------------*/
 				headers.setContentType(MediaType.parseMediaType(picture.get(0)));
 
+				System.out.println("headers"+headers);
 				/*-------------------getPicture回傳值[1]為檔案base64字串  將其設定到body中----------------------------*/
 				return picture;
 			}
