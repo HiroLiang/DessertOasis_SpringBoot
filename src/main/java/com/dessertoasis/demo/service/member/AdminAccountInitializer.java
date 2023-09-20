@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
+import com.dessertoasis.demo.model.member.Bank;
 import com.dessertoasis.demo.model.member.Member;
 import com.dessertoasis.demo.model.member.MemberAccess;
 import com.dessertoasis.demo.model.member.MemberDetail;
@@ -111,6 +112,10 @@ public class AdminAccountInitializer {
     		 		Date date = dateFormat.parse("1989-06-04");
     		 		userDetail.setBirthday(date);
     		 		
+    		 		Bank bank = new Bank();
+    		 		bank.setBankAccount("0021057123456127");
+    		 		bank.setBankCodeName("001");
+    		 		bank.setBranchName("高雄分行");
     		 		
     		 		user.setFullName("一般使用者");
     		 		user.setAccount("user");
@@ -123,6 +128,7 @@ public class AdminAccountInitializer {
     		 		user.setSignDate(new Date());
     		 		
     		 		//保持one to one關係
+    		 		user.setBank(bank);
     		 		user.setMemberDetail(userDetail);
     		 	    userDetail.setMember(user);
 //    		 		
@@ -141,6 +147,11 @@ public class AdminAccountInitializer {
     		 		Date date = dateFormat.parse("1989-06-05");
     		 		adminDetail.setBirthday(date);
     		 		
+    		 		Bank bank = new Bank();
+    		 		bank.setBankAccount("0036457113456327");
+    		 		bank.setBankCodeName("002");
+    		 		bank.setBranchName("台中分行");
+    		 		
     	            admin.setFullName("管理人員");
     	            admin.setAccount("admin");
     	            admin.setMemberName("管理");
@@ -150,7 +161,8 @@ public class AdminAccountInitializer {
     	            String password = "admin";
     	            admin.setPasswords(passwordEncoder.encode(password));
     	            admin.setSignDate(new Date());
-
+    	           
+    	            admin.setBank(bank);
     	            admin.setMemberDetail(adminDetail);
     	            adminDetail.setMember(admin);
 //    		 		
