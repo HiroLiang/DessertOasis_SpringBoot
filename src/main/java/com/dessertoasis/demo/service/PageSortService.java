@@ -142,12 +142,12 @@ public class PageSortService {
 		if (sortCon.getSearchRules() != null && sortCon.getSearchRules().size() != 0) {
 			System.out.println("search");
 			for (SearchRules rule : sortCon.getSearchRules()) {
-//				if (hasProperty(product, rule.getKey())) {
-//					predicate = cb.and(predicate, cb.like(root.get(rule.getKey()), "%" + rule.getInput() + "%"));
-//				} else {
-//					predicate = cb.and(predicate,
-//							cb.like(joinCategory.get(rule.getKey()), "%" + rule.getInput() + "%"));
-//				}
+				if (hasProperty(product, rule.getKey())) {
+					predicate = cb.and(predicate, cb.like(root.get(rule.getKey()), "%" + rule.getInput() + "%"));
+				} else {
+					predicate = cb.and(predicate,
+							cb.like(joinCategory.get(rule.getKey()), "%" + rule.getInput() + "%"));
+				}
 				if (rule.getKey().equals("categoryId")) {
 					predicate = cb.and(predicate, cb.like(joinCategory.get("id"), rule.getInput()));
 				} else if (hasProperty(product, rule.getKey())) {
@@ -180,6 +180,11 @@ public class PageSortService {
 						cb.between(joinCategory.get(sortCon.getNumKey()), sortCon.getNumStart(), sortCon.getNumEnd()));
 			}
 		}
+
+		
+		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
 		return predicate;
 	}
 
@@ -262,6 +267,7 @@ public class PageSortService {
 		return predicate;
 	}
 	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 
 	// ~~~~~~~~~課程後台查詢條件~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	public Predicate checkCourseCondition(Root<Course> root, Join<Course, Teacher> join, Join<Course, Category> catJoin,

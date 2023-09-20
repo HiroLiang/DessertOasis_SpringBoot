@@ -176,7 +176,7 @@ public class TeacherService {
 		// 決定join Table
 		Join<Teacher, Member> memberJoin = root.join("member");
 		// 決定搜索欄位
-		cq.multiselect(root.get("id"), memberJoin.get("fullName"), root.get("teacherTel"), root.get("teacherMail"));
+		cq.multiselect(root.get("id"), memberJoin.get("fullName"),root.get("teacherName"), root.get("teacherTel"), root.get("teacherMail"),root.get("teacherProfile"));
 		// 計算條件數量
 		List<DateRules> dateRules = sortCod.getDateRules();
 		List<SearchRules> searchRules = sortCod.getSearchRules();

@@ -32,13 +32,14 @@ import com.dessertoasis.demo.model.course.Teacher;
 import com.dessertoasis.demo.model.course.TeacherCmsTable;
 import com.dessertoasis.demo.model.course.TeacherDTO;
 import com.dessertoasis.demo.model.course.TeacherDemo;
+
 import com.dessertoasis.demo.model.course.TeacherFrontDTO;
 import com.dessertoasis.demo.model.course.TeacherPicture;
 
 import com.dessertoasis.demo.model.course.TeacherPictureRepository;
 import com.dessertoasis.demo.model.member.Member;
 import com.dessertoasis.demo.model.member.MemberAccess;
-
+import com.dessertoasis.demo.model.member.MemberRepository;
 import com.dessertoasis.demo.model.product.Product;
 import com.dessertoasis.demo.model.product.ProductPicture;
 import com.dessertoasis.demo.model.recipe.RecipeFrontDTO;
@@ -63,9 +64,14 @@ public class TeacherController {
 	
 	@Autowired
     private TeacherPictureRepository tpRepo;
+	
+	
 
 	@Autowired
 	private MemberService mService;
+	
+	@Autowired
+	private MemberRepository mRepo;
 
 	@Autowired
 	private CourseService cService;
@@ -95,14 +101,20 @@ public class TeacherController {
 	public ResponseEntity<Teacher> getTeacherById(@PathVariable Integer id, HttpSession session) {
 
 		// 判斷 user 存在且為 TEACHER
-//				Member user = (Member) session.getAttribute("loggedInMember");
+				Member user = (Member) session.getAttribute("loggedInMember");
 //				if (user == null || !user.getAccess().equals(MemberAccess.TEACHER)) {
 //					return null;
 //				}
+				
+//				Optional<Member> optional = mRepo.findById(user.getId());
+//				Member member = optional.get();
+				
 
 		Teacher teacher = tService.getTeacherById(id);
 		return ResponseEntity.ok(teacher);
 	}
+	
+
 
 	// 列出所有老師
 	@GetMapping("/all")
