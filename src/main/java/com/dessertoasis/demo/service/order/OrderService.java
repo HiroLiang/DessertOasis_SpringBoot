@@ -1,8 +1,12 @@
 package com.dessertoasis.demo.service.order;
 
+import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -10,6 +14,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import com.dessertoasis.demo.model.cart.CartListDTO;
 import com.dessertoasis.demo.model.cart.CourseCartDTO;
 import com.dessertoasis.demo.model.cart.ProductCartDTO;
 import com.dessertoasis.demo.model.cart.ReservationCartDTO;
@@ -20,6 +25,7 @@ import com.dessertoasis.demo.model.member.MemberRepository;
 import com.dessertoasis.demo.model.order.CourseOrderItem;
 import com.dessertoasis.demo.model.order.Order;
 import com.dessertoasis.demo.model.order.OrderCmsTable;
+import com.dessertoasis.demo.model.order.OrderDTO;
 import com.dessertoasis.demo.model.order.OrderRepository;
 import com.dessertoasis.demo.model.order.ProdOrderItem;
 import com.dessertoasis.demo.model.order.Reservation;
@@ -30,6 +36,8 @@ import com.dessertoasis.demo.model.sort.SortCondition;
 import com.dessertoasis.demo.model.sort.SortCondition.SortWay;
 import com.dessertoasis.demo.service.PageSortService;
 
+import ecpay.payment.integration.AllInOne;
+import ecpay.payment.integration.domain.AioCheckOutALL;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.TypedQuery;
@@ -91,11 +99,10 @@ public class OrderService {
 		LocalDateTime currentDateTime = LocalDateTime.now();
 		order.setOrdDate(currentDateTime);
 		order.setUpdateDate(currentDateTime);
-		
-		String ordStatus = (order.getProdOrderItems() != null && order.getProdOrderItems().size() > 0)?
-				"處理中" : "已下訂";
+
+		String ordStatus = (order.getProdOrderItems() != null && order.getProdOrderItems().size() > 0) ? "處理中" : "已下訂";
 		order.setOrdStatus(ordStatus);
-		
+
 		return orderRepo.save(order);
 	}
 
@@ -153,38 +160,38 @@ public class OrderService {
 		}
 		return null;
 	}
-	
+
 	// 取出會員預約的教室
 	public List<Reservation> getReservationsByMemberId(Integer memberId) {
 		Member member = memberRepo.findById(memberId).get();
 		List<Order> orders = member.getOrders();
-		
+
 		List<Reservation> reservations = new ArrayList<>();
 		for (Order order : orders) {
 			if (order.getReservations() != null) {
 				reservations.addAll(order.getReservations());
 			}
 		}
-		
+
 		return reservations;
 	}
-	
+
 	// 修改訂單狀態
 	public Order updateOrdStatus(Integer ordId, String ordStatus) {
 		Order order = orderRepo.findById(ordId).get();
 		order.setOrdStatus(ordStatus);
-		
+
 		LocalDateTime currentDateTime = LocalDateTime.now();
 		order.setUpdateDate(currentDateTime);
-		
+
 		return orderRepo.save(order);
 	}
-	
+
 	// 刪除訂單
 	public void deleteByOrdId(Integer ordId) {
 		orderRepo.deleteById(ordId);
 	}
-	
+
 	/*-----------------------------------------v v v 範例 v v v---------------------------------------------------*/
 	// Order table範例
 	public List<OrderCmsTable> getOrderPagenation(SortCondition sortCon) {
@@ -205,7 +212,7 @@ public class OrderService {
 		Predicate predicate = cb.conjunction();
 		Order order = new Order();
 		Predicate pre = pService.checkCondition(root, join, predicate, sortCon, cb, order);
-		
+
 		// 填入 where 條件
 		cq.where(pre);
 
@@ -234,7 +241,7 @@ public class OrderService {
 
 		// 送出請求
 		List<OrderCmsTable> list = query.getResultList();
-		if (list != null) 
+		if (list != null)
 			return list;
 		return null;
 	}
@@ -257,12 +264,46 @@ public class OrderService {
 		Order order = new Order();
 		Predicate pre = pService.checkCondition(root, join, predicate, sortCon, cb, order);
 		cq.where(pre);
-		
-		//查詢傯頁數
+
+		// 查詢傯頁數
 		Long totalRecords = em.createQuery(cq).getSingleResult();
 		Integer totalPages = (int) Math.ceil((double) totalRecords / sortCon.getPageSize());
-		
+
 		return totalPages;
 	}
 	/*-----------------------------------------＾＾＾範例＾＾＾---------------------------------------------------*/
+
+	// ECPAY SERVICE
+	public String ecpayCheckout(List<OrderDTO> orderDtoList) {
+		String totalPrice = "";
+//		String ordId="";
+		String itemName = "";
+		for (int i = 0; i < orderDtoList.size(); i++) {
+			totalPrice = Integer.toString(orderDtoList.get(i).getTotal());
+			itemName = orderDtoList.get(i).getProdOrderItems().get(i).getProdName();
+//			ordId = Integer.toString(oDto.getOrdId());
+		}
+		
+		String uuId = UUID.randomUUID().toString().replaceAll("-", "").substring(0, 20);
+		
+		Date date = new Date();
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+		String formattedDate = sdf.format(date);
+		
+		AllInOne all = new AllInOne("");
+
+		AioCheckOutALL obj = new AioCheckOutALL();
+		obj.setMerchantTradeNo(uuId);
+		obj.setMerchantTradeDate(formattedDate);
+		obj.setTotalAmount(totalPrice);
+		obj.setTradeDesc("test Description");
+		obj.setItemName(itemName);
+		obj.setReturnURL("http://211.23.128.214:5000");
+		obj.setClientBackURL("http://localhost:5173/#/cart");
+		obj.setNeedExtraPaidInfo("N");
+		
+		String form = all.aioCheckOut(obj, null);
+
+		return form;
+	}
 }
