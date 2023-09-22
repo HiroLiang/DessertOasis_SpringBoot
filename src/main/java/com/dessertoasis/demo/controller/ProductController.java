@@ -197,7 +197,9 @@ public class ProductController {
     public ResponseEntity<String> uploadImage(@RequestParam("productId") Integer productId, @RequestParam("image") MultipartFile image) {
        
         try {
-            String uploadDir = "C:/workspace/dessertoasis-vue/public/images/product/" +productId;
+        	String uploadDir ="C:/Users/iSpan/Documents/dessertoasis-vue/public/images/product/"+productId;
+        	 //String uploadDir ="C:\\Users\\iSpan\\Documents\\dessertoasis-vue\\public\\" +productId;
+            //String uploadDir = "C:/workspace/dessertoasis-vue/public/images/product/" +productId;
             File dir = new File(uploadDir);
             if (!dir.exists()) {
                 dir.mkdirs();
@@ -228,8 +230,8 @@ System.out.println(imagePath);
 		System.out.println("start");
 		 if (!productPictures.getPictures().isEmpty()) {
 		        System.out.println("if");
-		        String userPath = "C:/workspace/dessertoasis-vue/public";
-		        // String userPath = "C:\\Users\\iSpan\\Documents\\dessertoasis-vue\\public\\";
+		        //String userPath = "C:/workspace/dessertoasis-vue/public";
+		         String userPath = "C:\\Users\\iSpan\\Documents\\dessertoasis-vue\\public";
 		        
 		       
 		        for (ProductPicture productPicture : productPictures.getPictures()) {
