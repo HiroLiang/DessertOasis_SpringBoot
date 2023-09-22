@@ -4,7 +4,6 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
 
@@ -14,10 +13,13 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import com.dessertoasis.demo.model.cart.CartListDTO;
-import com.dessertoasis.demo.model.cart.CourseCartDTO;
-import com.dessertoasis.demo.model.cart.ProductCartDTO;
+import com.dessertoasis.demo.model.cart.Cart;
+import com.dessertoasis.demo.model.cart.CartRepository;
+import com.dessertoasis.demo.model.cart.CartToOrderDTO;
+import com.dessertoasis.demo.model.cart.ReservationCart;
 import com.dessertoasis.demo.model.cart.ReservationCartDTO;
+import com.dessertoasis.demo.model.cart.ReservationCartRepository;
+import com.dessertoasis.demo.model.category.RootCategory;
 import com.dessertoasis.demo.model.course.Course;
 import com.dessertoasis.demo.model.course.CourseRepository;
 import com.dessertoasis.demo.model.member.Member;
@@ -36,6 +38,7 @@ import com.dessertoasis.demo.model.product.ProductRepository;
 import com.dessertoasis.demo.model.sort.SortCondition;
 import com.dessertoasis.demo.model.sort.SortCondition.SortWay;
 import com.dessertoasis.demo.service.PageSortService;
+import com.dessertoasis.demo.service.cart.CartService;
 
 import ecpay.payment.integration.AllInOne;
 import ecpay.payment.integration.domain.AioCheckOutALL;
@@ -53,9 +56,15 @@ public class OrderService {
 
 	@PersistenceContext
 	private EntityManager em;
+	
+	@Autowired
+	private RootCategory rootCategory;
 
 	@Autowired
 	private OrderRepository orderRepo;
+	
+	@Autowired
+	private CartRepository cartRepo;
 
 	@Autowired
 	private MemberRepository memberRepo;
@@ -68,9 +77,15 @@ public class OrderService {
 
 	@Autowired
 	private ReservationRepository rsvRepo;
+	
+	@Autowired
+	private ReservationCartRepository rsvCartRepo;
 
 	@Autowired
 	private ReservationService rsvService;
+	
+	@Autowired
+	private CartService cartService;
 
 	@Autowired
 	private PageSortService pService;
@@ -92,56 +107,88 @@ public class OrderService {
 		Page<Order> page = orderRepo.findByMember(member, pageRequest);
 		return page;
 	}
-
+	
 	// 新增訂單
-	public Order insert(Order order, Integer memberId) {
+	public String insert(CartToOrderDTO cartToOrderDTO, Integer memberId) {
+		Order order = new Order();
+		
+		List<Integer> cartIds = cartToOrderDTO.getCartIds();
+		for (Integer cartId : cartIds) {
+			Cart cartItem = cartRepo.findById(cartId).get();
+			if (cartItem.getCategoryId() == rootCategory.getProductCategoryId()) {
+				this.placeProdOrderItem(order, cartItem);
+			}
+			else if (cartItem.getCategoryId() == rootCategory.getCourseCategoryId()) {
+				this.placeCourseOrderItem(order, cartItem);
+			}
+			else if (cartItem.getCategoryId() == rootCategory.getReservationCategoryId()) {
+				this.placeReservation(order, cartItem);
+			}
+		}
+		
 		order.setMember(memberRepo.findById(memberId).get());
-
+		
+		order.setProdOrderAddress(cartToOrderDTO.getProdOrderAddress());
+		
 		LocalDateTime currentDateTime = LocalDateTime.now();
 		order.setOrdDate(currentDateTime);
 		order.setUpdateDate(currentDateTime);
 
 		String ordStatus = (order.getProdOrderItems() != null && order.getProdOrderItems().size() > 0) ? "處理中" : "已下訂";
 		order.setOrdStatus(ordStatus);
-
-		return orderRepo.save(order);
+		orderRepo.save(order);
+		
+		// 清理購物車
+		cartService.deleteCarts(cartIds);
+		
+		return "1";
 	}
 
-	public Order placeProdOrderItem(Order order, List<ProductCartDTO> productCartDTOs) {
-		if (productCartDTOs != null) {
-			List<ProdOrderItem> orderItems = new ArrayList<>();
-			for (ProductCartDTO cartDTO : productCartDTOs) {
-				Product product = productRepo.findById(cartDTO.getProductId()).get();
-				ProdOrderItem ordItem = new ProdOrderItem(cartDTO, product, order);
-				orderItems.add(ordItem);
-			}
-			order.setProdOrderItems(orderItems);
+	public Order placeProdOrderItem(Order order, Cart cartItem) {
+		
+		Product product = productRepo.findById(cartItem.getInterestedId()).get();
+		ProdOrderItem ordItem = new ProdOrderItem(cartItem.getProdQuantity(), product, order);
+		
+		if (order.getProdOrderItems() == null) {
+			List<ProdOrderItem> ordItems = new ArrayList<>();
+			ordItems.add(ordItem);
+			order.setProdOrderItems(ordItems);
+		} else {
+			order.getProdOrderItems().add(ordItem);
 		}
+		
 		return order;
 	}
 
-	public Order placeCourseOrderItem(Order order, List<CourseCartDTO> courseCartDTOs) {
-		if (courseCartDTOs != null) {
-			List<CourseOrderItem> orderItems = new ArrayList<>();
-			for (CourseCartDTO cartDTO : courseCartDTOs) {
-				Course course = courseRepo.findById(cartDTO.getCourseId()).get();
-				CourseOrderItem ordItem = new CourseOrderItem(cartDTO, course, order);
-				orderItems.add(ordItem);
-			}
-			order.setCourseOrderItems(orderItems);
+	public Order placeCourseOrderItem(Order order, Cart cartItem) {
+		
+		Course course = courseRepo.findById(cartItem.getInterestedId()).get();
+		CourseOrderItem ordItem = new CourseOrderItem(course, order);
+		
+		if (order.getCourseOrderItems() == null) {
+			List<CourseOrderItem> ordItems = new ArrayList<>();
+			ordItems.add(ordItem);
+			order.setCourseOrderItems(ordItems);
+		}else {
+			order.getCourseOrderItems().add(ordItem);
 		}
+		
 		return order;
 	}
 
-	public Order placeReservation(Order order, List<ReservationCartDTO> rsvCartDTOs) {
-		if (rsvCartDTOs != null) {
-			List<Reservation> reservations = new ArrayList<>();
-			for (ReservationCartDTO cartDTO : rsvCartDTOs) {
-				Reservation rsv = new Reservation(cartDTO, order);
-				reservations.add(rsv);
-			}
-			order.setReservations(reservations);
+	public Order placeReservation(Order order, Cart cartItem) {
+		
+		ReservationCart rsvCart = rsvCartRepo.findById(cartItem.getInterestedId()).get();
+		Reservation reservation = new Reservation(rsvCart, order);
+		
+		if (order.getReservations() == null) {
+			List<Reservation> ordItems = new ArrayList<>();
+			ordItems.add(reservation);
+			order.setReservations(ordItems);
+		}else {
+			order.getReservations().add(reservation);
 		}
+		
 		return order;
 	}
 

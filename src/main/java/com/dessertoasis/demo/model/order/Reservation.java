@@ -1,8 +1,10 @@
 package com.dessertoasis.demo.model.order;
 
 import java.time.LocalDate;
+import java.util.HashMap;
+import java.util.Map;
 
-import com.dessertoasis.demo.model.cart.ReservationCartDTO;
+import com.dessertoasis.demo.model.cart.ReservationCart;
 import com.dessertoasis.demo.model.classroom.Classroom;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
@@ -49,12 +51,18 @@ public class Reservation {
 		
 	}
 	
-	public Reservation(ReservationCartDTO rsvDTO, Order order) {
-		this.reservationDate = rsvDTO.getReservationDate();
-		this.reservationTime = rsvDTO.getReservationTime();
-		this.detail = rsvDTO.getDetail();
-		this.price = rsvDTO.getPrice();
-		this.classroom = rsvDTO.getClassroom();
+	public Reservation(ReservationCart rsv, Order order) {
+		this.reservationDate = rsv.getReservationDate();
+		this.reservationTime = rsv.getReservationTime();
+		this.detail = rsv.getDetail();
+		this.classroom = rsv.getClassroom();
 		this.order = order;
+		
+		Map<String, Integer> priceMap = new HashMap<>();
+		priceMap.put("A", this.classroom.getMorningPrice());
+		priceMap.put("B", this.classroom.getAfternoonPrice());
+		priceMap.put("C", this.classroom.getNightPrice());
+		
+		this.price = priceMap.get(this.reservationTime);
 	}
 }
