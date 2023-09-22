@@ -262,8 +262,9 @@ System.out.println(imagePath);
 	    List<String> pictureURLs = new ArrayList<>();
 
 	    if (!productPictures.getPictures().isEmpty()) {
-	        String userPath = "C:\\workspace\\dessertoasis-vue\\public";
+//	        String userPath = "C:\\workspace\\dessertoasis-vue\\public";
 	        // String userPath = "C:\\Users\\iSpan\\Documents\\dessertoasis-vue\\public\\";
+	    	String userPath = "C:\\Users\\iSpan\\Documents\\dessertoasis-vue\\public";
 
 	        for (ProductPicture productPicture : productPictures.getPictures()) {
 	            String pictureURL = productPicture.getPictureURL();

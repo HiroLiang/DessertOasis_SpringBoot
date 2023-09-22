@@ -310,9 +310,13 @@ public class CourseController {
 
 	@GetMapping("/base64/image")
 	public String getPictureUrlByPath(@RequestParam("path") String path) {
-		String picUrl = imgUtil.writeImageToString(path);
-		if (picUrl != null)
-			return picUrl;
+		System.out.println(path);
+		if(path!=null) {
+			String picUrl = imgUtil.writeImageToString(path);
+			if (picUrl != null)
+				return picUrl;
+			
+		}
 		return null;
 	}
 

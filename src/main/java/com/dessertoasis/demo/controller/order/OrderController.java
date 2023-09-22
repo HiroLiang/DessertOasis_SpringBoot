@@ -124,4 +124,12 @@ public class OrderController {
 		return pages;
 	}
 	/*-----------------------------------------＾＾＾範例＾＾＾---------------------------------------------------*/
+	
+	//ECPAY CONTROLLER
+	@PostMapping("/ecpayCheckout")
+	public String ecpayCheckout(List<OrderDTO> oDto) {
+		String aioCheckOutALLForm = orderService.ecpayCheckout(oDto);
+		
+		return aioCheckOutALLForm;
+	}
 }
