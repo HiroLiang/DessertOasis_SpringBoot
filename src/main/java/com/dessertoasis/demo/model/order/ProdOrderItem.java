@@ -42,10 +42,10 @@ public class ProdOrderItem {
 		
 	}
 	
-	public ProdOrderItem(ProductCartDTO cartItem, Product product, Order order) {
+	public ProdOrderItem(Integer prodQuantity, Product product, Order order) {
 		this.product = product;
-		this.price = cartItem.getProdPrice();
-		this.quantity = cartItem.getProdQuantity();
+		this.price = product.getProdPrice();
+		this.quantity = prodQuantity;
 		this.order = order;
 	}
 }
