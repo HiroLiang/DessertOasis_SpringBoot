@@ -23,6 +23,7 @@ import com.dessertoasis.demo.model.cart.ProductCartDTO;
 import com.dessertoasis.demo.model.cart.ReservationCartDTO;
 import com.dessertoasis.demo.model.member.Member;
 import com.dessertoasis.demo.model.member.MemberAccess;
+import com.dessertoasis.demo.model.order.EcpayDTO;
 import com.dessertoasis.demo.model.order.Order;
 import com.dessertoasis.demo.model.order.OrderCmsTable;
 import com.dessertoasis.demo.model.order.OrderDTO;
@@ -159,8 +160,8 @@ public class OrderController {
 	
 	//ECPAY CONTROLLER
 	@PostMapping("/ecpayCheckout")
-	public String ecpayCheckout(List<OrderDTO> oDto) {
-		String aioCheckOutALLForm = orderService.ecpayCheckout(oDto);
+	public String ecpayCheckout(@RequestBody EcpayDTO ecpayDto) {
+		String aioCheckOutALLForm = orderService.ecpayCheckout(ecpayDto);
 		
 		return aioCheckOutALLForm;
 	}

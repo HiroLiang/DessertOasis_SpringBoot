@@ -23,6 +23,7 @@ import com.dessertoasis.demo.model.course.CourseRepository;
 import com.dessertoasis.demo.model.member.Member;
 import com.dessertoasis.demo.model.member.MemberRepository;
 import com.dessertoasis.demo.model.order.CourseOrderItem;
+import com.dessertoasis.demo.model.order.EcpayDTO;
 import com.dessertoasis.demo.model.order.Order;
 import com.dessertoasis.demo.model.order.OrderCmsTable;
 import com.dessertoasis.demo.model.order.OrderDTO;
@@ -274,15 +275,9 @@ public class OrderService {
 	/*-----------------------------------------＾＾＾範例＾＾＾---------------------------------------------------*/
 
 	// ECPAY SERVICE
-	public String ecpayCheckout(List<OrderDTO> orderDtoList) {
-		String totalPrice = "";
-//		String ordId="";
-		String itemName = "";
-		for (int i = 0; i < orderDtoList.size(); i++) {
-			totalPrice = Integer.toString(orderDtoList.get(i).getTotal());
-			itemName = orderDtoList.get(i).getProdOrderItems().get(i).getProdName();
-//			ordId = Integer.toString(oDto.getOrdId());
-		}
+	public String ecpayCheckout(EcpayDTO ecpay) {
+		
+		System.err.println(ecpay.getToTalPrice());
 		
 		String uuId = UUID.randomUUID().toString().replaceAll("-", "").substring(0, 20);
 		
@@ -295,11 +290,11 @@ public class OrderService {
 		AioCheckOutALL obj = new AioCheckOutALL();
 		obj.setMerchantTradeNo(uuId);
 		obj.setMerchantTradeDate(formattedDate);
-		obj.setTotalAmount(totalPrice);
+		obj.setTotalAmount(Integer.toString(ecpay.getToTalPrice()));
 		obj.setTradeDesc("test Description");
-		obj.setItemName(itemName);
-		obj.setReturnURL("http://211.23.128.214:5000");
-		obj.setClientBackURL("http://localhost:5173/#/cart");
+		obj.setItemName(ecpay.getItemName()+"等共"+Integer.toString(ecpay.getItemNumber())+"項");
+		obj.setReturnURL("http://localhost:5173/#/cart");
+		obj.setClientBackURL("http://localhost:5173/#/cart/pay_success");
 		obj.setNeedExtraPaidInfo("N");
 		
 		String form = all.aioCheckOut(obj, null);
