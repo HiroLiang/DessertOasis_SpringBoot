@@ -30,7 +30,7 @@ public interface RecipeRepository extends JpaRepository<Recipes, Integer> {
 	List<Recipes> findTop10RecipeByCreateTime();
 	
 	//取得訪問數最高的10筆食譜
-	@Query(value="select top 10 * from Recipes order by recipeMonthlyVisitCount ASC", nativeQuery = true)
+	@Query(value="select top 10 * from Recipes order by recipeMonthlyVisitCount DESC", nativeQuery = true)
 	List<Recipes> findTop10RecipeByVisitCount();
 	
 	

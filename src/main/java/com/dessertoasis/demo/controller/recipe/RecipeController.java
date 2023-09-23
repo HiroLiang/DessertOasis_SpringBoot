@@ -189,9 +189,9 @@ public class RecipeController {
 	@ResponseBody
 	public String addRecipe(@RequestBody RecipeCreateDTO createDto, HttpSession session) {
 		Member member = (Member) session.getAttribute("loggedInMember");
-//		if (member != null) {
-		String add = recipeService.addRecipe(4, createDto);
-		/*-------------------------------使用ImageUploadUtil儲存圖片並接收回傳儲存位置區塊--------------------------------------*/
+		if (member != null) {
+			String add = recipeService.addRecipe(member.getId(), createDto);
+			/*-------------------------------使用ImageUploadUtil儲存圖片並接收回傳儲存位置區塊--------------------------------------*/
 //			Recipes recipe = new Recipes();
 //			recipe.setRecipeTitle(recipeTitle);
 //			recipe.setRecipeAuthor(member);
@@ -239,20 +239,21 @@ public class RecipeController {
 //			}
 //
 //			Boolean add = recipeService.addRecipe(1, recipe);
-		if (add != null) {
-			return add; // 新增成功,回傳食譜id
+			if (add != null) {
+				return add; // 新增成功,回傳食譜id
+			}
+			return "F";// 新增失敗 recipebean資料不符或是找不到對應使用者
+			/*-------------------------------使用ImageUploadUtil儲存圖片並接收回傳儲存位置區塊--------------------------------------*/
 		}
-		return "F";// 新增失敗 recipebean資料不符或是找不到對應使用者
-		/*-------------------------------使用ImageUploadUtil儲存圖片並接收回傳儲存位置區塊--------------------------------------*/
-//		}
-//		return "N";//新增失敗 找不到session中的使用者資料
+		return "N";// 新增失敗 找不到session中的使用者資料
 	}
 
 	/*----------------------------------------------圖檔處理回傳儲存路徑Controller------------------------------------------------------------------*/
 	@SuppressWarnings("resource")
 	@PostMapping(path = "test/uploadimg")
-	public List<String> sendPic(@RequestBody List<PicturesDTO> pictures) {
+	public List<String> sendPic(@RequestBody List<PicturesDTO> pictures, HttpSession session) {
 		/*---------設定儲存路徑---------*/
+		Member member = (Member) session.getAttribute("loggedInMember");
 
 //TODO 調整路徑
 //		final String uploadPath = "D:/dessertoasis-vue/public/";
@@ -269,95 +270,44 @@ public class RecipeController {
 			/*---------儲存成品圖區塊---------*/
 			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmssSSS");
 			String timestamp = LocalDateTime.now().format(formatter);
-//		if (member != null) {
-			// 調整存入資料庫的路徑位置
-			String sqlPath = "images/recipe" + "/" + 1 + "/";
-			String userFolder = uploadPath + sqlPath;
+			if (member != null) {
+				// 調整存入資料庫的路徑位置
+				String sqlPath = "images/recipe" + "/" + member.getId() + "/";
+				String userFolder = uploadPath + sqlPath;
 
-			File folder = new File(userFolder);
-			if (!folder.exists()) {
-				folder.mkdirs();
-			}
+				File folder = new File(userFolder);
+				if (!folder.exists()) {
+					folder.mkdirs();
+				}
 //			Optional<Recipes> getRecipe = recipeRepo.findById(recipe.getId());
 //			if (getRecipe.isPresent()) {
 //				Recipes useRecipe = getRecipe.get();
 
-			// 判斷陣列內有無檔案 避免讀取空值錯誤
-			if (pictures.get(0) != null) {
-				/*----------取得前端傳來的圖檔字串----------*/
-				String mainPic = pictures.get(0).getBase64Content();
-				String mainPicName = pictures.get(0).getFileName();
-				/*----------取得前端傳來的圖檔字串----------*/
-
-				/*----------寫入檔案及儲存位置串接字串----------*/
-				String mainFileName = mainPicName.substring(0, mainPicName.lastIndexOf("."));// 將副檔名與檔名拆開 取得檔名
-				String mainExtension = mainPicName.substring(mainPicName.lastIndexOf("."));// 將副檔名與檔名拆開 取得副檔名
-				String mainUniqueName = mainFileName + "_" + timestamp + mainExtension;// 將時間串入檔名
-
-				byte[] mainDecode = Base64.getDecoder().decode(mainPic);
-				File mainfile = new File(userFolder + mainUniqueName);
-
-				try {
-					FileOutputStream mainfileOutputStream = new FileOutputStream(mainfile);
-					mainfileOutputStream.write(mainDecode);
-					mainfileOutputStream.flush();
-					/*----------寫入檔案及儲存位置串接字串----------*/
-
-					/*----------將儲存位置準備回傳前端----------*/
-					msg.add("-1");
-					msg.add(sqlPath + mainUniqueName);
-					/*----------將儲存位置準備回傳前端----------*/
-				} catch (FileNotFoundException e) {
-					e.printStackTrace();
-					msg.add("N");
-					msg.add("MainFile not found");
-					return msg;
-				} catch (IOException e) {
-					e.printStackTrace();
-					msg.add("N");
-					msg.add("MainFile upload failed");
-					return msg;
-				}
-			}
-			/*---------儲存成品圖區塊---------*/
-//					useRecipe.setPictureURL(userFolder + mainUniqueName);
-//					recipeRepo.save(useRecipe);
-
-			// 處理步驟圖片
-//						List<RecipeSteps> steps = stepRepo.findRecipeStepsByRecipeId(recipe.getId());
-//					if (!steps.isEmpty()) {
-
-			/*---------儲存步驟圖區塊---------*/
-			for (int i = 1; i < pictures.size(); i++) {
-//							RecipeSteps step = steps.get(i);
-
 				// 判斷陣列內有無檔案 避免讀取空值錯誤
-				if (pictures.get(i) != null) {
-					String steptimestamp = LocalDateTime.now().format(formatter);
-
+				if (pictures.get(0) != null) {
 					/*----------取得前端傳來的圖檔字串----------*/
-					String stepPic = pictures.get(i).getBase64Content();
-					String originalfileName = pictures.get(i).getFileName();
+					String mainPic = pictures.get(0).getBase64Content();
+					String mainPicName = pictures.get(0).getFileName();
 					/*----------取得前端傳來的圖檔字串----------*/
 
 					/*----------寫入檔案及儲存位置串接字串----------*/
-					String fileName = originalfileName.substring(0, originalfileName.lastIndexOf("."));
-					String extension = originalfileName.substring(originalfileName.lastIndexOf("."));
-					String uniqueName = fileName + "_" + steptimestamp + extension;
+					String mainFileName = mainPicName.substring(0, mainPicName.lastIndexOf("."));// 將副檔名與檔名拆開 取得檔名
+					String mainExtension = mainPicName.substring(mainPicName.lastIndexOf("."));// 將副檔名與檔名拆開 取得副檔名
+					String mainUniqueName = mainFileName + "_" + timestamp + mainExtension;// 將時間串入檔名
+
+					byte[] mainDecode = Base64.getDecoder().decode(mainPic);
+					File mainfile = new File(userFolder + mainUniqueName);
 
 					try {
-						byte[] decode = Base64.getDecoder().decode(stepPic);
-						File file = new File(userFolder + uniqueName);
-						FileOutputStream fileOutputStream = new FileOutputStream(file);
-						fileOutputStream.write(decode);
-						fileOutputStream.flush();
-						fileOutputStream.close();
+						FileOutputStream mainfileOutputStream = new FileOutputStream(mainfile);
+						mainfileOutputStream.write(mainDecode);
+						mainfileOutputStream.flush();
 						/*----------寫入檔案及儲存位置串接字串----------*/
 
 						/*----------將儲存位置準備回傳前端----------*/
-						msg.add(sqlPath + uniqueName);
+						msg.add("-1");
+						msg.add(sqlPath + mainUniqueName);
 						/*----------將儲存位置準備回傳前端----------*/
-
 					} catch (FileNotFoundException e) {
 						e.printStackTrace();
 						msg.add("N");
@@ -369,18 +319,68 @@ public class RecipeController {
 						msg.add("MainFile upload failed");
 						return msg;
 					}
+				}
+				/*---------儲存成品圖區塊---------*/
+//					useRecipe.setPictureURL(userFolder + mainUniqueName);
+//					recipeRepo.save(useRecipe);
+
+				// 處理步驟圖片
+//						List<RecipeSteps> steps = stepRepo.findRecipeStepsByRecipeId(recipe.getId());
+//					if (!steps.isEmpty()) {
+
+				/*---------儲存步驟圖區塊---------*/
+				for (int i = 1; i < pictures.size(); i++) {
+//							RecipeSteps step = steps.get(i);
+
+					// 判斷陣列內有無檔案 避免讀取空值錯誤
+					if (pictures.get(i) != null) {
+						String steptimestamp = LocalDateTime.now().format(formatter);
+
+						/*----------取得前端傳來的圖檔字串----------*/
+						String stepPic = pictures.get(i).getBase64Content();
+						String originalfileName = pictures.get(i).getFileName();
+						/*----------取得前端傳來的圖檔字串----------*/
+
+						/*----------寫入檔案及儲存位置串接字串----------*/
+						String fileName = originalfileName.substring(0, originalfileName.lastIndexOf("."));
+						String extension = originalfileName.substring(originalfileName.lastIndexOf("."));
+						String uniqueName = fileName + "_" + steptimestamp + extension;
+
+						try {
+							byte[] decode = Base64.getDecoder().decode(stepPic);
+							File file = new File(userFolder + uniqueName);
+							FileOutputStream fileOutputStream = new FileOutputStream(file);
+							fileOutputStream.write(decode);
+							fileOutputStream.flush();
+							fileOutputStream.close();
+							/*----------寫入檔案及儲存位置串接字串----------*/
+
+							/*----------將儲存位置準備回傳前端----------*/
+							msg.add(sqlPath + uniqueName);
+							/*----------將儲存位置準備回傳前端----------*/
+
+						} catch (FileNotFoundException e) {
+							e.printStackTrace();
+							msg.add("N");
+							msg.add("MainFile not found");
+							return msg;
+						} catch (IOException e) {
+							e.printStackTrace();
+							msg.add("N");
+							msg.add("MainFile upload failed");
+							return msg;
+						}
 //							step.setStepPicture(userFolder + uniqueName);
 //							stepRepo.save(step);
+					}
 				}
+				return msg; // 送出處理好的圖片儲存位址,成品圖找到-1後的一筆，其後皆為步驟圖片
+				/*---------儲存步驟圖路徑串接區塊---------*/
 			}
-			return msg; // 送出處理好的圖片儲存位址,成品圖找到-1後的一筆，其後皆為步驟圖片
-			/*---------儲存步驟圖路徑串接區塊---------*/
-		}
-
 //				}
 //			}
 
-//		}
+		}
 		msg.add("F");
 		return msg; // 沒有資料則回傳F
 	}
@@ -434,7 +434,7 @@ public class RecipeController {
 	public ResponseEntity<String> getPicByGetPicture(@RequestBody Integer recipeId) {
 		Optional<Recipes> findById = recipeRepo.findById(recipeId);
 		if (findById.isPresent()) {
-			//TODO 調整路徑
+			// TODO 調整路徑
 //			String userPath ="D:/dessertoasis-vue/public/";
 			String userPath = "C:\\Users\\iSpan\\Documents\\dessertoasis-vue\\public\\";
 			Recipes recipe = findById.get();
@@ -462,8 +462,8 @@ public class RecipeController {
 		Optional<Recipes> findById = recipeRepo.findById(recipeId);
 		List<String> pictureDatas = new ArrayList<>();
 		if (findById.isPresent()) {
-			
-			//TODO 調整路徑
+
+			// TODO 調整路徑
 //			String userPath ="D:/dessertoasis-vue/public/";
 			String userPath = "C:\\Users\\iSpan\\Documents\\dessertoasis-vue\\public\\";
 			Recipes recipe = findById.get();
@@ -517,8 +517,8 @@ public class RecipeController {
 		}
 		return "N";
 	}
-	
-	//重新啟用食譜
+
+	// 重新啟用食譜
 	@PostMapping("recipe/republishrecipe")
 	public String republishRecipe(@RequestParam("recipeId") Integer recipeId, HttpSession session) {
 		Member member = (Member) session.getAttribute("loggedInMember");
