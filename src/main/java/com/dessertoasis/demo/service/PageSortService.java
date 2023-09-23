@@ -17,6 +17,7 @@ import com.dessertoasis.demo.model.member.Member;
 import com.dessertoasis.demo.model.order.Order;
 import com.dessertoasis.demo.model.product.Product;
 import com.dessertoasis.demo.model.product.ProductPicture;
+import com.dessertoasis.demo.model.recipe.RecipeCategory;
 import com.dessertoasis.demo.model.recipe.Recipes;
 import com.dessertoasis.demo.model.sort.DateRules;
 import com.dessertoasis.demo.model.sort.SearchRules;
@@ -103,6 +104,9 @@ public class PageSortService {
 			for (SearchRules rule : sortCon.getSearchRules()) {
 				if (rule.getKey().equals("recipeStatus")) {
 					predicate = cb.and(predicate, cb.notEqual(root.get(rule.getKey()), rule.getInput()));
+//				} else if (rule.getKey().equals("recipeCategories")) {
+//				    Join<Recipes, RecipeCategory> recipeCategoryJoin = root.join("recipeCategories");
+//					predicate = cb.and(predicate, cb.equal(recipeCategoryJoin.get("category").get("id"),rule.getInput()));
 				} else if (hasProperty(recipes, rule.getKey())) {
 					predicate = cb.and(predicate, cb.like(root.get(rule.getKey()), "%" + rule.getInput() + "%"));
 				} else {
@@ -138,7 +142,6 @@ public class PageSortService {
 	/*-----------------------------------------商品測試---------------------------------------------------*/
 	public Predicate checkCondition(Root<Product> root, Join<Product, Category> joinCategory, Predicate predicate,
 			SortCondition sortCon, CriteriaBuilder cb, Product product) {
- 		
 
 		// 模糊搜索
 		if (sortCon.getSearchRules() != null && sortCon.getSearchRules().size() != 0) {
@@ -158,7 +161,6 @@ public class PageSortService {
 				}
 			}
 		}
- 		
 
 		// 日期範圍
 		if (sortCon.getDateRules() != null && sortCon.getDateRules().size() != 0) {
@@ -173,7 +175,6 @@ public class PageSortService {
 			}
 		}
 
-
 		// 數值範圍
 		if (sortCon.getNumKey() != null) {
 			System.out.println("num");
@@ -186,9 +187,7 @@ public class PageSortService {
 			}
 		}
 
-		
-		//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
+		// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 		return predicate;
 	}
@@ -272,7 +271,6 @@ public class PageSortService {
 		return predicate;
 	}
 	// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
 
 	// ~~~~~~~~~課程後台查詢條件~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	public Predicate checkCourseCondition(Root<Course> root, Join<Course, Teacher> join, Join<Course, Category> catJoin,
