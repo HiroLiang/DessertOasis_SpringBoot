@@ -77,8 +77,8 @@ public class Member { //與會員帳號相關
 	@Column(name="otpGeneratedTime" , columnDefinition ="datetime2(0)")
 	private LocalDateTime otpGeneratedTime;
 
-
-	@JsonIgnore
+	@JsonIgnoreProperties(value = "recipeAuthor",allowSetters = true)
+//	@JsonIgnore
 	@OneToMany(mappedBy = "recipeAuthor",cascade = CascadeType.ALL)
 	private List<Recipes> recipes;
 	
