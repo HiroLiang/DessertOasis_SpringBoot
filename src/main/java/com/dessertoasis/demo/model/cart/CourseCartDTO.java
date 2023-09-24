@@ -36,14 +36,4 @@ public class CourseCartDTO {
 		this.pictures = course.getCoursePictureList();
 	}
 	
-	public CourseCartDTO(Course course) {
-		this.courseId = course.getId();
-		this.courseName = course.getCourseName();
-		this.coursePrice = course.getCoursePrice();
-		this.remainPlaces = course.getRemainPlaces();
-		this.closeDate = course.getCloseDate();
-		this.courseDate = course.getCourseDate();
-		this.coursePlace = course.getCoursePlace();
-		this.pictures = course.getCoursePictureList();
-	}
 }
