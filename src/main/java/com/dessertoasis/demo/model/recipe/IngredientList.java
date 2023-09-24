@@ -46,7 +46,7 @@ public class IngredientList {
 //	@MapsId("ingredientId")
 	@ManyToOne
 	@JoinColumn(name = "ingredientId")
-//	@JsonIgnoreProperties({"id", "ingredientName"})
+	@JsonIgnoreProperties({"ingredientList"})
 	private Ingredient ingredient;
 
 	// 食材份量
