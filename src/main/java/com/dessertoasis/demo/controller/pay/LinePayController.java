@@ -105,10 +105,10 @@ public class LinePayController {
 
 		System.out.println(response);
 
-		if ((response.getReturnCode() == "0000")) {
+//		if ((response.getReturnCode() == "0000")) {
 			return response.getInfo().getPaymentUrl().getWeb();
-		}
-		return null;
+//		}
+//		return null;
 	}
 
 }
