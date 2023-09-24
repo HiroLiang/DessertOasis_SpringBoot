@@ -10,7 +10,7 @@ import lombok.Data;
 
 @Data
 public class ReservationDTO {
-	private Integer resrvationId;
+	private Integer reservationId;
 	private Classroom classroom;
 	private LocalDate reservationDate;
 	private String reservationTime;
@@ -22,7 +22,7 @@ public class ReservationDTO {
 	}
 	
 	public ReservationDTO(Reservation rsv) {
-		this.resrvationId = rsv.getId();
+		this.reservationId = rsv.getId();
 		this.classroom = rsv.getClassroom();
 		this.reservationDate = rsv.getReservationDate();
 		this.reservationTime = rsv.getReservationTime();
