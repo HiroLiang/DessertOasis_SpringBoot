@@ -1,6 +1,7 @@
 package com.dessertoasis.demo.controller.cart;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -74,9 +75,9 @@ public class CartController {
 	}
 	
 	@PatchMapping("/cart/product")
-	public void updateProdQuantities(@RequestBody List<ProductCartDTO> productCartDTOs) {
-		for (ProductCartDTO productCartDTO : productCartDTOs) {
-			cartService.updateProdQuantity(productCartDTO.getCartId(), productCartDTO.getProdQuantity());
+	public void updateProdQuantities(@RequestBody List<Map<String, Integer>> items) {
+		for (Map<String, Integer> item : items) {
+			cartService.updateProdQuantity(item.get("cartId"), item.get("prodQuantity"));
 		}
 	}
 	

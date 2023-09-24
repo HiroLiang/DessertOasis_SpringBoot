@@ -17,18 +17,15 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.dessertoasis.demo.model.cart.CartListDTO;
-import com.dessertoasis.demo.model.cart.CourseCartDTO;
-import com.dessertoasis.demo.model.cart.ProductCartDTO;
-import com.dessertoasis.demo.model.cart.ReservationCartDTO;
+import com.dessertoasis.demo.model.cart.CartToOrderDTO;
 import com.dessertoasis.demo.model.member.Member;
 import com.dessertoasis.demo.model.member.MemberAccess;
+import com.dessertoasis.demo.model.order.EcpayDTO;
 import com.dessertoasis.demo.model.order.Order;
 import com.dessertoasis.demo.model.order.OrderCmsTable;
 import com.dessertoasis.demo.model.order.OrderDTO;
 import com.dessertoasis.demo.model.order.Reservation;
 import com.dessertoasis.demo.model.sort.SortCondition;
-import com.dessertoasis.demo.service.cart.CartService;
 import com.dessertoasis.demo.service.order.OrderService;
 
 import jakarta.servlet.http.HttpSession;
@@ -39,9 +36,6 @@ public class OrderController {
 	@Autowired
 	private OrderService orderService;
 
-	@Autowired
-	private CartService cartService;
-
 	// 取得單一訂單
 	@GetMapping("/order/{ordId}")
 	public OrderDTO getOrderById(@PathVariable("ordId") Integer ordId) {
@@ -49,32 +43,33 @@ public class OrderController {
 		OrderDTO orderDto = new OrderDTO(order);
 		return orderDto;
 	}
-	
+
 	// 修改訂單狀態
 	@PatchMapping("/order/{ordId}")
 	public Order updateOrdStatus(@PathVariable("ordId") Integer ordId, @RequestParam("ordStatus") String ordStatus) {
 		Order order = orderService.updateOrdStatus(ordId, ordStatus);
 		return order;
 	}
-	
+
 	// 刪除訂單
 	@DeleteMapping("/order/{ordId}")
 	public void deleteOrderById(@PathVariable("ordId") Integer ordId) {
 		orderService.deleteByOrdId(ordId);
 	}
-	
+
 	// 取得會員的訂單
 	@GetMapping("/order/member/page/{pageNum}")
 	public Map<String, Object> getOrdersByMember(@PathVariable("pageNum") Integer pageNum, HttpSession session) {
 		Member member = (Member) session.getAttribute("loggedInMember");
-		
+
 		Integer pageSize = 5;
-		Page<Order> page = orderService.getPageByMemberId(member.getId(), pageNum, pageSize, Sort.Direction.DESC, "ordDate");
+		Page<Order> page = orderService.getPageByMemberId(member.getId(), pageNum, pageSize, Sort.Direction.DESC,
+				"ordDate");
 		List<OrderDTO> orderDTOs = new ArrayList<>();
 		for (Order order : page.getContent()) {
 			orderDTOs.add(new OrderDTO(order));
 		}
-		
+
 		Map<String, Object> response = new HashMap<>();
 		response.put("totalPages", page.getTotalPages());
 		response.put("orders", orderDTOs);
@@ -83,40 +78,14 @@ public class OrderController {
 
 	// 新增訂單
 	@PostMapping("/order")
-	public String insertOrder(@RequestBody CartListDTO cartList, HttpSession session) {
+	public String insertOrder(@RequestBody CartToOrderDTO cartToOrderDTO, HttpSession session) {
 		Member member = (Member) session.getAttribute("loggedInMember");
 		if (member == null)
 			return "沒有會員";
-
-		List<ProductCartDTO> productCartDTOs = cartList.getProductCartDTOs();
-		List<CourseCartDTO> courseCartDTOs = cartList.getCourseCartDTOs();
-		List<ReservationCartDTO> rsvCartDTOs = cartList.getReservationCartDTOs();
-
-		// 檢查教室是否已被預約
-		String rsvCheckResult = orderService.checkReservation(rsvCartDTOs);
-		if (rsvCheckResult != null) {
-			return rsvCheckResult;
-		}
-
-		Order order = new Order();
-
-		// 訂單設置 orderItem
-		order = orderService.placeProdOrderItem(order, productCartDTOs);
-		order = orderService.placeCourseOrderItem(order, courseCartDTOs);
-		order = orderService.placeReservation(order, rsvCartDTOs);
 		
-		// 訂單設置商品運送地址
-		order.setProdOrderAddress(cartList.getProdOrderAddress());
-	
-		// 新增訂單
-		order = orderService.insert(order, member.getId());
-
-		// 清掉購物車
-		cartService.deleteCarts(productCartDTOs, courseCartDTOs, rsvCartDTOs);
-
-		return "1";
+		return orderService.insert(cartToOrderDTO, member.getId());
 	}
-	
+
 	// 取出會員的所有預約
 	@GetMapping("/order/reservation")
 	public List<Reservation> getReservatedClassroom(HttpSession session) {
@@ -156,4 +125,12 @@ public class OrderController {
 		return pages;
 	}
 	/*-----------------------------------------＾＾＾範例＾＾＾---------------------------------------------------*/
+	
+	//ECPAY CONTROLLER
+	@PostMapping("/ecpayCheckout")
+	public String ecpayCheckout(@RequestBody EcpayDTO ecpayDto) {
+		String aioCheckOutALLForm = orderService.ecpayCheckout(ecpayDto);
+		
+		return aioCheckOutALLForm;
+	}
 }

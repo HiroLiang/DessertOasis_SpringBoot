@@ -264,7 +264,7 @@ System.out.println(imagePath);
 	    List<String> pictureURLs = new ArrayList<>();
 
 	    if (!productPictures.getPictures().isEmpty()) {
-//	        String userPath = "C:\\workspace\\dessertoasis-vue\\public";
+	        //String userPath = "C:\\workspace\\dessertoasis-vue\\public";
 	        // String userPath = "C:\\Users\\iSpan\\Documents\\dessertoasis-vue\\public\\";
 	    	String userPath = "C:\\Users\\iSpan\\Documents\\dessertoasis-vue\\public";
 
@@ -294,36 +294,87 @@ System.out.println(imagePath);
 	    return null;
 	}
 	
-	 @PostMapping("/updateImg/{id}")
-	    public ResponseEntity<String> updateProductPictures(@PathVariable Integer id, @RequestBody List<String> pictureUrls) {
-	        try {
-	            // 根据商品ID查询商品信息
-	            Product product = pService.findById(id);
+//	 @PostMapping("/updateImg/{id}")
+//	    public ResponseEntity<String> updateProductPictures(@PathVariable Integer id, @RequestBody List<String> pictureUrls) {
+//	        try {
+//	            // 根据商品ID查询商品信息
+//	            Product product = pService.findById(id);
+//
+//	            if (product != null) {
+//	                // 根据传入的图片URL列表，创建新的 ProductPicture 实例并添加到商品的图片列表中
+//	                List<ProductPicture> productPictures = new ArrayList<>();
+//	                for (String pictureUrl : pictureUrls) {
+//	                    ProductPicture productPicture = new ProductPicture();
+//	                    productPicture.setPictureURL(pictureUrl);
+//	                    // 设置其他图片属性（如果需要）
+//	                    productPictures.add(productPicture);
+//	                }
+//	                product.setPictures(productPictures);
+//
+//	                // 更新商品信息
+//	                pService.update(product);
+//
+//	                return ResponseEntity.ok("商品图片信息已成功更新");
+//	            } else {
+//	                return ResponseEntity.notFound().build(); // 如果商品不存在，返回404响应
+//	            }
+//	        } catch (Exception e) {
+//	            e.printStackTrace();
+//	            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("更新商品图片信息时出现错误");
+//	        }
+//	    }
+//	
+	@PostMapping("/updateImg/{id}")
+	public ResponseEntity<String> updateProductPictures(
+	    @PathVariable Integer id,
+	    @RequestParam("image") MultipartFile[] pictureFiles) {
+	    try {
+	        // 根據商品ID查詢商品信息
+	        Product product = pService.findById(id);
 
-	            if (product != null) {
-	                // 根据传入的图片URL列表，创建新的 ProductPicture 实例并添加到商品的图片列表中
-	                List<ProductPicture> productPictures = new ArrayList<>();
-	                for (String pictureUrl : pictureUrls) {
+	        if (product != null) {
+	            // 根據傳入的圖片檔案列表，創建新的 ProductPicture 實例並添加到商品的圖片列表中
+	            List<ProductPicture> productPictures = new ArrayList<>();
+	            for (MultipartFile pictureFile : pictureFiles) {
+	                String pictureUrl = savePictureAndGetUrl(pictureFile, id);
+	                if (pictureUrl != null) {
 	                    ProductPicture productPicture = new ProductPicture();
 	                    productPicture.setPictureURL(pictureUrl);
-	                    // 设置其他图片属性（如果需要）
+	                    // 設置其他圖片屬性（如果需要）
 	                    productPictures.add(productPicture);
 	                }
-	                product.setPictures(productPictures);
-
-	                // 更新商品信息
-	                pService.update(product);
-
-	                return ResponseEntity.ok("商品图片信息已成功更新");
-	            } else {
-	                return ResponseEntity.notFound().build(); // 如果商品不存在，返回404响应
 	            }
-	        } catch (Exception e) {
-	            e.printStackTrace();
-	            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("更新商品图片信息时出现错误");
+	            product.setPictures(productPictures);
+
+	            // 更新商品信息
+	            pService.update(product);
+
+	            return ResponseEntity.ok("商品圖片信息已成功更新");
+	        } else {
+	            return ResponseEntity.notFound().build(); // 如果商品不存在，返回404響應
 	        }
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("更新商品圖片信息時出現錯誤");
 	    }
-	
+	}
+
+	private String savePictureAndGetUrl(MultipartFile pictureFile, Integer productId) throws IOException {
+	    String uploadDir = "C:/workspace/dessertoasis-vue/public/images/product/" + productId;
+	    File dir = new File(uploadDir);
+	    if (!dir.exists()) {
+	        dir.mkdirs();
+	    }
+
+	    String imagePath = uploadDir + "/" + pictureFile.getOriginalFilename();
+	    String sqlPath = "/" + "images/product/" + productId + "/" + pictureFile.getOriginalFilename();
+	    File destination = new File(imagePath);
+	    pictureFile.transferTo(destination);
+
+	    // 在此處添加將圖片 URL 儲存到數據庫的邏輯（如果需要）
+
+	    return sqlPath; // 返回圖片的 URL
+	}
 
 
 	/*----------------------﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀發送base64給前端範例﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀﹀--------------------------*/
@@ -493,6 +544,7 @@ System.out.println(imagePath);
 // 		}
  		// 送出查詢條件給service，若有結果則回傳list
  		List<ProdSearchDTO> result = pService.getProductPagenation(sortCon);
+
  		if (result != null) {
  			System.out.println(result);
  			return result;

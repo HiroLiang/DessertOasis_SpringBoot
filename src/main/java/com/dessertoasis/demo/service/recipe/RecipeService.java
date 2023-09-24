@@ -24,6 +24,7 @@ import jakarta.persistence.TypedQuery;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Join;
+import jakarta.persistence.criteria.JoinType;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
 
@@ -236,6 +237,7 @@ public class RecipeService {
 			if (cDto.getRecipe().getCookingTime() == null) {
 				cDto.getRecipe().setCookingTime(0);
 			}
+			cDto.getRecipe().setRecipeMonthlyVisitCount(0);
 //			System.out.println(cDto.getRecipe().getId()); // 持久化前沒有id
 			Recipes save = recipeRepo.save(cDto.getRecipe());
 //			System.out.println(cDto.getRecipe().getId()); // 持久化後能取得id
@@ -496,10 +498,12 @@ public class RecipeService {
 		// 決定select.join表格
 		Root<Recipes> root = cq.from(Recipes.class);
 		Join<Recipes, Member> join = root.join("recipeAuthor");
-//		Join<Recipes,Category> categoryJoin = join.join("");
+//		Join<Recipes,Category> categoryJoin = root.join("recipeCategories");
+
+//	    root.fetch("recipeCategories", JoinType.INNER);
 
 		// 決定查詢 column
-		cq.multiselect(root.get("id"), root.get("recipeTitle"), join.get("fullName"), root.get("pictureURL"),
+		cq.multiselect(root.get("id"), root.get("recipeTitle"),join.get("fullName"), root.get("pictureURL"),
 				root.get("difficulty"), root.get("recipeIntroduction"));
 
 		// 加入查詢條件
