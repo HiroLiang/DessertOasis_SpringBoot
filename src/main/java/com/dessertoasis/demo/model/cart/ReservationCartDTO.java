@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.dessertoasis.demo.model.classroom.Classroom;
-import com.dessertoasis.demo.model.order.Reservation;
 
 import lombok.Data;
 
@@ -40,18 +39,4 @@ public class ReservationCartDTO {
 		this.price = priceMap.get(this.reservationTime);
 	}
 	
-	public ReservationCartDTO(Reservation rsv) {
-		this.reservationCartId = rsv.getId();
-		this.classroom = rsv.getClassroom();
-		this.reservationDate = rsv.getReservationDate();
-		this.reservationTime = rsv.getReservationTime();
-		this.detail = rsv.getDetail();
-		
-		Map<String, Integer> priceMap = new HashMap<>();
-		priceMap.put("A", this.classroom.getMorningPrice());
-		priceMap.put("B", this.classroom.getAfternoonPrice());
-		priceMap.put("C", this.classroom.getNightPrice());
-		
-		this.price = priceMap.get(this.reservationTime);
-	}
 }

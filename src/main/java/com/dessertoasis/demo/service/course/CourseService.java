@@ -145,7 +145,8 @@ public class CourseService {
 			if (coursePicture.getId() == null) {
 				Date date = new Date();
 				long time = date.getTime();
-				String path = "/Users/apple/Documents/PDF";
+//				String path = "/Users/apple/Documents/PDF";
+				String path = "C:/DessertOasis_Img/Course";
 				String img = coursePicture.getCourseImgURL();
 				String[] split = img.split(",");
 				System.out.println("save picture :" + img);

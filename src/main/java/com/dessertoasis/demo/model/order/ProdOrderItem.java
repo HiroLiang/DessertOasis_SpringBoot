@@ -1,6 +1,5 @@
 package com.dessertoasis.demo.model.order;
 
-import com.dessertoasis.demo.model.cart.ProductCartDTO;
 import com.dessertoasis.demo.model.product.Product;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
@@ -42,10 +41,10 @@ public class ProdOrderItem {
 		
 	}
 	
-	public ProdOrderItem(ProductCartDTO cartItem, Product product, Order order) {
+	public ProdOrderItem(Integer prodQuantity, Product product, Order order) {
 		this.product = product;
-		this.price = cartItem.getProdPrice();
-		this.quantity = cartItem.getProdQuantity();
+		this.price = product.getProdPrice();
+		this.quantity = prodQuantity;
 		this.order = order;
 	}
 }

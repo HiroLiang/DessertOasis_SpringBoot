@@ -1,8 +1,11 @@
 package com.dessertoasis.demo.service.order;
 
+import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -10,16 +13,22 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import com.dessertoasis.demo.model.cart.CourseCartDTO;
-import com.dessertoasis.demo.model.cart.ProductCartDTO;
+import com.dessertoasis.demo.model.cart.Cart;
+import com.dessertoasis.demo.model.cart.CartRepository;
+import com.dessertoasis.demo.model.cart.CartToOrderDTO;
+import com.dessertoasis.demo.model.cart.ReservationCart;
 import com.dessertoasis.demo.model.cart.ReservationCartDTO;
+import com.dessertoasis.demo.model.cart.ReservationCartRepository;
+import com.dessertoasis.demo.model.category.RootCategory;
 import com.dessertoasis.demo.model.course.Course;
 import com.dessertoasis.demo.model.course.CourseRepository;
 import com.dessertoasis.demo.model.member.Member;
 import com.dessertoasis.demo.model.member.MemberRepository;
 import com.dessertoasis.demo.model.order.CourseOrderItem;
+import com.dessertoasis.demo.model.order.EcpayDTO;
 import com.dessertoasis.demo.model.order.Order;
 import com.dessertoasis.demo.model.order.OrderCmsTable;
+import com.dessertoasis.demo.model.order.OrderDTO;
 import com.dessertoasis.demo.model.order.OrderRepository;
 import com.dessertoasis.demo.model.order.ProdOrderItem;
 import com.dessertoasis.demo.model.order.Reservation;
@@ -29,7 +38,10 @@ import com.dessertoasis.demo.model.product.ProductRepository;
 import com.dessertoasis.demo.model.sort.SortCondition;
 import com.dessertoasis.demo.model.sort.SortCondition.SortWay;
 import com.dessertoasis.demo.service.PageSortService;
+import com.dessertoasis.demo.service.cart.CartService;
 
+import ecpay.payment.integration.AllInOne;
+import ecpay.payment.integration.domain.AioCheckOutALL;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.TypedQuery;
@@ -44,9 +56,15 @@ public class OrderService {
 
 	@PersistenceContext
 	private EntityManager em;
+	
+	@Autowired
+	private RootCategory rootCategory;
 
 	@Autowired
 	private OrderRepository orderRepo;
+	
+	@Autowired
+	private CartRepository cartRepo;
 
 	@Autowired
 	private MemberRepository memberRepo;
@@ -59,9 +77,15 @@ public class OrderService {
 
 	@Autowired
 	private ReservationRepository rsvRepo;
+	
+	@Autowired
+	private ReservationCartRepository rsvCartRepo;
 
 	@Autowired
 	private ReservationService rsvService;
+	
+	@Autowired
+	private CartService cartService;
 
 	@Autowired
 	private PageSortService pService;
@@ -83,57 +107,88 @@ public class OrderService {
 		Page<Order> page = orderRepo.findByMember(member, pageRequest);
 		return page;
 	}
-
+	
 	// 新增訂單
-	public Order insert(Order order, Integer memberId) {
+	public String insert(CartToOrderDTO cartToOrderDTO, Integer memberId) {
+		Order order = new Order();
+		
+		List<Integer> cartIds = cartToOrderDTO.getCartIds();
+		for (Integer cartId : cartIds) {
+			Cart cartItem = cartRepo.findById(cartId).get();
+			if (cartItem.getCategoryId() == rootCategory.getProductCategoryId()) {
+				this.placeProdOrderItem(order, cartItem);
+			}
+			else if (cartItem.getCategoryId() == rootCategory.getCourseCategoryId()) {
+				this.placeCourseOrderItem(order, cartItem);
+			}
+			else if (cartItem.getCategoryId() == rootCategory.getReservationCategoryId()) {
+				this.placeReservation(order, cartItem);
+			}
+		}
+		
 		order.setMember(memberRepo.findById(memberId).get());
-
+		
+		order.setProdOrderAddress(cartToOrderDTO.getProdOrderAddress());
+		
 		LocalDateTime currentDateTime = LocalDateTime.now();
 		order.setOrdDate(currentDateTime);
 		order.setUpdateDate(currentDateTime);
-		
-		String ordStatus = (order.getProdOrderItems() != null && order.getProdOrderItems().size() > 0)?
-				"處理中" : "已下訂";
+
+		String ordStatus = (order.getProdOrderItems() != null && order.getProdOrderItems().size() > 0) ? "處理中" : "已下訂";
 		order.setOrdStatus(ordStatus);
+		orderRepo.save(order);
 		
-		return orderRepo.save(order);
+		// 清理購物車
+		cartService.deleteCarts(cartIds);
+		
+		return "1";
 	}
 
-	public Order placeProdOrderItem(Order order, List<ProductCartDTO> productCartDTOs) {
-		if (productCartDTOs != null) {
-			List<ProdOrderItem> orderItems = new ArrayList<>();
-			for (ProductCartDTO cartDTO : productCartDTOs) {
-				Product product = productRepo.findById(cartDTO.getProductId()).get();
-				ProdOrderItem ordItem = new ProdOrderItem(cartDTO, product, order);
-				orderItems.add(ordItem);
-			}
-			order.setProdOrderItems(orderItems);
+	public Order placeProdOrderItem(Order order, Cart cartItem) {
+		
+		Product product = productRepo.findById(cartItem.getInterestedId()).get();
+		ProdOrderItem ordItem = new ProdOrderItem(cartItem.getProdQuantity(), product, order);
+		
+		if (order.getProdOrderItems() == null) {
+			List<ProdOrderItem> ordItems = new ArrayList<>();
+			ordItems.add(ordItem);
+			order.setProdOrderItems(ordItems);
+		} else {
+			order.getProdOrderItems().add(ordItem);
 		}
+		
 		return order;
 	}
 
-	public Order placeCourseOrderItem(Order order, List<CourseCartDTO> courseCartDTOs) {
-		if (courseCartDTOs != null) {
-			List<CourseOrderItem> orderItems = new ArrayList<>();
-			for (CourseCartDTO cartDTO : courseCartDTOs) {
-				Course course = courseRepo.findById(cartDTO.getCourseId()).get();
-				CourseOrderItem ordItem = new CourseOrderItem(cartDTO, course, order);
-				orderItems.add(ordItem);
-			}
-			order.setCourseOrderItems(orderItems);
+	public Order placeCourseOrderItem(Order order, Cart cartItem) {
+		
+		Course course = courseRepo.findById(cartItem.getInterestedId()).get();
+		CourseOrderItem ordItem = new CourseOrderItem(course, order);
+		
+		if (order.getCourseOrderItems() == null) {
+			List<CourseOrderItem> ordItems = new ArrayList<>();
+			ordItems.add(ordItem);
+			order.setCourseOrderItems(ordItems);
+		}else {
+			order.getCourseOrderItems().add(ordItem);
 		}
+		
 		return order;
 	}
 
-	public Order placeReservation(Order order, List<ReservationCartDTO> rsvCartDTOs) {
-		if (rsvCartDTOs != null) {
-			List<Reservation> reservations = new ArrayList<>();
-			for (ReservationCartDTO cartDTO : rsvCartDTOs) {
-				Reservation rsv = new Reservation(cartDTO, order);
-				reservations.add(rsv);
-			}
-			order.setReservations(reservations);
+	public Order placeReservation(Order order, Cart cartItem) {
+		
+		ReservationCart rsvCart = rsvCartRepo.findById(cartItem.getInterestedId()).get();
+		Reservation reservation = new Reservation(rsvCart, order);
+		
+		if (order.getReservations() == null) {
+			List<Reservation> ordItems = new ArrayList<>();
+			ordItems.add(reservation);
+			order.setReservations(ordItems);
+		}else {
+			order.getReservations().add(reservation);
 		}
+		
 		return order;
 	}
 
@@ -153,38 +208,38 @@ public class OrderService {
 		}
 		return null;
 	}
-	
+
 	// 取出會員預約的教室
 	public List<Reservation> getReservationsByMemberId(Integer memberId) {
 		Member member = memberRepo.findById(memberId).get();
 		List<Order> orders = member.getOrders();
-		
+
 		List<Reservation> reservations = new ArrayList<>();
 		for (Order order : orders) {
 			if (order.getReservations() != null) {
 				reservations.addAll(order.getReservations());
 			}
 		}
-		
+
 		return reservations;
 	}
-	
+
 	// 修改訂單狀態
 	public Order updateOrdStatus(Integer ordId, String ordStatus) {
 		Order order = orderRepo.findById(ordId).get();
 		order.setOrdStatus(ordStatus);
-		
+
 		LocalDateTime currentDateTime = LocalDateTime.now();
 		order.setUpdateDate(currentDateTime);
-		
+
 		return orderRepo.save(order);
 	}
-	
+
 	// 刪除訂單
 	public void deleteByOrdId(Integer ordId) {
 		orderRepo.deleteById(ordId);
 	}
-	
+
 	/*-----------------------------------------v v v 範例 v v v---------------------------------------------------*/
 	// Order table範例
 	public List<OrderCmsTable> getOrderPagenation(SortCondition sortCon) {
@@ -205,7 +260,7 @@ public class OrderService {
 		Predicate predicate = cb.conjunction();
 		Order order = new Order();
 		Predicate pre = pService.checkCondition(root, join, predicate, sortCon, cb, order);
-		
+
 		// 填入 where 條件
 		cq.where(pre);
 
@@ -234,7 +289,7 @@ public class OrderService {
 
 		// 送出請求
 		List<OrderCmsTable> list = query.getResultList();
-		if (list != null) 
+		if (list != null)
 			return list;
 		return null;
 	}
@@ -257,12 +312,40 @@ public class OrderService {
 		Order order = new Order();
 		Predicate pre = pService.checkCondition(root, join, predicate, sortCon, cb, order);
 		cq.where(pre);
-		
-		//查詢傯頁數
+
+		// 查詢傯頁數
 		Long totalRecords = em.createQuery(cq).getSingleResult();
 		Integer totalPages = (int) Math.ceil((double) totalRecords / sortCon.getPageSize());
-		
+
 		return totalPages;
 	}
 	/*-----------------------------------------＾＾＾範例＾＾＾---------------------------------------------------*/
+
+	// ECPAY SERVICE
+	public String ecpayCheckout(EcpayDTO ecpay) {
+		
+		System.err.println(ecpay.getToTalPrice());
+		
+		String uuId = UUID.randomUUID().toString().replaceAll("-", "").substring(0, 20);
+		
+		Date date = new Date();
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+		String formattedDate = sdf.format(date);
+		
+		AllInOne all = new AllInOne("");
+
+		AioCheckOutALL obj = new AioCheckOutALL();
+		obj.setMerchantTradeNo(uuId);
+		obj.setMerchantTradeDate(formattedDate);
+		obj.setTotalAmount(Integer.toString(ecpay.getToTalPrice()));
+		obj.setTradeDesc("test Description");
+		obj.setItemName(ecpay.getItemName()+"等共"+Integer.toString(ecpay.getItemNumber())+"項");
+		obj.setReturnURL("http://localhost:5173/#/cart");
+		obj.setClientBackURL("http://localhost:5173/#/cart/pay_success");
+		obj.setNeedExtraPaidInfo("N");
+		
+		String form = all.aioCheckOut(obj, null);
+
+		return form;
+	}
 }

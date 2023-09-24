@@ -160,24 +160,9 @@ public class CartService {
 		cartRepo.deleteById(cartId);
 	}
 	
-	public void deleteCarts(List<ProductCartDTO> productCartDTOs, List<CourseCartDTO> courseCartDTOs, List<ReservationCartDTO> reservationCartDTOs) {
-		List<Integer> cartIds = new ArrayList<>();
-		if (productCartDTOs != null) {
-			for (ProductCartDTO productCartDTO : productCartDTOs) {
-				cartIds.add(productCartDTO.getCartId());
-			}
+	public void deleteCarts(List<Integer> cartIds) {
+		for (Integer cartId : cartIds) {
+			this.deleteCart(cartId);
 		}
-		if (courseCartDTOs != null) {
-			for (CourseCartDTO courseCartDTO : courseCartDTOs) {
-				cartIds.add(courseCartDTO.getCartId());
-			}
-		}
-		if (reservationCartDTOs != null) {
-			for (ReservationCartDTO reservationCartDTO : reservationCartDTOs) {
-				rsvCartRepo.deleteById(reservationCartDTO.getReservationCartId());
-				cartIds.add(reservationCartDTO.getCartId());
-			}
-		}
-		cartRepo.deleteAllById(cartIds);
 	}
 }

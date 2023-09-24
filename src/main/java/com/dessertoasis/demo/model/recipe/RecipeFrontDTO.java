@@ -19,6 +19,7 @@ public class RecipeFrontDTO {
 	private String difficulty;
 	
 	private String recipeIntroduction;
+	
 
 	public RecipeFrontDTO() {
 		super();

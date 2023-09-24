@@ -2,7 +2,6 @@ package com.dessertoasis.demo.model.cart;
 
 import java.util.List;
 
-import com.dessertoasis.demo.model.order.ProdOrderItem;
 import com.dessertoasis.demo.model.product.Product;
 import com.dessertoasis.demo.model.product.ProductPicture;
 
@@ -43,15 +42,5 @@ public class ProductCartDTO {
 		this.prodPrice = product.getProdPrice();
 		this.pictures = product.getPictures();
 		this.prodQuantity = cart.getProdQuantity();
-	}
-	
-	
-	public ProductCartDTO(Product product, Integer prodQuantity) {
-		this.productId = product.getId();
-		this.prodName = product.getProdName();
-		this.prodStock = product.getProdStock();
-		this.prodPrice = product.getProdPrice();
-		this.pictures = product.getPictures();
-		this.prodQuantity = prodQuantity;
 	}
 }

@@ -386,7 +386,7 @@ public class TeacherController {
 		// 送出查詢條件給service，若有結果則回傳list
 		List<TeacherFrontDTO> result = tService.getFrontTeacherPagenation(sortCon);
 		if (result != null) {
-			System.out.println(result);
+			System.err.println(result.size());
 			return result;
 		}
 		return null;

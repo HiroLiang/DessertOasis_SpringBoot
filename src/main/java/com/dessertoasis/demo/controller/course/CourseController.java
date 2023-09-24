@@ -32,6 +32,7 @@ import com.dessertoasis.demo.model.course.Course;
 import com.dessertoasis.demo.model.course.CourseCmsTable;
 import com.dessertoasis.demo.model.course.CourseDTO;
 import com.dessertoasis.demo.model.course.CoursePicture;
+import com.dessertoasis.demo.model.course.CoursePictureRepository;
 import com.dessertoasis.demo.model.course.CourseSearchDTO;
 import com.dessertoasis.demo.model.course.Teacher;
 import com.dessertoasis.demo.model.member.Member;
@@ -65,6 +66,9 @@ public class CourseController {
 
 	@Autowired
 	private ImageUploadUtil imgUtil;
+	
+	@Autowired
+	private CoursePictureRepository cpRepo;
 
 	// 查詢單筆課程(用課程id)
 //	@GetMapping("/{id}")
@@ -111,7 +115,7 @@ public class CourseController {
 
 	// 新增單筆課程
 	@PostMapping("/add")
-	public ResponseEntity<String> addCourse(@RequestBody Course course, HttpSession session) {
+	public ResponseEntity<Integer> addCourse(@RequestBody Course course, HttpSession session) {
 
 		Member member = (Member)session.getAttribute("loggedInMember");
 //		member.getTeacher().getId();
@@ -134,8 +138,8 @@ public class CourseController {
 		Course savedCourse = cService.insert(course);
 		Integer courseId = savedCourse.getId();
 		System.out.println(courseId);
-		return ResponseEntity.ok("新增"+courseId+"成功");
-   }return ResponseEntity.ok("新增失敗");
+		return ResponseEntity.ok(courseId);
+   }return ResponseEntity.ok(0);
 	}
 
 
@@ -160,6 +164,8 @@ public class CourseController {
 	@PostMapping("/uploadImage")
 	public ResponseEntity<String> uploadImage(@RequestParam("courseId") Integer courseId,
 			@RequestParam("image") MultipartFile image) {
+		System.err.println("start");
+		Course course = cService.findById(courseId);
 		try {
 			String baseDir = "C:/dessertoasis-vue/public/images/course/";
 			String courseDir = baseDir + courseId;
@@ -184,6 +190,11 @@ public class CourseController {
 			// 处理縮圖逻辑，将縮圖存储在thumbnailPath中
 
 			// pService.addImageToProduct(productId, imagePath);
+		 	 CoursePicture coursePicture = new CoursePicture();
+		 	 coursePicture.setCourse(course);
+		 	 coursePicture.setCourseImgURL(imagePath);
+		 	 cpRepo.save(coursePicture);
+		 	 System.err.println("end");
 
 			return ResponseEntity.ok("Image uploaded successfully.");
 		} catch (IOException e) {
@@ -310,9 +321,13 @@ public class CourseController {
 
 	@GetMapping("/base64/image")
 	public String getPictureUrlByPath(@RequestParam("path") String path) {
-		String picUrl = imgUtil.writeImageToString(path);
-		if (picUrl != null)
-			return picUrl;
+		System.out.println(path);
+		if(path!=null) {
+			String picUrl = imgUtil.writeImageToString(path);
+			if (picUrl != null)
+				return picUrl;
+			
+		}
 		return null;
 	}
 

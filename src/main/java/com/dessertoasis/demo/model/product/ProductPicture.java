@@ -51,7 +51,8 @@ public class ProductPicture {
 		  if (pictureURL != null && !pictureURL.isEmpty()) {
 		        try {
 		            // 圖片儲存的根路徑，根據你的實際情況修改
-		            String rootPath = "C:/workspace/dessertoasis-vue/public/images/product/";
+//		            String rootPath = "C:/workspace/dessertoasis-vue/public/images/product/";
+		            String rootPath = "C:\\Users\\iSpan\\Documents\\dessertoasis-vue\\public\\images\\product\\";
 		            Integer productId = product.getId();
 		            
 		            // 獲取完整的資料夾路徑（資料夾名稱即為productId）
