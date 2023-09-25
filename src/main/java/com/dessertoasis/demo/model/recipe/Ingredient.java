@@ -29,8 +29,8 @@ public class Ingredient {
 	private String ingredientName;
 	
 	@OneToMany(mappedBy = "ingredient")
-//	@JsonIgnoreProperties({"recipe","ingredient"})
-	@JsonIgnore
+	@JsonIgnoreProperties(value="ingredient",allowSetters = true)
+//	@JsonIgnore
 	private List<IngredientList> ingredientList;
 	
 	public Ingredient() {
@@ -52,13 +52,13 @@ public class Ingredient {
 		this.ingredientName = ingredientName;
 	}
 
-//	public List<IngredientList> getIngredientList() {
-//		return ingredientList;
-//	}
-//
-//	public void setIngredientList(List<IngredientList> ingredientList) {
-//		this.ingredientList = ingredientList;
-//	}
+	public List<IngredientList> getIngredientList() {
+		return ingredientList;
+	}
+
+	public void setIngredientList(List<IngredientList> ingredientList) {
+		this.ingredientList = ingredientList;
+	}
 
 	
 }

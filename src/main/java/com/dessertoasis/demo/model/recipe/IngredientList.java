@@ -38,7 +38,7 @@ public class IngredientList {
 //		"ingredientList","ingredientList","recipeTitle","pictureURL",
 //		"recipeIntroduction","cookingTime","difficulty","recipeCreateDate",
 //		"recipeStatus","recipeMonthlyVisitCount","course"})
-	@JsonIgnoreProperties("ingredientList")
+	@JsonIgnoreProperties(value="ingredientList",allowSetters = true)
 //	@JsonIgnore
 	private Recipes recipe;
 
@@ -46,7 +46,11 @@ public class IngredientList {
 //	@MapsId("ingredientId")
 	@ManyToOne
 	@JoinColumn(name = "ingredientId")
-//	@JsonIgnoreProperties({"id", "ingredientName"})
+<<<<<<< HEAD
+	@JsonIgnoreProperties({"ingredientList"})
+=======
+	@JsonIgnoreProperties(value="ingredientList",allowSetters = true)
+>>>>>>> origin/test-branch
 	private Ingredient ingredient;
 
 	// 食材份量

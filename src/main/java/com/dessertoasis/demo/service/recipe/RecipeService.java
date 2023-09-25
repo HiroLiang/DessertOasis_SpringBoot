@@ -296,6 +296,7 @@ public class RecipeService {
 				existRecipe.setCookingTime(recipe.getCookingTime());
 				existRecipe.setIngredientPersons(recipe.getIngredientPersons());
 				existRecipe.setPictureURL(recipe.getPictureURL());
+				existRecipe.setRecipeMonthlyVisitCount(recipe.getRecipeMonthlyVisitCount());
 //				System.err.println(recipe.getIngredientPersons());
 //				List<IngredientList> existIngredientList = existRecipe.getIngredientList();
 				for (int i = 0; i < recipe.getIngredientList().size(); i++) {
