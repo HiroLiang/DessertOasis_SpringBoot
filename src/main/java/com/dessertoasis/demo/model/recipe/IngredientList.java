@@ -46,11 +46,8 @@ public class IngredientList {
 //	@MapsId("ingredientId")
 	@ManyToOne
 	@JoinColumn(name = "ingredientId")
-<<<<<<< HEAD
-	@JsonIgnoreProperties({"ingredientList"})
-=======
+
 	@JsonIgnoreProperties(value="ingredientList",allowSetters = true)
->>>>>>> origin/test-branch
 	private Ingredient ingredient;
 
 	// 食材份量
