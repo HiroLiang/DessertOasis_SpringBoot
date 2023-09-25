@@ -71,7 +71,7 @@ public class CartController {
 		
 		cartService.insert(cartDTO, member.getId());
 		
-		return "加入購物車成功";
+		return "1";
 	}
 	
 	@PatchMapping("/cart/product")
