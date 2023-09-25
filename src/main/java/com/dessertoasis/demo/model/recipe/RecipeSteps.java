@@ -1,6 +1,7 @@
 package com.dessertoasis.demo.model.recipe;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -24,8 +25,8 @@ public class RecipeSteps {
 	private Integer id;
 	
 	//食譜id fk
-	@JsonIgnore
 	@ManyToOne
+	@JsonIgnoreProperties(value="recipeSteps", allowSetters = true)
 	@JoinColumn(name = "recipeId",referencedColumnName = "id")
 	private Recipes recipe;
 	 

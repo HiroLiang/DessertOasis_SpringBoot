@@ -4,9 +4,6 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.dessertoasis.demo.model.cart.CourseCartDTO;
-import com.dessertoasis.demo.model.cart.ProductCartDTO;
-import com.dessertoasis.demo.model.cart.ReservationCartDTO;
 import com.dessertoasis.demo.model.member.Member;
 
 import lombok.Data;
@@ -20,9 +17,9 @@ public class OrderDTO {
 	private String ordStatus;
 	private LocalDateTime updateDate;
 	private String prodOrderAddress;
-	private List<ReservationCartDTO> reservations;
-	private List<ProductCartDTO> prodOrderItems;
-	private List<CourseCartDTO> courseOrderItems;
+	private List<ReservationDTO> reservations;
+	private List<ProdOrderItemDTO> prodOrderItems;
+	private List<CourseOrderItemDTO> courseOrderItems;
 	private Integer total;
 	
 	public OrderDTO() {
@@ -39,9 +36,9 @@ public class OrderDTO {
 		
 		Integer total = 0;
 		if (order.getProdOrderItems() != null) {
-			List<ProductCartDTO> prodOrderItems	= new ArrayList<>();
+			List<ProdOrderItemDTO> prodOrderItems	= new ArrayList<>();
 			for (ProdOrderItem prodOrderItem : order.getProdOrderItems()) {
-				ProductCartDTO itemDto = new ProductCartDTO(prodOrderItem.getProduct(), prodOrderItem.getQuantity());
+				ProdOrderItemDTO itemDto = new ProdOrderItemDTO(prodOrderItem);
 				prodOrderItems.add(itemDto);
 				total += itemDto.getProdPrice() * itemDto.getProdQuantity();
 			}
@@ -49,9 +46,9 @@ public class OrderDTO {
 		}
 		
 		if (order.getCourseOrderItems() != null) {
-			List<CourseCartDTO> courseOrderItems = new ArrayList<>();
+			List<CourseOrderItemDTO> courseOrderItems = new ArrayList<>();
 			for (CourseOrderItem courseOrderItem : order.getCourseOrderItems()) {
-				CourseCartDTO itemDto = new CourseCartDTO(courseOrderItem.getCourse());
+				CourseOrderItemDTO itemDto = new CourseOrderItemDTO(courseOrderItem);
 				courseOrderItems.add(itemDto);
 				total += itemDto.getCoursePrice();
 			}
@@ -59,9 +56,9 @@ public class OrderDTO {
 		}
 		
 		if (order.getReservations() != null) {
-			List<ReservationCartDTO> reservations = new ArrayList<>();
+			List<ReservationDTO> reservations = new ArrayList<>();
 			for (Reservation rsv : order.getReservations()) {
-				ReservationCartDTO itemDto = new ReservationCartDTO(rsv);
+				ReservationDTO itemDto = new ReservationDTO(rsv);
 				reservations.add(itemDto);
 				total += itemDto.getPrice();
 			}

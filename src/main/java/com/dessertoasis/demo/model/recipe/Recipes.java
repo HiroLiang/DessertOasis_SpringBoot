@@ -37,23 +37,22 @@ public class Recipes {
 	private Integer id;
 	
 	//撰寫者ID(連結Member id)
-//	@JsonProperty(access = JsonProperty.Access.READ_ONLY)
-	@JsonIgnoreProperties({"account","email","passwords","emailForCode","code","access","memberStatus","signDate","verificationToken","memberDetail","teacher"})
+	@JsonIgnoreProperties(value = {"account","email","passwords","emailForCode","code","access","memberStatus","signDate","verificationToken","memberDetail","teacher","recipes","otp","otpGeneratedTime","bank"},allowSetters = true)
 	@ManyToOne
-//	@JsonIgnoreProperties({"passwords"})
 	@JoinColumn(name="memberId", nullable = true)
 	private Member recipeAuthor;
 	
 	//分類Id  OneToMany
-	@JsonIgnoreProperties("recipe")
+	@JsonIgnoreProperties(value="recipe", allowSetters=true)
 	@OneToMany(mappedBy = "recipe")
 	private List<RecipeCategory> recipeCategories;
 	
 	//食譜步驟
+	@JsonIgnoreProperties(value="recipe", allowSetters=true)
 	@OneToMany(mappedBy = "recipe", cascade = CascadeType.ALL)
 	private List<RecipeSteps> recipeSteps;
 	
-	@JsonIgnoreProperties("recipe")
+	@JsonIgnoreProperties(value="recipe", allowSetters=true)
 	@OneToMany(mappedBy = "recipe", cascade = CascadeType.ALL)
 	private List<IngredientList> ingredientList;
 	

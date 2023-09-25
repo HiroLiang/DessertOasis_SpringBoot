@@ -109,7 +109,7 @@ public class OrderService {
 	}
 	
 	// 新增訂單
-	public String insert(CartToOrderDTO cartToOrderDTO, Integer memberId) {
+	public Integer insert(CartToOrderDTO cartToOrderDTO, Integer memberId) {
 		Order order = new Order();
 		
 		List<Integer> cartIds = cartToOrderDTO.getCartIds();
@@ -136,12 +136,12 @@ public class OrderService {
 
 		String ordStatus = (order.getProdOrderItems() != null && order.getProdOrderItems().size() > 0) ? "處理中" : "已下訂";
 		order.setOrdStatus(ordStatus);
-		orderRepo.save(order);
+		order = orderRepo.save(order);
 		
 		// 清理購物車
 		cartService.deleteCarts(cartIds);
 		
-		return "1";
+		return order.getId();
 	}
 
 	public Order placeProdOrderItem(Order order, Cart cartItem) {

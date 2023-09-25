@@ -341,6 +341,41 @@ public class MemberController {
 			return pages;
 	 }
 	 
-	 
+	 @PutMapping("/update/{id}")
+	 public ResponseEntity<Member> updateMember(@PathVariable Integer id, @RequestBody Member updatedMember) {
+	     try {
+	         // 使用ID从数据库中获取原始成员信息
+	         Member existingMember = mService.findByMemberId(id);
+
+	         if (existingMember != null) {
+	             // 更新原始成员信息
+	             existingMember.setEmail(updatedMember.getEmail());
+	             existingMember.setFullName(updatedMember.getFullName());
+	             existingMember.setMemberName(updatedMember.getMemberName());
+	             if (updatedMember.getAccess() != null) {
+	                 existingMember.setAccess(updatedMember.getAccess());
+	             }
+	             if (updatedMember.getMemberStatus() != null) {
+	                 existingMember.setMemberStatus(updatedMember.getMemberStatus());
+	             }
+
+	             // 调用更新方法来执行更新操作
+	             mService.updateMember(existingMember);
+
+	             // 返回更新后的 MemberDetail
+	             return ResponseEntity.ok(existingMember);
+	         } else {
+	             // 未找到原始成员，返回 404 Not Found
+	             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+	         }
+	     } catch (ResourceNotFoundException e) {
+	         // MemberDetail 未找到，返回 404 Not Found
+	         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+	     } catch (Exception e) {
+	         // 其他错误处理，返回 500 Internal Server Error 或其他错误消息
+	         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+	     }
+	 }
+
 
 }

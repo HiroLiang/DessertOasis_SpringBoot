@@ -78,10 +78,10 @@ public class OrderController {
 
 	// 新增訂單
 	@PostMapping("/order")
-	public String insertOrder(@RequestBody CartToOrderDTO cartToOrderDTO, HttpSession session) {
+	public Integer insertOrder(@RequestBody CartToOrderDTO cartToOrderDTO, HttpSession session) {
 		Member member = (Member) session.getAttribute("loggedInMember");
 		if (member == null)
-			return "沒有會員";
+			return null;
 		
 		return orderService.insert(cartToOrderDTO, member.getId());
 	}
