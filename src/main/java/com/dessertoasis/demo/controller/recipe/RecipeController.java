@@ -146,6 +146,19 @@ public class RecipeController {
 		}
 		return null;
 	}
+	
+	@GetMapping("recipe/getCmsRecipeById")
+	@ResponseBody
+	public Recipes getCmsRecipeById(@RequestParam String recipeId) {
+		System.out.println(recipeId);
+		Optional<Recipes> findById = recipeRepo.findById(Integer.parseInt(recipeId));
+
+		if (findById.isPresent() && findById.get().getRecipeStatus() != -1) {
+			Recipes recipe = findById.get();
+			return recipe;
+		}
+		return null;
+	}
 
 	/*--------------------------------------------食譜主頁使用controller ------------------------------------------------*/
 
