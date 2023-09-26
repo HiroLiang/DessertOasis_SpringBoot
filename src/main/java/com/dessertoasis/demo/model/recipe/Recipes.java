@@ -38,7 +38,7 @@ public class Recipes {
 	
 	//撰寫者ID(連結Member id)
 	@JsonIgnoreProperties(value = {"account","email","passwords","emailForCode","code","access","memberStatus","signDate","verificationToken","memberDetail","teacher","recipes","otp","otpGeneratedTime","bank"},allowSetters = true)
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name="memberId", nullable = true)
 	private Member recipeAuthor;
 	
